@@ -1,0 +1,14 @@
+{
+    "ID": "123e4567-e89b-12d3-a456-426614174000",
+    "email": "someone.gmail.com",
+    "maxVolume": 100,
+    "maxDimensions": {
+      "maxLength": 20,
+      "maxWidth": 10,
+      "maxHeight": 30  
+    },
+    "tags": null,
+    "Name": "Hristo Mihaylov",
+    "isActive": true,
+    "isAvailable": true
+}
