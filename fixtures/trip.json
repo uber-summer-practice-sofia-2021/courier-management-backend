@@ -4,8 +4,8 @@
         "courierId": "6c5ba9f2-9d26-470b-8dcc-bee4cf6a2fc3",
         "orderId": "4d32a9dc-122d-4dc5-922a-4aa595434a7e",
         "distance": 40.32,
-        "assignedAt": 1630418125,
-        "pickedAt":  1630458125,
-        "deliveredAt": 1630468125
+        "assignedAt": "2012-04-23T18:25:43.511Z",
+        "pickedAt":  "2012-04-23T18:25:43.511Z",
+        "deliveredAt": "2012-04-23T18:25:43.511Z"
     }
 }
