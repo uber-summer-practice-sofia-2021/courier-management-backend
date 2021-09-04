@@ -1,21 +1,41 @@
+from typing import Type
 from flaskr import db
+from flask import json
 
 class Courier(db.Model):
     ID=db.Column('ID', db.String(28), primary_key=True)
     email=db.Column('email', db.String(100), nullable=False)
     name=db.Column('name', db.String(30), default=None)
-    maxDimension=db.Column('maxDimension', db.String(20), default=None)
-    tags=db.Column('tags', db.Text(), default=None)
+    maxWidth=db.Column('maxWidth', db.Float, default=None)
+    maxLength=db.Column('maxLength', db.Float, default=None)
+    maxHeight=db.Column('maxHeight', db.Float, default=None)
+    tags=db.Column('tags', db.Text, default=None)
 
-    def __init__(self, ID, email, name=None, maxDimension=None, tags=None):
+    def __init__(self, ID, email, name=None, maxWidth=None, maxLength=None, maxHeight=None, tags=None):
         self.ID=ID
         self.email=email
         self.name=name
-        self.maxDimension=maxDimension
+        self.maxWidth=maxWidth
+        self.maxLength=maxLength
+        self.maxHeight=maxHeight
         self.tags=tags
 
     def __repr__(self):
-        return f"Courier('{self.ID}', '{self.email}', '{self.name}', '{self.maxDimension}', '{self.tags}')"
+        return f"Courier('{self.ID}', '{self.email}', '{self.name}', '{self.maxWidth}', '{self.maxLength}', '{self.maxHeight}', '{self.tags}')"
+    
+    def json(self):
+        data = {
+            "ID": self.ID,
+            "email": self.email,
+            "name": self.name,
+            "maxDimension": {
+                "maxWidth": self.maxWidth,
+                "maxLength": self.maxLength,
+                "maxHeight": self.maxHeight
+                },
+            "tags": self.tags
+        }
+        return json.dumps(data)
         
 class Trip(db.Model):
     ID=db.Column('ID', db.String(28), primary_key=True)
@@ -37,3 +57,15 @@ class Trip(db.Model):
 
     def __repr__(self):
         return f"Trip('{self.ID}', '{self.courierID}', '{self.orderID}', '{self.distance}', '{self.assignedAt}', '{self.pickedAt}', '{self.deliveredAt}',)"
+            
+    def json(self):
+        data = {
+            "ID": self.ID,
+            "courierID": self.courierID,
+            "orderID": self.orderID,
+            "distance": self.distance,
+            "assignedAt": self.assignedAt,
+            "pickedAt": self.pickedAt,
+            "deliveredAt": self.deliveredAt
+        }
+        return json.dumps(data)

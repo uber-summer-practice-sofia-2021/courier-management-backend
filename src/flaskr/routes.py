@@ -1,6 +1,6 @@
 from flaskr import app
 from flaskr.models import *
-from flask import render_template, request, session, flash, redirect, url_for
+from flask import render_template, request, session, flash, redirect, url_for, jsonify
 
 json_data = {
     "courier": {
@@ -63,13 +63,13 @@ def logout():
     session.pop("email",None)
     return redirect(url_for("login"))
 
-@app.route("/couriers/<string:ID>")
-def get_courier_data(ID):
-    return Courier.query.filter(ID).first()
+@app.route("/couriers/<string:id>")
+def get_courier_data(id):
+    return Courier.query.filter_by(ID = id).first().json()
 
-@app.route("/trips/<string:ID>")
-def get_courier_data(ID):
-    return Trip.query.filter(ID).first()
+@app.route("/trips/<string:id>")
+def get_trip_data(id):
+    return Trip.query.filter_by(ID = id).first().json()
 
 # @app.route('/dashboard')
 # def dashboard():
