@@ -1,6 +1,5 @@
 from flaskr import app
 from flask import render_template, request, session, flash, redirect, url_for
-from datetime import timedelta
 
 json_data = {
     "courier": {
