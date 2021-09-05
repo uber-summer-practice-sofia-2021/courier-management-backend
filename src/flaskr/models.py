@@ -1,6 +1,5 @@
-from typing import Type
 from flaskr import db
-from flask import json
+from flask import jsonify
 
 class Courier(db.Model):
     id=db.Column('id', db.String(36), primary_key=True)
@@ -42,7 +41,7 @@ class Courier(db.Model):
             data["tags"]=self.tags.split(',')
         except:
             pass
-        return json.dumps(data)
+        return jsonify(data)
         
 class Trip(db.Model):
     id=db.Column('id', db.String(36), primary_key=True)
@@ -60,7 +59,7 @@ class Trip(db.Model):
         self.courier_id=courier_id
         self.order_id=order_id
         self.distance=distance
-        self.assignedAt=assigned_at
+        self.assigned_at=assigned_at
         self.picked_at=picked_at
         self.delivered_at=delivered_at
 
@@ -77,4 +76,4 @@ class Trip(db.Model):
             "pickedAt": self.picked_at,
             "deliveredAt": self.delivered_at
         }
-        return json.dumps(data)
+        return jsonify(data)
