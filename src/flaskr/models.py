@@ -3,69 +3,78 @@ from flaskr import db
 from flask import json
 
 class Courier(db.Model):
-    ID=db.Column('ID', db.String(28), primary_key=True)
+    id=db.Column('id', db.String(36), primary_key=True)
     email=db.Column('email', db.String(100), nullable=False)
     name=db.Column('name', db.String(30), default=None)
-    maxWidth=db.Column('maxWidth', db.Float, default=None)
-    maxLength=db.Column('maxLength', db.Float, default=None)
-    maxHeight=db.Column('maxHeight', db.Float, default=None)
+    max_width=db.Column('max_width', db.Float, default=None)
+    max_length=db.Column('max_length', db.Float, default=None)
+    max_height=db.Column('max_height', db.Float, default=None)
     tags=db.Column('tags', db.Text, default=None)
 
-    def __init__(self, ID, email, name=None, maxWidth=None, maxLength=None, maxHeight=None, tags=None):
-        self.ID=ID
+    def __init__(self, id, email, name=None, max_width=None, max_length=None, max_height=None, tags=None):
+        self.id=id
         self.email=email
         self.name=name
-        self.maxWidth=maxWidth
-        self.maxLength=maxLength
-        self.maxHeight=maxHeight
-        self.tags=tags
+        self.max_width=max_width
+        self.max_length=max_length
+        self.max_height=max_height
+        try:
+            self.tags=','.join(tags)
+        except:
+            self.tags=None
 
     def __repr__(self):
-        return f"Courier('{self.ID}', '{self.email}', '{self.name}', '{self.maxWidth}', '{self.maxLength}', '{self.maxHeight}', '{self.tags}')"
+        return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}')"
     
     def json(self):
         data = {
-            "ID": self.ID,
+            "ID": self.id,
             "email": self.email,
             "name": self.name,
             "maxDimension": {
-                "maxWidth": self.maxWidth,
-                "maxLength": self.maxLength,
-                "maxHeight": self.maxHeight
+                "maxWidth": self.max_width,
+                "maxLength": self.max_length,
+                "maxHeight": self.max_height
                 },
-            "tags": self.tags
+            "tags": None
         }
+        try:
+            data["tags"]=self.tags.split(',')
+        except:
+            pass
         return json.dumps(data)
         
 class Trip(db.Model):
-    ID=db.Column('ID', db.String(28), primary_key=True)
-    courierID=db.Column('courierID', db.String(28), nullable=None)
-    orderID=db.Column('orderID', db.String(28), nullable=None)
-    distance=db.Column('distance', db.Float, nullable=None)
-    assignedAt=db.Column('assignedAt', db.String(30), nullable=None)
-    pickedAt=db.Column('pickedAt', db.String(30), nullable=None)
-    deliveredAt=db.Column('deliveredAt', db.String(30), nullable=None)
+    id=db.Column('id', db.String(36), primary_key=True)
+    courier_id=db.Column('courier_id', db.String(36), db.ForeignKey('courier.id'), nullable=False)
+    order_id=db.Column('order_id', db.String(36), nullable=False)
+    distance=db.Column('distance', db.Float, nullable=False)
+    assigned_at=db.Column('assigned_at', db.String(30), nullable=False)
+    picked_at=db.Column('picked_at', db.String(30), nullable=False)
+    delivered_at=db.Column('delivered_at', db.String(30), nullable=False)
 
-    def __init__(self, ID, courierID, orderID, distance, assignedAt, pickedAt, deliveredAt):
-        self.ID=ID
-        self.courierID=courierID
-        self.orderID=orderID
+    courier = db.relationship('Courier', backref=db.backref('trips', lazy=True))
+
+    def __init__(self, id, courier_id, order_id, distance, assigned_at, picked_at, delivered_at):
+        self.id=id
+        self.courier_id=courier_id
+        self.order_id=order_id
         self.distance=distance
-        self.assignedAt=assignedAt
-        self.pickedAt=pickedAt
-        self.deliveredAt=deliveredAt
+        self.assignedAt=assigned_at
+        self.picked_at=picked_at
+        self.delivered_at=delivered_at
 
     def __repr__(self):
-        return f"Trip('{self.ID}', '{self.courierID}', '{self.orderID}', '{self.distance}', '{self.assignedAt}', '{self.pickedAt}', '{self.deliveredAt}',)"
+        return f"Trip('{self.id}', '{self.courier_id}', '{self.order_id}', '{self.distance}', '{self.assigned_at}', '{self.picked_at}', '{self.delivered_at}',)"
             
     def json(self):
         data = {
-            "ID": self.ID,
-            "courierID": self.courierID,
-            "orderID": self.orderID,
+            "ID": self.id,
+            "courierID": self.courier_id,
+            "orderID": self.order_id,
             "distance": self.distance,
-            "assignedAt": self.assignedAt,
-            "pickedAt": self.pickedAt,
-            "deliveredAt": self.deliveredAt
+            "assignedAt": self.assigned_at,
+            "pickedAt": self.picked_at,
+            "deliveredAt": self.delivered_at
         }
         return json.dumps(data)

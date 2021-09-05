@@ -64,16 +64,29 @@ def logout():
     return redirect(url_for("login"))
 
 @app.route("/couriers/<string:id>")
-def get_courier_data(id):
-    return Courier.query.filter_by(ID = id).first().json()
+def get_courier_info(id):
+    try:
+        return Courier.query.filter_by(id = id).first().json()
+    except:
+        return jsonify(None)
 
 @app.route("/trips/<string:id>")
-def get_trip_data(id):
-    return Trip.query.filter_by(ID = id).first().json()
+def get_trip_info(id):
+    try:
+        return Trip.query.filter_by(id = id).first().json()
+    except:
+        return jsonify(None)
 
-# @app.route('/dashboard')
+# @app.route('/user/dashboard')
 # def dashboard():
 #     if inSession:
 #         show-courier-dashboard
+#     else:
+#         redirect-to-login-page
+
+# @app.route('/user/settings')
+# def settings():
+#     if inSession:
+#         show-courier-settings
 #     else:
 #         redirect-to-login-page
