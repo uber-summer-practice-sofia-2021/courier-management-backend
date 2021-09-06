@@ -1,22 +1,6 @@
 from flaskr import app
 from flaskr.models import *
-from flask import render_template, request, session, flash, redirect, url_for, jsonify
-
-json_data = {
-    "courier": {
-        "id": "7f4dc6b6-f8ba-477b-8b21-25446c9c72b3",
-        "email": "example@email.com",
-        "maxDimmension": {
-            "maxwidth": 30.00,
-            "maxheight": 20.00,
-            "maxlength": 20.00
-        },
-        "name": "Jhon Nash",
-        "tags": [ "fragile", "dangerous" ],
-        "isActive": True,
-        "isAvailable": True  
-    }
-}
+from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
 
 @app.route("/")
 def home():
@@ -63,19 +47,29 @@ def logout():
     session.pop("email",None)
     return redirect(url_for("login"))
 
-@app.route("/couriers/<string:id>")
-def get_courier_info(id):
+""" Endpoint for requesting courier info """
+@app.route("/couriers", methods=['GET', 'POST'])
+def get_courier_info():
     try:
-        return Courier.query.filter_by(id = id).first().json()
+        courier_id = request.json
+        courier = Courier.query.filter_by(id=courier_id['courierID']).first().map()
+        response = make_response(jsonify(courier))
+        response.headers["Content-Type"] = "application/json"
+        return response
     except:
-        return jsonify(None)
+        return make_response(jsonify(None), 401)
 
-@app.route("/trips/<string:id>")
-def get_trip_info(id):
+""" Endpoint for requesting trip info """
+@app.route("/trips", methods=['GET', 'POST'])
+def get_trip_info():
     try:
-        return Trip.query.filter_by(id = id).first().json()
+        trip_id = request.json
+        trip = Trip.query.filter_by(id=trip_id['tripID']).first().map()
+        response = make_response(jsonify(trip))
+        response.headers["Content-Type"] = "application/json"
+        return response
     except:
-        return jsonify(None)
+        return make_response(jsonify(None), 401)
 
 # @app.route('/user/dashboard')
 # def dashboard():

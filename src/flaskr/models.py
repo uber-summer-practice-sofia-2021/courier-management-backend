@@ -1,5 +1,4 @@
 from flaskr import db
-from flask import jsonify
 
 class Courier(db.Model):
     id=db.Column('id', db.String(36), primary_key=True)
@@ -25,7 +24,8 @@ class Courier(db.Model):
     def __repr__(self):
         return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}')"
     
-    def json(self):
+    """ Returns a dictionary of the object """
+    def map(self):
         data = {
             "ID": self.id,
             "email": self.email,
@@ -41,7 +41,7 @@ class Courier(db.Model):
             data["tags"]=self.tags.split(',')
         except:
             pass
-        return jsonify(data)
+        return data
         
 class Trip(db.Model):
     id=db.Column('id', db.String(36), primary_key=True)
@@ -66,7 +66,8 @@ class Trip(db.Model):
     def __repr__(self):
         return f"Trip('{self.id}', '{self.courier_id}', '{self.order_id}', '{self.distance}', '{self.assigned_at}', '{self.picked_at}', '{self.delivered_at}',)"
             
-    def json(self):
+    """ Returns a dictionary of the object """
+    def map(self):
         data = {
             "ID": self.id,
             "courierID": self.courier_id,
@@ -76,4 +77,4 @@ class Trip(db.Model):
             "pickedAt": self.picked_at,
             "deliveredAt": self.delivered_at
         }
-        return jsonify(data)
+        return data
