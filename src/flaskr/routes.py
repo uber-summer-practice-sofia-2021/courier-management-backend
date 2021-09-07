@@ -1,9 +1,6 @@
 from flaskr import app
 from flaskr.models import *
-from datetime import timedelta
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
-
-app.permanent_session_lifetime = timedelta(minutes=5)
 
 @app.route("/")
 def home():
