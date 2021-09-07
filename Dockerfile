@@ -5,8 +5,7 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY venv/requirements.txt \
-#     requirements.txt \
+COPY requirements.txt \
      src/ ./
 
 RUN pip install -r requirements.txt
