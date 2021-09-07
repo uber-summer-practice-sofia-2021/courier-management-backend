@@ -1,7 +1,7 @@
 from flaskr import db
 
 class Courier(db.Model):
-    id=db.Column('id', db.String(36), primary_key=True)
+    id=db.Column('id', db.String(36), primary_key=True) # , primary_key=True
     email=db.Column('email', db.String(100), nullable=False)
     name=db.Column('name', db.String(30), default=None)
     max_weight = db.Column('max_weight', db.Float, default=None) #added a max_weight column to the db

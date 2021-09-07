@@ -1,10 +1,15 @@
-from flaskr import app
+from flaskr import app, db
 from flaskr.models import *
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
+from random import random
 
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/view")
+def view():
+    return render_template("view.html", values=Courier.query.all())
 
 # @app.route("/tags")
 # def tags():
@@ -19,6 +24,19 @@ def login():
         session.permanent=True
         email = request.form["Email"]
         session["Email"] = email
+
+        found_user = Courier.query.filter_by(email=email).first()
+        if found_user:
+            session["nm"] = found_user.name
+            session["weight"] = found_user.weight
+            session["width"] = found_user.width
+            session["height"] = found_user.height
+            session["length"] = found_user.length
+        else:
+            r = random()
+            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None)
+            db.session.add(usr)
+            db.session.commit()
         
         flash("Login successful!")
         return redirect(url_for("user"))
@@ -56,6 +74,13 @@ def user():
             max_length=request.form["length"]
             session["length"]=max_length
 
+            found_user = Courier.query.filter_by(email=email).first()
+            found_user.name = name
+            found_user.max_weight = max_weight
+            found_user.max_width = max_width
+            found_user.max_height = max_height
+            found_user.max_length = max_length
+            db.session.commit()
 
             flash("Information was saved!")
         else:
