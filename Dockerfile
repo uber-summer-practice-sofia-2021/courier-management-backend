@@ -5,7 +5,7 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY venv/requirements.txt \
+COPY requirements.txt \
 #     requirements.txt \
      src/ ./
 
