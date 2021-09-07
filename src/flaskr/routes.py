@@ -28,10 +28,10 @@ def login():
         found_user = Courier.query.filter_by(email=email).first()
         if found_user:
             session["nm"] = found_user.name
-            session["weight"] = found_user.weight
-            session["width"] = found_user.width
-            session["height"] = found_user.height
-            session["length"] = found_user.length
+            session["weight"] = found_user.max_weight
+            session["width"] = found_user.max_width
+            session["height"] = found_user.max_height
+            session["length"] = found_user.max_length
         else:
             r = random()
             usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None)
