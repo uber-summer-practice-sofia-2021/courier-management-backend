@@ -1,18 +1,4 @@
-from flask import Flask, request, jsonify
-
-server = Flask(__name__)
-
-@server.route("/")
-def hello():
-  return "Hello World!"
-
-@server.route("/hello")
-def personalised_hello():
-  username = request.args.get('user')
-  return f'Hello {username}!'
-
+from flaskr import app
 
 if __name__ == "__main__":
-   server.run(host='0.0.0.0')
-
-
+   app.run(debug=True)

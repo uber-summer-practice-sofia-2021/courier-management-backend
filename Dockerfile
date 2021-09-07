@@ -5,15 +5,14 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY venv/requirements.txt \
-	 src/ ./
-#	 requirements.txt \
+COPY requirements.txt \
+     src/ ./
 
 RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
 ENV FLASK_ENV=development \
-	FLASK_APP=server.py
+    FLASK_APP=server.py
 
 CMD ["flask", "run", "--host=0.0.0.0"]
