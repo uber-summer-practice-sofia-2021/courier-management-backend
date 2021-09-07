@@ -5,6 +5,13 @@ from flask import render_template, request, session, flash, redirect, url_for, j
 @app.route("/")
 def home():
     return render_template("index.html")
+
+# @app.route("/tags")
+# def tags():
+#     if request.method == "POST":
+#         tags = request.form.getlist("tags")
+#         print(tags)
+#         return "OK"
     
 @app.route("/login" , methods=["POST","GET"])
 def login():
@@ -25,6 +32,7 @@ def login():
 def user():
     
     name = None
+    max_weight = None
     max_width = None
     max_height = None
     max_length = None
@@ -36,6 +44,9 @@ def user():
             name=request.form["nm"]
             session["nm"]=name
 
+            max_weight=request.form["weight"]
+            session["weight"]=max_weight
+
             max_width=request.form["width"]
             session["width"]=max_width
 
@@ -45,15 +56,17 @@ def user():
             max_length=request.form["length"]
             session["length"]=max_length
 
+
             flash("Information was saved!")
         else:
-            if "nm" in session and "width" in session and "height" in session and "length" in session:
+            if "nm" in session and "weight" in session and "width" in session and "height" in session and "length" in session:
                 name=session["nm"]
+                max_weight=session["weight"]
                 max_width=session["width"]
                 max_height=session["height"]
                 max_length=session["length"]
 
-        return render_template("user.html", name=name, max_width=max_width, max_height=max_height, max_length=max_length)
+        return render_template("user.html", name=name, max_weight=max_weight, max_width=max_width, max_height=max_height, max_length=max_length)
     else:
         flash("You are not logged in!")
         return redirect(url_for("login"))
