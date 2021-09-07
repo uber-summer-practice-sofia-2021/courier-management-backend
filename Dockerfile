@@ -6,7 +6,8 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY requirements.txt \
-#     requirements.txt \
+
+
      src/ ./
 
 RUN pip install -r requirements.txt
