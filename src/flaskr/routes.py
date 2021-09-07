@@ -1,6 +1,9 @@
 from flaskr import app
 from flaskr.models import *
+from datetime import timedelta
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
+
+app.permanent_session_lifetime = timedelta(minutes=5)
 
 @app.route("/")
 def home():
@@ -10,8 +13,9 @@ def home():
 def login():
     if request.method == "POST":
         session.permanent=True
-        user=request.form["nm"]
-        session["user"]=user
+        email = request.form["Email"]
+        session["Email"] = email
+        
         flash("Login successful!")
         return redirect(url_for("user"))
     else:
@@ -22,18 +26,37 @@ def login():
 
 @app.route("/user",methods=["POST","GET"])
 def user():
-    email=None
-    if "user" in session:
-        user=session["user"]
-        if request.method=="POST":
-            email=request.form["email"]
-            session["email"]=email
-            flash("Email was saved!")
-        else:
-            if "email" in session:
-                email=session["email"]
+    
+    name = None
+    max_width = None
+    max_height = None
+    max_length = None
 
-        return render_template("user.html",email=email)
+    if "Email" in session:
+        email=session["Email"]
+        if request.method=="POST":
+
+            name=request.form["nm"]
+            session["nm"]=name
+
+            max_width=request.form["width"]
+            session["width"]=max_width
+
+            max_height=request.form["height"]
+            session["height"]=max_height
+
+            max_length=request.form["length"]
+            session["length"]=max_length
+
+            flash("Information was saved!")
+        else:
+            if "nm" in session and "width" in session and "height" in session and "length" in session:
+                name=session["nm"]
+                max_width=session["width"]
+                max_height=session["height"]
+                max_length=session["length"]
+
+        return render_template("user.html", name=name, max_width=max_width, max_height=max_height, max_length=max_length)
     else:
         flash("You are not logged in!")
         return redirect(url_for("login"))
