@@ -1,7 +1,8 @@
 version: '3.7'
 services:
+
   server:
-    container_name: python_devserver
+    container_name: courier-server
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,11 +15,13 @@ services:
     environment:
       - FLASK_APP=server.py
       - FLASK_ENV=development
+  
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
     ports: 
       - "2181:2181"
+  
   kafka:
     image: wurstmeister/kafka
     container_name: kafka
