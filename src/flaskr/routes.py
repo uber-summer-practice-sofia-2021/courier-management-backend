@@ -1,3 +1,4 @@
+from os import removedirs
 from flaskr import app, db
 from flaskr.models import *
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
@@ -32,7 +33,7 @@ def login():
         else:
             
             r = uuid.uuid4()
-            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None)
+            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False)
             db.session.add(usr)
             db.session.commit()
         
@@ -55,6 +56,10 @@ def user():
 
     if "Email" in session:
         email=session["Email"]
+        found_user = Courier.query.filter_by(email=email).first()
+        if found_user and found_user.is_validated:
+            return redirect(url_for("active"))
+
         if request.method=="POST":
 
             name=request.form["nm"]
@@ -72,12 +77,12 @@ def user():
             max_length=request.form["length"]
             session["length"]=max_length
 
-            found_user = Courier.query.filter_by(email=email).first()
             found_user.name = name
             found_user.max_weight = max_weight
             found_user.max_width = max_width
             found_user.max_height = max_height
             found_user.max_length = max_length
+            found_user.is_validated=True
             db.session.commit()
 
             # flash("Information was saved!")
@@ -94,17 +99,18 @@ def user():
     else:
         flash("You are not logged in!")
         return redirect(url_for("login"))
-   
+
 @app.route("/logout")
 def logout():
     if "Email" in session:
         email=session["Email"]
         flash(f"You have been logged out, {email}!","info")
     session.pop("Email",None)
-    session.pop("weight", None)
-    session.pop("height", None)
-    session.pop("width", None)
-    session.pop("length", None)
+    session.pop("nm",None)
+    session.pop("weight",None)
+    session.pop("width",None)
+    session.pop("height",None)
+    session.pop("length",None)
     return redirect(url_for("login"))
 
 
@@ -139,8 +145,8 @@ def inactive():
 @app.route("/couriers", methods=['GET', 'POST'])
 def get_courier_info():
     try:
-        courier_id = request.json
-        courier = Courier.query.filter_by(id=courier_id['courierID']).first().map()
+        courier_id = request.args['courierID']
+        courier = Courier.query.filter_by(id=courier_id).first().map()
         response = make_response(jsonify(courier))
         response.headers["Content-Type"] = "application/json"
         return response
@@ -151,8 +157,8 @@ def get_courier_info():
 @app.route("/trips", methods=['GET', 'POST'])
 def get_trip_info():
     try:
-        trip_id = request.json
-        trip = Trip.query.filter_by(id=trip_id['tripID']).first().map()
+        trip_id = request.args['tripID']
+        trip = Trip.query.filter_by(id=trip_id).first().map()
         response = make_response(jsonify(trip))
         response.headers["Content-Type"] = "application/json"
         return response
