@@ -48,11 +48,11 @@ def logout():
     return redirect(url_for("login"))
 
 """ Endpoint for requesting courier info """
-@app.route("/couriers", methods=['GET', 'POST'])
+@app.route("/couriers", methods=['GET'])
 def get_courier_info():
     try:
-        courier_id = request.json
-        courier = Courier.query.filter_by(id=courier_id['courierID']).first().map()
+        courier_id = request.args['courierID']
+        courier = Courier.query.filter_by(id=courier_id).first().map()
         response = make_response(jsonify(courier))
         response.headers["Content-Type"] = "application/json"
         return response
@@ -60,11 +60,11 @@ def get_courier_info():
         return make_response(jsonify(None), 401)
 
 """ Endpoint for requesting trip info """
-@app.route("/trips", methods=['GET', 'POST'])
+@app.route("/trips", methods=['GET'])
 def get_trip_info():
     try:
-        trip_id = request.json
-        trip = Trip.query.filter_by(id=trip_id['tripID']).first().map()
+        trip_id = request.args['tripID']
+        trip = Trip.query.filter_by(id=trip_id).first().map()
         response = make_response(jsonify(trip))
         response.headers["Content-Type"] = "application/json"
         return response
