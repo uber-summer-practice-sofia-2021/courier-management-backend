@@ -96,31 +96,6 @@ def user():
         flash("You are not logged in!")
         return redirect(url_for("login"))
 
-@app.route("/working",methods=["POST","GET"])
-def working():
-    name=None
-    if "Email" in session:
-        email=session["Email"]
-        found_user = Courier.query.filter_by(email=email).first()
-        name=found_user.name
-    if request.method=="POST":
-        if request.form['submit_button']=='Show orders':
-            print("showorders")
-        elif request.form['submit_button']=='Go inactive':
-            return redirect(url_for("notWorking"))
-    
-    return render_template("working.html",name=name)
-
-@app.route("/notWorking",methods=["GET","POST"])
-def notWorking():
-    name=None
-    if "Email" in session:
-        email=session["Email"]
-        found_user = Courier.query.filter_by(email=email).first()
-        name=found_user.name
-    if request.method=="POST" and request.form['submit_button']=='Go active':  
-        return redirect(url_for("working"))
-    return render_template("notWorking.html",name=name)
 @app.route("/logout")
 def logout():
     if "Email" in session:
