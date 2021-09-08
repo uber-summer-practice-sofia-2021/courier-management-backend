@@ -77,7 +77,7 @@ def user():
             found_user.max_length = max_length
             db.session.commit()
 
-            flash("Information was saved!")
+            # flash("Information was saved!")
             return redirect(url_for("active"))
         else:
             if "nm" in session and "weight" in session and "width" in session and "height" in session and "length" in session:
@@ -96,7 +96,7 @@ def user():
 def logout():
     if "Email" in session:
         email=session["Email"]
-        flash("You have been logged out!")
+        flash(f"You have been logged out, {email}!","info")
     session.pop("Email",None)
     session.pop("weight", None)
     session.pop("height", None)
