@@ -3,8 +3,11 @@ from flaskr.models import *
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
 import uuid
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def home():
+    if request.method == "POST":
+        if request.form["login_button"] == "Login":
+            return redirect(url_for("login"))
     return render_template("index.html")
 
 @app.route("/view")

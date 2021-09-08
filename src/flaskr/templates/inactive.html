@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-{%block title%} Courier {{name}} is not working at the moment!{%endblock%}
+{%block title%} Inactive {%endblock%}
 {%block content %}
+<p>Courier {{name}} is not active at the moment!</p>
 <p></p>
 <form method="POST">
     <input type="submit" name="submit_button" value="Go active"/>
