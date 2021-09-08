@@ -41,7 +41,7 @@ def login():
         flash("Login successful!")
         return redirect(url_for("user"))
     else:
-        if "user" in session:
+        if "Email" in session:
             flash("Already logged in!")
             return redirect(url_for("user"))
         return render_template("login.html")
@@ -98,11 +98,12 @@ def user():
    
 @app.route("/logout")
 def logout():
-    if "user" in session:
-        user=session["user"]
-        flash(f"You have been logged out!, {user}","info")
-    session.pop("user",None)
-    session.pop("email",None)
+    if "Email" in session:
+        # user=session["user"]
+        email=session["Email"]
+        flash(f"You have been logged out, {email}","info")
+    # session.pop("user",None)
+    session.pop("Email",None)
     return redirect(url_for("login"))
 
 """ Endpoint for requesting courier info """
