@@ -1,3 +1,4 @@
+from os import removedirs
 from flaskr import app, db
 from flaskr.models import *
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
@@ -83,6 +84,7 @@ def user():
             db.session.commit()
 
             flash("Information was saved!")
+            return redirect(url_for("working"))
         else:
             if "nm" in session and "weight" in session and "width" in session and "height" in session and "length" in session:
                 name=session["nm"]
@@ -95,7 +97,32 @@ def user():
     else:
         flash("You are not logged in!")
         return redirect(url_for("login"))
-   
+
+@app.route("/working",methods=["POST","GET"])
+def working():
+    name=None
+    if "Email" in session:
+        email=session["Email"]
+        found_user = Courier.query.filter_by(email=email).first()
+        name=found_user.name
+    if request.method=="POST":
+        if request.form['submit_button']=='Show orders':
+            print("showorders")
+        elif request.form['submit_button']=='Go inactive':
+            return redirect(url_for("notWorking"))
+    
+    return render_template("working.html",name=name)
+
+@app.route("/notWorking",methods=["GET","POST"])
+def notWorking():
+    name=None
+    if "Email" in session:
+        email=session["Email"]
+        found_user = Courier.query.filter_by(email=email).first()
+        name=found_user.name
+    if request.method=="POST" and request.form['submit_button']=='Go active':  
+        return redirect(url_for("working"))
+    return render_template("notWorking.html",name=name)
 @app.route("/logout")
 def logout():
     if "Email" in session:
@@ -104,6 +131,11 @@ def logout():
         flash(f"You have been logged out, {email}","info")
     # session.pop("user",None)
     session.pop("Email",None)
+    session.pop("nm",None)
+    session.pop("weight",None)
+    session.pop("width",None)
+    session.pop("height",None)
+    session.pop("length",None)
     return redirect(url_for("login"))
 
 """ Endpoint for requesting courier info """
