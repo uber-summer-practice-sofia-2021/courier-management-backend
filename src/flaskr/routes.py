@@ -1,7 +1,7 @@
 from flaskr import app, db
 from flaskr.models import *
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
-from random import random
+import uuid
 
 @app.route("/")
 def home():
@@ -10,6 +10,10 @@ def home():
 @app.route("/view")
 def view():
     return render_template("view.html", values=Courier.query.all())
+
+# @app.route("/user/orders", methods=['GET', 'POST'])
+# def orders():
+#     return render_template("orders.html")
 
 # @app.route("/tags")
 # def tags():
@@ -33,7 +37,8 @@ def login():
             session["height"] = found_user.max_height
             session["length"] = found_user.max_length
         else:
-            r = random()
+            
+            r = uuid.uuid4()
             usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None)
             db.session.add(usr)
             db.session.commit()
@@ -83,6 +88,7 @@ def user():
             db.session.commit()
 
             flash("Information was saved!")
+            # redirect(url_for("orders"))
         else:
             if "nm" in session and "weight" in session and "width" in session and "height" in session and "length" in session:
                 name=session["nm"]
@@ -101,10 +107,12 @@ def logout():
     if "Email" in session:
         # user=session["user"]
         email=session["Email"]
-        flash(f"You have been logged out, {email}","info")
+        # flash(f"You have been logged out, {email}!","info")
+        flash("You have been logged out!")
     # session.pop("user",None)
     session.pop("Email",None)
     return redirect(url_for("login"))
+
 
 """ Endpoint for requesting courier info """
 @app.route("/couriers", methods=['GET', 'POST'])
