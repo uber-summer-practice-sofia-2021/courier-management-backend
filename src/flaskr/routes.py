@@ -1,5 +1,6 @@
 from flaskr import app
 from flaskr.models import *
+from flaskr.producer import Producer
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
 
 @app.route("/")
@@ -84,3 +85,12 @@ def get_trip_info():
 #         show-courier-settings
 #     else:
 #         redirect-to-login-page
+
+@app.route("/trips/msg")
+def complete_order():
+    try:
+        producer = Producer()
+        producer.produce('trips', {"test": "data"})
+        return "ok"
+    except:
+        return "not ok"
