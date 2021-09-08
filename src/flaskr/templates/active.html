@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{%block title%} Courier {{name}} is working!{%endblock%}
+{%block content %}
+<p></p>
+<form method="POST">
+    <input type="submit" name="submit_button" value="Show orders"/>
+    <input type="submit" name="submit_button" value="Go inactive"/>
+</form>
+{%endblock%}

@@ -11,16 +11,6 @@ def home():
 def view():
     return render_template("view.html", values=Courier.query.all())
 
-# @app.route("/user/orders", methods=['GET', 'POST'])
-# def orders():
-#     return render_template("orders.html")
-
-# @app.route("/tags")
-# def tags():
-#     if request.method == "POST":
-#         tags = request.form.getlist("tags")
-#         print(tags)
-#         return "OK"
     
 @app.route("/login" , methods=["POST","GET"])
 def login():
@@ -88,7 +78,7 @@ def user():
             db.session.commit()
 
             flash("Information was saved!")
-            # redirect(url_for("orders"))
+            return redirect(url_for("active"))
         else:
             if "nm" in session and "weight" in session and "width" in session and "height" in session and "length" in session:
                 name=session["nm"]
@@ -105,13 +95,41 @@ def user():
 @app.route("/logout")
 def logout():
     if "Email" in session:
-        # user=session["user"]
         email=session["Email"]
-        # flash(f"You have been logged out, {email}!","info")
         flash("You have been logged out!")
-    # session.pop("user",None)
     session.pop("Email",None)
+    session.pop("weight", None)
+    session.pop("height", None)
+    session.pop("width", None)
+    session.pop("length", None)
     return redirect(url_for("login"))
+
+
+@app.route("/active",methods=["POST","GET"])
+def active():
+    name=None
+    if "Email" in session:
+        email=session["Email"]
+        found_user = Courier.query.filter_by(email=email).first()
+        name=found_user.name
+    if request.method=="POST":
+        if request.form['submit_button']=='Show orders':
+            print("showorders")
+        elif request.form['submit_button']=='Go inactive':
+            return redirect(url_for("inactive"))
+    
+    return render_template("active.html",name=name)
+
+@app.route("/inactive",methods=["GET","POST"])
+def inactive():
+    name=None
+    if "Email" in session:
+        email=session["Email"]
+        found_user = Courier.query.filter_by(email=email).first()
+        name=found_user.name
+    if request.method=="POST" and request.form['submit_button']=='Go active':  
+        return redirect(url_for("active"))
+    return render_template("inactive.html",name=name)
 
 
 """ Endpoint for requesting courier info """
@@ -137,6 +155,18 @@ def get_trip_info():
         return response
     except:
         return make_response(jsonify(None), 401)
+
+
+# @app.route("/user/orders", methods=['GET', 'POST'])
+# def orders():
+#     return render_template("orders.html")
+
+# @app.route("/tags")
+# def tags():
+#     if request.method == "POST":
+#         tags = request.form.getlist("tags")
+#         print(tags)
+#         return "OK"
 
 # @app.route('/user/dashboard')
 # def dashboard():
