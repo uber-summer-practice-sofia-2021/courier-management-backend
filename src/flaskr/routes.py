@@ -33,7 +33,7 @@ def login():
         else:
             
             r = uuid.uuid4()
-            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None)
+            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False)
             db.session.add(usr)
             db.session.commit()
         
@@ -56,6 +56,10 @@ def user():
 
     if "Email" in session:
         email=session["Email"]
+        found_user = Courier.query.filter_by(email=email).first()
+        if found_user and found_user.is_validated:
+            return redirect(url_for("active"))
+
         if request.method=="POST":
 
             name=request.form["nm"]
@@ -73,12 +77,12 @@ def user():
             max_length=request.form["length"]
             session["length"]=max_length
 
-            found_user = Courier.query.filter_by(email=email).first()
             found_user.name = name
             found_user.max_weight = max_weight
             found_user.max_width = max_width
             found_user.max_height = max_height
             found_user.max_length = max_length
+            found_user.is_validated=True
             db.session.commit()
 
             # flash("Information was saved!")

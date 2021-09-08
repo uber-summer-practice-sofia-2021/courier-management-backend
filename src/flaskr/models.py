@@ -9,8 +9,9 @@ class Courier(db.Model):
     max_length=db.Column('max_length', db.Float, default=None)
     max_height=db.Column('max_height', db.Float, default=None)
     tags=db.Column('tags', db.Text, default=None)
+    is_validated=db.Column('is_validated',db.Boolean,default=False)
 
-    def __init__(self, id, email, name=None, max_weight=None, max_width=None, max_length=None, max_height=None, tags=None):
+    def __init__(self, id, email, name=None, max_weight=None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False):
         self.id=id
         self.email=email
         self.name=name
@@ -18,13 +19,14 @@ class Courier(db.Model):
         self.max_width=max_width
         self.max_length=max_length
         self.max_height=max_height
+        self.is_validated=is_validated
         try:
             self.tags=','.join(tags)
         except:
             self.tags=None
 
     def __repr__(self):
-        return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_weight}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}')"
+        return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_weight}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}','{self.is_validated}')"
     
     """ Returns a dictionary of the object """
     def map(self):
