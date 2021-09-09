@@ -170,3 +170,6 @@ dmypy.json
 
 #vscode
 .vscode/*
+
+#kafka
+kafka/logs
