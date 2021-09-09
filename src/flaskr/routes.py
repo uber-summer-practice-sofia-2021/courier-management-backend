@@ -1,5 +1,3 @@
-
-import re
 from flaskr import app, db
 from flaskr.models import *
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
@@ -7,8 +5,7 @@ import uuid
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-   
-            return redirect(url_for("login"))
+    return redirect(url_for("login"))
    
 
 @app.route("/view")
