@@ -49,14 +49,12 @@ def user():
     max_width = None
     max_height = None
     max_length = None
-    edit_details = False
 
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
-            if not edit_details:
-                return redirect(url_for("active"))
+            return redirect(url_for("active"))
         
 
         if request.method=="POST":
