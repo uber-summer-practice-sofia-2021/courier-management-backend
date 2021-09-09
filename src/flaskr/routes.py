@@ -128,14 +128,7 @@ def active():
     file = open(fixtures_path)
     data = json.load(file)
     file.close()
-    keys = data[0].keys()
-    # print(keys)
-    # print(Response(json.dumps(data), mimetype='application/json'))
-    # print(data)
-    # for item in data:
-    #     print(json.dumps(item))
 
-    # return Response(json.dumps(data), mimetype='application/json')
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
