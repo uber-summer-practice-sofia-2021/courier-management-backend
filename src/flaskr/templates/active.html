@@ -2,14 +2,14 @@
 {%block title%} Active {%endblock%}
 {% block navbar %}
 <li class="nav-item">
-    <a class="nav-link" href="/user">Edit details</a>
+    <a class="nav-link" name="edit_profile" href="/user">Edit details</a>
 </li>
 {% endblock%}
 {%block content %}
 <p>Courier {{name}} is now active!</p>
 <p></p>
 <form method="POST">
-    
+    <input type="submit" name="submit_button" value="edit_details"/>
     <input type="submit" name="submit_button" value="Go inactive"/>
 </form>
 {%endblock%}

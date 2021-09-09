@@ -1,3 +1,5 @@
+
+import re
 from flaskr import app, db
 from flaskr.models import *
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
@@ -5,7 +7,9 @@ import uuid
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    return redirect(url_for("login"))
+   
+            return redirect(url_for("login"))
+   
 
 @app.route("/view")
 def view():
@@ -49,19 +53,13 @@ def user():
     max_width = None
     max_height = None
     max_length = None
-<<<<<<< HEAD
     tags=None
-=======
-    edit_details = False
->>>>>>> 3470645a2e5e4e98f5cfeb4b7b619ddeb5ca7c94
 
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
-            if not edit_details:
-                return redirect(url_for("active"))
-        
+            return redirect(url_for("active"))
 
         if request.method=="POST":
 
@@ -82,6 +80,7 @@ def user():
 
             arr=request.form.getlist('mycheckbox')
             tags=','.join(arr)
+
 
             found_user.name = name
             found_user.max_weight = max_weight
@@ -123,16 +122,23 @@ def logout():
 
 @app.route("/active",methods=["POST","GET"])
 def active():
+    found_user=None
     name=None
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         name=found_user.name
-    
+        found_user.is_validated=True
+        db.session.commit()
+
     if request.method=="POST":
-        request.form['submit_button']=='Go inactive'
-        return redirect(url_for("inactive"))
-    
+        if  request.form['submit_button']=='Go inactive':
+             return redirect(url_for("inactive"))
+        elif request.form['submit_button']=='edit_details':
+            found_user.is_validated=False
+            db.session.commit()
+            return redirect(url_for("user"))
+            
     return render_template("active.html",name=name)
 
 @app.route("/inactive",methods=["GET","POST"])
@@ -196,5 +202,3 @@ def get_trip_info():
 #         show-courier-settings
 #     else:
 #         redirect-to-login-page
-
-# git merge --abort
