@@ -5,10 +5,7 @@ import uuid
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    if request.method == "POST":
-        if request.form["login_button"] == "Login":
-            return redirect(url_for("login"))
-    return render_template("index.html")
+    return redirect(url_for("login"))
 
 @app.route("/view")
 def view():
@@ -52,12 +49,15 @@ def user():
     max_width = None
     max_height = None
     max_length = None
+    edit_details = False
 
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
-            return redirect(url_for("active"))
+            if not edit_details:
+                return redirect(url_for("active"))
+        
 
         if request.method=="POST":
 
