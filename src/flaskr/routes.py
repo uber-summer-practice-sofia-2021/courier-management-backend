@@ -1,6 +1,11 @@
 from flaskr import app, db
 from flaskr.models import *
+<<<<<<< HEAD
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response, Response, json
+=======
+from flaskr.producer import Producer
+from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
+>>>>>>> bcbe6c3c2f2fea5df78a8df6a4b81d30ca4272af
 import uuid
 
 @app.route("/", methods=["GET", "POST"])
@@ -28,9 +33,7 @@ def login():
             session["height"] = found_user.max_height
             session["length"] = found_user.max_length
         else:
-            
-            r = uuid.uuid4()
-            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False)
+            usr = Courier(email)
             db.session.add(usr)
             db.session.commit()
         
@@ -110,12 +113,8 @@ def logout():
     if "Email" in session:
         email=session["Email"]
         flash(f"You have been logged out, {email}!","info")
-    session.pop("Email",None)
-    session.pop("nm",None)
-    session.pop("weight",None)
-    session.pop("width",None)
-    session.pop("height",None)
-    session.pop("length",None)
+    for key in [key for key in session]:
+        session.pop(key, None)
     return redirect(url_for("login"))
 
 
@@ -197,6 +196,7 @@ def get_trip_info():
     except:
         return make_response(jsonify(None), 401)
 
+<<<<<<< HEAD
 
 # @app.route("/user/orders", methods=['GET', 'POST'])
 # def orders():
@@ -222,3 +222,16 @@ def get_trip_info():
 #         show-courier-settings
 #     else:
 #         redirect-to-login-page
+=======
+""" Endpoint for order visualization """
+@app.route('/orders/<orderID>', methods=['GET'])
+def order_dashboard(orderID):
+    if "Email" not in session:
+        return redirect(url_for('login'))
+    return render_template('order.html', orderID=orderID)
+
+""" Endpoint for order status change """
+@app.route('/orders/<orderID>/<status>', methods=['POST'])
+def change_order_status(orderID, status):
+    return "test"
+>>>>>>> bcbe6c3c2f2fea5df78a8df6a4b81d30ca4272af
