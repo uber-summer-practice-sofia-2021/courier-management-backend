@@ -17,4 +17,26 @@
 {% for item in data %}
     <p>{{item}}</p>
 {% endfor %}
+
+<table>
+    <tr>
+        <th>From</th>
+        <th>To</th>
+        <th>Tags</th>
+    </tr>
+{% for item in data %}
+    <tr>
+        <td>{{item.get("from").get("addressName")}}</td>
+        <td>{{item.get("to").get("addressName")}}</td>
+        <td>{{item.get("tags")}}</td>
+
+        <td>
+            <form name="f2" action="javascript:select();" >
+            <input id="edit" type="submit" name="edit" value="Assign"/>
+            </form>
+        </td>
+    </tr>
+    
+{% endfor %}
+</table>
 {%endblock%}

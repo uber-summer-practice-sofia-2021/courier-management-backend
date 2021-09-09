@@ -128,6 +128,8 @@ def active():
     file = open(fixtures_path)
     data = json.load(file)
     file.close()
+    keys = data[0].keys()
+    # print(keys)
     # print(Response(json.dumps(data), mimetype='application/json'))
     # print(data)
     # for item in data:
@@ -148,7 +150,7 @@ def active():
             found_user.is_validated=False
             db.session.commit()
             return redirect(url_for("user"))
-    return render_template("active.html",name=name,data=data)
+    return render_template("active.html",name=name,data=data,keys=keys)
 
 @app.route("/inactive",methods=["GET","POST"])
 def inactive():
