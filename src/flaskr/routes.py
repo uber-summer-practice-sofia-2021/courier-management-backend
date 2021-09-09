@@ -1,6 +1,6 @@
 from flaskr import app, db
 from flaskr.models import *
-from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
+from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response, Response, json
 import uuid
 
 @app.route("/", methods=["GET", "POST"])
@@ -50,6 +50,7 @@ def user():
     max_width = None
     max_height = None
     max_length = None
+    tags=None
 
     if "Email" in session:
         email=session["Email"]
@@ -122,6 +123,17 @@ def logout():
 def active():
     found_user=None
     name=None
+
+    fixtures_path = "../fixtures/orders.json"
+    file = open(fixtures_path)
+    data = json.load(file)
+    file.close()
+    # print(Response(json.dumps(data), mimetype='application/json'))
+    # print(data)
+    # for item in data:
+    #     print(json.dumps(item))
+
+    # return Response(json.dumps(data), mimetype='application/json')
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
@@ -136,7 +148,7 @@ def active():
             found_user.is_validated=False
             db.session.commit()
             return redirect(url_for("user"))
-    return render_template("active.html",name=name)
+    return render_template("active.html",name=name,data=data)
 
 @app.route("/inactive",methods=["GET","POST"])
 def inactive():
