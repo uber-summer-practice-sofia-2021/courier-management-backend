@@ -138,18 +138,23 @@ def active():
             found_user.is_validated=False
             db.session.commit()
             return redirect(url_for("user"))
-            
     return render_template("active.html",name=name)
 
 @app.route("/inactive",methods=["GET","POST"])
 def inactive():
+    found_user=None
     name=None
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         name=found_user.name
+
     if request.method=="POST" and request.form['submit_button']=='Go active':  
         return redirect(url_for("active"))
+    if request.method=="POST" and request.form['submit_button']=='edit_details':
+        found_user.is_validated=False
+        db.session.commit()
+        return redirect(url_for("user"))
     return render_template("inactive.html",name=name)
 
 
