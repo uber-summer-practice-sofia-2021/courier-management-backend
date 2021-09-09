@@ -1,7 +1,7 @@
 from flaskr import db
 
 class Courier(db.Model):
-    id=db.Column('id', db.String(36), primary_key=True)
+    id=db.Column('id', db.String(36), primary_key=True) # , primary_key=True
     email=db.Column('email', db.String(100), nullable=False)
     name=db.Column('name', db.String(30), default=None)
     max_weight = db.Column('max_weight', db.Float, default=None) #added a max_weight column to the db
@@ -9,8 +9,9 @@ class Courier(db.Model):
     max_length=db.Column('max_length', db.Float, default=None)
     max_height=db.Column('max_height', db.Float, default=None)
     tags=db.Column('tags', db.Text, default=None)
+    is_validated=db.Column('is_validated',db.Boolean,default=False)
 
-    def __init__(self, id, email, name=None, max_weight=None, max_width=None, max_length=None, max_height=None, tags=None):
+    def __init__(self, id, email, name=None, max_weight=None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False):
         self.id=id
         self.email=email
         self.name=name
@@ -18,13 +19,14 @@ class Courier(db.Model):
         self.max_width=max_width
         self.max_length=max_length
         self.max_height=max_height
+        self.is_validated=is_validated
         try:
             self.tags=','.join(tags)
         except:
             self.tags=None
 
     def __repr__(self):
-        return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_weight}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}')"
+        return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_weight}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}','{self.is_validated}')"
     
     """ Returns a dictionary of the object """
     def map(self):

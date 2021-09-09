@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title%}View All Users{% endblock %}
+
+{% block content %}
+    {% for item in values %}
+        <p>ID: {{item.id}}; Email: {{item.email}}; Name: {{item.name}}; Max Weight: {{item.max_weight}}; Max Width: {{item.max_width}}; Max Length: {{item.max_length}}; Max Height: {{item.max_height}}; isValidated: {{item.is_validated}}</p>
+    {% endfor %}
+{% endblock %}
