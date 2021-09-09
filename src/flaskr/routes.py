@@ -159,28 +159,14 @@ def get_trip_info():
     except:
         return make_response(jsonify(None), 401)
 
+""" Endpoint for order visualization """
+@app.route('/orders/<orderID>', methods=['GET'])
+def order_dashboard(orderID):
+    if "Email" not in session:
+        return redirect(url_for('login'))
+    return render_template('order.html', orderID=orderID)
 
-# @app.route("/user/orders", methods=['GET', 'POST'])
-# def orders():
-#     return render_template("orders.html")
-
-# @app.route("/tags")
-# def tags():
-#     if request.method == "POST":
-#         tags = request.form.getlist("tags")
-#         print(tags)
-#         return "OK"
-
-# @app.route('/user/dashboard')
-# def dashboard():
-#     if inSession:
-#         show-courier-dashboard
-#     else:
-#         redirect-to-login-page
-
-# @app.route('/user/settings')
-# def settings():
-#     if inSession:
-#         show-courier-settings
-#     else:
-#         redirect-to-login-page
+""" Endpoint for order status change """
+@app.route('/orders/<orderID>/<status>', methods=['POST'])
+def change_order_status(orderID, status):
+    return "test"
