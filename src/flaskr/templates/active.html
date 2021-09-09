@@ -12,9 +12,26 @@
     <input type="submit" name="submit_button" value="edit_details"/>
     <input type="submit" name="submit_button" value="Go inactive"/>
 </form>
-
+<p></p>
 <!-- {{data}} -->
+<table class="centered thick-border">
+    
 {% for item in data %}
-    <p>{{item}}</p>
+    <th>From</th>
+    <th>To</th>
+    <th>Tags</th>
+<tr>
+    <th>{{item.from['addressName']}}</th>
+    <th>{{item.to['addressName']}}</th>
+    <th>{{item.tags}}</th>
+            <td>
+                <form name="f2" action="javascript:select();" >
+                 <input id="assign order" type="submit" name="assign order" value="assign order" />
+                </form>
+            </td>
+</tr>
 {% endfor %}
+
+</table>
+
 {%endblock%}

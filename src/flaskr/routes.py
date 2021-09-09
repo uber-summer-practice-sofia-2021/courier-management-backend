@@ -5,11 +5,7 @@ import uuid
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-<<<<<<< HEAD
-    return redirect(url_for("login"))
-=======
    return redirect(url_for("login"))
->>>>>>> 2a6af638586b2a4d3005def5594d43f15acf5f77
    
 
 @app.route("/view")
