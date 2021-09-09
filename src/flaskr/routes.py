@@ -53,6 +53,7 @@ def user():
     max_width = None
     max_height = None
     max_length = None
+    tags=None
 
     if "Email" in session:
         email=session["Email"]
@@ -77,11 +78,15 @@ def user():
             max_length=request.form["length"]
             session["length"]=max_length
 
+            arr=request.form.getlist('mycheckbox')
+            tags=','.join(arr)
+
             found_user.name = name
             found_user.max_weight = max_weight
             found_user.max_width = max_width
             found_user.max_height = max_height
             found_user.max_length = max_length
+            found_user.tags=tags
             found_user.is_validated=True
             db.session.commit()
 
@@ -121,11 +126,10 @@ def active():
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         name=found_user.name
+    
     if request.method=="POST":
-        if request.form['submit_button']=='Show orders':
-            print("showorders")
-        elif request.form['submit_button']=='Go inactive':
-            return redirect(url_for("inactive"))
+        request.form['submit_button']=='Go inactive'
+        return redirect(url_for("inactive"))
     
     return render_template("active.html",name=name)
 
