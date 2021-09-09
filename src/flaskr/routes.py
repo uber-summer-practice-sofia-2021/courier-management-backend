@@ -135,6 +135,8 @@ def active():
         name=found_user.name
         found_user.is_validated=True
         db.session.commit()
+    else:
+        return redirect(url_for("login"))
 
     if request.method=="POST":
         if  request.form['submit_button']=='Go inactive':
