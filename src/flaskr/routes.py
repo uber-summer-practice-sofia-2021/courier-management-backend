@@ -5,7 +5,8 @@ import uuid
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    return redirect(url_for("login"))
+   return redirect(url_for("login"))
+   
 
 @app.route("/view")
 def view():
@@ -74,11 +75,17 @@ def user():
             max_length=request.form["length"]
             session["length"]=max_length
 
+            arr=request.form.getlist('mycheckbox')
+            if arr:
+                tags=','.join(arr)
+
+
             found_user.name = name
             found_user.max_weight = max_weight
             found_user.max_width = max_width
             found_user.max_height = max_height
             found_user.max_length = max_length
+            found_user.tags=tags
             found_user.is_validated=True
             db.session.commit()
 
@@ -113,28 +120,42 @@ def logout():
 
 @app.route("/active",methods=["POST","GET"])
 def active():
+    found_user=None
     name=None
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         name=found_user.name
+        found_user.is_validated=True
+        db.session.commit()
+
     if request.method=="POST":
-        if request.form['submit_button']=='Show orders':
-            print("showorders")
-        elif request.form['submit_button']=='Go inactive':
-            return redirect(url_for("inactive"))
-    
+        if  request.form['submit_button']=='Go inactive':
+             return redirect(url_for("inactive"))
+        elif request.form['submit_button']=='edit_details':
+            found_user.is_validated=False
+            db.session.commit()
+            return redirect(url_for("user"))
     return render_template("active.html",name=name)
 
 @app.route("/inactive",methods=["GET","POST"])
 def inactive():
+    found_user=None
     name=None
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         name=found_user.name
-    if request.method=="POST" and request.form['submit_button']=='Go active':  
-        return redirect(url_for("active"))
+        found_user.is_validated=True
+        db.session.commit()
+
+    if request.method=="POST": 
+        if request.form['submit_button']=='Go active':  
+            return redirect(url_for("active"))
+        elif request.form['submit_button']=='edit_details':
+            found_user.is_validated=False
+            db.session.commit()
+            return redirect(url_for("user"))
     return render_template("inactive.html",name=name)
 
 
@@ -187,5 +208,3 @@ def get_trip_info():
 #         show-courier-settings
 #     else:
 #         redirect-to-login-page
-
-# git merge --abort
