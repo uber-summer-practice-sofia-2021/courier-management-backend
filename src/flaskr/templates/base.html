@@ -15,15 +15,16 @@
 	         <li class="nav-item active">
                      <!-- <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a> -->
 		</li>
-		<li class="nav-item">
+		<!-- <li class="nav-item">
 		    <a class="nav-link" href="/login">Login</a>
-		</li>
+		</li> -->
         <!-- <li class="nav-item">
 		    <a class="nav-link" href="#">Orders</a>
 		</li> -->
         <li class="nav-item">
 		    <a class="nav-link" href="/view">View</a>
 		</li>
+        {% block navbar %}{% endblock %}
 		<li class="nav-item">
 		    <a class="nav-link" href="/logout">Log out</a>
 		</li>

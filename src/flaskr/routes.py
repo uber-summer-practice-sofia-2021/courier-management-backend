@@ -1,4 +1,3 @@
-from os import removedirs
 from flaskr import app, db
 from flaskr.models import *
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
@@ -6,10 +5,7 @@ import uuid
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    if request.method == "POST":
-        if request.form["login_button"] == "Login":
-            return redirect(url_for("login"))
-    return render_template("index.html")
+    return redirect(url_for("login"))
 
 @app.route("/view")
 def view():
@@ -53,13 +49,19 @@ def user():
     max_width = None
     max_height = None
     max_length = None
+<<<<<<< HEAD
     tags=None
+=======
+    edit_details = False
+>>>>>>> 3470645a2e5e4e98f5cfeb4b7b619ddeb5ca7c94
 
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
-            return redirect(url_for("active"))
+            if not edit_details:
+                return redirect(url_for("active"))
+        
 
         if request.method=="POST":
 
@@ -194,3 +196,5 @@ def get_trip_info():
 #         show-courier-settings
 #     else:
 #         redirect-to-login-page
+
+# git merge --abort
