@@ -31,9 +31,7 @@ def login():
             session["height"] = found_user.max_height
             session["length"] = found_user.max_length
         else:
-            
-            r = uuid.uuid4()
-            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False)
+            usr = Courier(email)
             db.session.add(usr)
             db.session.commit()
         
@@ -105,12 +103,8 @@ def logout():
     if "Email" in session:
         email=session["Email"]
         flash(f"You have been logged out, {email}!","info")
-    session.pop("Email",None)
-    session.pop("nm",None)
-    session.pop("weight",None)
-    session.pop("width",None)
-    session.pop("height",None)
-    session.pop("length",None)
+    for key in [key for key in session]:
+        session.pop(key, None)
     return redirect(url_for("login"))
 
 
