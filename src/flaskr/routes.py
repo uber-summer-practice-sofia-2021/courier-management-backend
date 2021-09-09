@@ -165,6 +165,14 @@ def get_trip_info():
     except:
         return make_response(jsonify(None), 401)
 
+@app.route("/receipt")
+def get_message():
+    try:
+        new_producer = Producer()
+        new_producer.produce("trips", {"checking" : 2})
+        return "sent."
+    except:
+        return make_response(jsonify(None), 401)
 
 # @app.route("/user/orders", methods=['GET', 'POST'])
 # def orders():
