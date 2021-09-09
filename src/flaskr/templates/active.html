@@ -35,7 +35,7 @@
     <th>{{item.to['addressName']}}</th>
     <th>{{','.join(item.tags)}}</th>
             <td>
-                <form method="POST" >
+                <form method="GET" action="/active/{{item.ID}}" >
                  <input id="assign order" type="submit" name="assign order" value="assign order" />
                 </form>
             </td>
