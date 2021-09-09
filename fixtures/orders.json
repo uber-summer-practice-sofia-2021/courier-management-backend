@@ -1,5 +1,5 @@
-{
-    "order1": {
+[
+    {
         "clientName": "John Smith",
         "from": {
             "latitude": 1,
@@ -32,7 +32,7 @@
         "createdAt": "2012-04-23T18:25:43.511Z"
     },
 
-    "order2": {
+    {
         "clientName": "John Smith",
         "from": {
             "latitude": 1,
@@ -64,4 +64,4 @@
         },
         "createdAt": "2012-04-23T18:25:43.511Z"
     }
-}
+]
