@@ -143,7 +143,7 @@ def active():
             found_user.is_validated=False
             db.session.commit()
             return redirect(url_for("user"))
-    return render_template("active.html",name=name,data=data,keys=keys)
+    return render_template("active.html",name=name,data=data)
 
 @app.route("/inactive",methods=["GET","POST"])
 def inactive():
