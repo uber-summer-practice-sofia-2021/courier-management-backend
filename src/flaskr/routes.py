@@ -31,9 +31,7 @@ def login():
             session["height"] = found_user.max_height
             session["length"] = found_user.max_length
         else:
-            
-            r = uuid.uuid4()
-            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False)
+            usr = Courier(email)
             db.session.add(usr)
             db.session.commit()
         
@@ -105,12 +103,8 @@ def logout():
     if "Email" in session:
         email=session["Email"]
         flash(f"You have been logged out, {email}!","info")
-    session.pop("Email",None)
-    session.pop("nm",None)
-    session.pop("weight",None)
-    session.pop("width",None)
-    session.pop("height",None)
-    session.pop("length",None)
+    for key in [key for key in session]:
+        session.pop(key, None)
     return redirect(url_for("login"))
 
 
@@ -165,28 +159,14 @@ def get_trip_info():
     except:
         return make_response(jsonify(None), 401)
 
+""" Endpoint for order visualization """
+@app.route('/orders/<orderID>', methods=['GET'])
+def order_dashboard(orderID):
+    if "Email" not in session:
+        return redirect(url_for('login'))
+    return render_template('order.html', orderID=orderID)
 
-# @app.route("/user/orders", methods=['GET', 'POST'])
-# def orders():
-#     return render_template("orders.html")
-
-# @app.route("/tags")
-# def tags():
-#     if request.method == "POST":
-#         tags = request.form.getlist("tags")
-#         print(tags)
-#         return "OK"
-
-# @app.route('/user/dashboard')
-# def dashboard():
-#     if inSession:
-#         show-courier-dashboard
-#     else:
-#         redirect-to-login-page
-
-# @app.route('/user/settings')
-# def settings():
-#     if inSession:
-#         show-courier-settings
-#     else:
-#         redirect-to-login-page
+""" Endpoint for order status change """
+@app.route('/orders/<orderID>/<status>', methods=['POST'])
+def change_order_status(orderID, status):
+    return "test"
