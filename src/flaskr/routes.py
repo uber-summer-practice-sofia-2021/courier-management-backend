@@ -79,7 +79,8 @@ def user():
             session["length"]=max_length
 
             arr=request.form.getlist('mycheckbox')
-            tags=','.join(arr)
+            if arr:
+                tags=','.join(arr)
 
 
             found_user.name = name
@@ -148,13 +149,16 @@ def inactive():
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         name=found_user.name
-
-    if request.method=="POST" and request.form['submit_button']=='Go active':  
-        return redirect(url_for("active"))
-    if request.method=="POST" and request.form['submit_button']=='edit_details':
-        found_user.is_validated=False
+        found_user.is_validated=True
         db.session.commit()
-        return redirect(url_for("user"))
+
+    if request.method=="POST": 
+        if request.form['submit_button']=='Go active':  
+            return redirect(url_for("active"))
+        elif request.form['submit_button']=='edit_details':
+            found_user.is_validated=False
+            db.session.commit()
+            return redirect(url_for("user"))
     return render_template("inactive.html",name=name)
 
 
