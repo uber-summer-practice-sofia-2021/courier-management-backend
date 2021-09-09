@@ -12,13 +12,13 @@
     <p>Full Name:</p>
     <input type="name" name="nm" placeholder="Enter name" value="{{name if name}}" required/>
     <p>Maximum weight of the package:</p>
-    <input type="number" step="0.5" name="weight" value="{{max_weight if max_weight}}" required/>
+    <input type="number" step="0.5" name="weight" min="0" value="{{max_weight if max_weight}}" required/>
     <p>Maximum width of the package:</p>
-    <input type="number" step="0.5" name="width" value="{{max_width if max_width}}" required/>
+    <input type="number" step="0.5" name="width" min="0" value="{{max_width if max_width}}" required/>
     <p>Maximum height of the package:</p>
-    <input type="number" step="0.5" name="height" value="{{max_height if max_height}}" required/>
+    <input type="number" step="0.5" name="height" min="0" value="{{max_height if max_height}}" required/>
     <p>Maximum length of the package:</p>
-    <input type="number" step="0.5" name="length" value="{{max_length if max_length}}" required/>
+    <input type="number" step="0.5" name="length" min="0" value="{{max_length if max_length}}" required/>
     <p><span>Select Tags:</span>
         <ul>
             <li><input type="checkbox"  value="fragile" name="mycheckbox"/> Fragile </li>

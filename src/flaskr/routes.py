@@ -1,11 +1,15 @@
 from flaskr import app, db
 from flaskr.models import *
-from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
+from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response, Response, json
 import uuid
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+<<<<<<< HEAD
     return redirect(url_for("login"))
+=======
+   return redirect(url_for("login"))
+>>>>>>> 2a6af638586b2a4d3005def5594d43f15acf5f77
    
 
 @app.route("/view")
@@ -57,6 +61,7 @@ def user():
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
             return redirect(url_for("active"))
+        
 
         if request.method=="POST":
 
@@ -122,6 +127,17 @@ def logout():
 def active():
     found_user=None
     name=None
+
+    fixtures_path = "../fixtures/orders.json"
+    file = open(fixtures_path)
+    data = json.load(file)
+    file.close()
+    # print(Response(json.dumps(data), mimetype='application/json'))
+    # print(data)
+    # for item in data:
+    #     print(json.dumps(item))
+
+    # return Response(json.dumps(data), mimetype='application/json')
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
@@ -136,7 +152,7 @@ def active():
             found_user.is_validated=False
             db.session.commit()
             return redirect(url_for("user"))
-    return render_template("active.html",name=name)
+    return render_template("active.html",name=name,data=data)
 
 @app.route("/inactive",methods=["GET","POST"])
 def inactive():
@@ -160,7 +176,7 @@ def inactive():
 
 
 """ Endpoint for requesting courier info """
-@app.route("/couriers", methods=['GET', 'POST'])
+@app.route("/couriers", methods=['GET'])
 def get_courier_info():
     try:
         courier_id = request.args['courierID']
@@ -172,7 +188,7 @@ def get_courier_info():
         return make_response(jsonify(None), 401)
 
 """ Endpoint for requesting trip info """
-@app.route("/trips", methods=['GET', 'POST'])
+@app.route("/trips", methods=['GET'])
 def get_trip_info():
     try:
         trip_id = request.args['tripID']
