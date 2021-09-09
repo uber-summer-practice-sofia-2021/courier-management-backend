@@ -1,5 +1,6 @@
 from flaskr import app, db
 from flaskr.models import *
+from flaskr.producer import Producer
 from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
 import uuid
 
@@ -189,5 +190,3 @@ def get_trip_info():
 #         show-courier-settings
 #     else:
 #         redirect-to-login-page
-
-# git merge --abort
