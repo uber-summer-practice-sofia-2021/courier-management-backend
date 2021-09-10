@@ -1,3 +1,5 @@
+from os import SEEK_CUR
+import re
 from flaskr import app, db
 from flaskr.models import *
 from flaskr.producer import Producer
@@ -52,6 +54,8 @@ def user():
     max_height = None
     max_length = None
     tags=None
+    f_checked=False
+    d_checked=False
 
     if "Email" in session:
         email=session["Email"]
@@ -77,10 +81,28 @@ def user():
             max_length=request.form["length"]
             session["length"]=max_length
 
-            arr=request.form.getlist('mycheckbox')
+            #f_checked=request.form['mycheckbox']
+            #print(f_checked)
+            
+            arr=request.form.getlist('mycheckbox1')
+            if arr:
+                session['mycheckbox1']=True
+            else:
+                session['mycheckbox1']=False
+            if request.form.get('mycheckbox2'):
+                session['mycheckbox2']=True
+            else:
+                session['mycheckbox2']=False
+                arr.append(str(request.form.get('mycheckbox2')))
             if arr:
                 tags=','.join(arr)
-
+                print(tags)
+                for tag in arr:
+                    if tag=='fragile':
+                        f_checked=True
+                    elif tag=='dangerous':
+                        d_checked=True    
+            
 
             found_user.name = name
             found_user.max_weight = max_weight
@@ -100,8 +122,13 @@ def user():
                 max_width=session["width"]
                 max_height=session["height"]
                 max_length=session["length"]
+                print(session['mycheckbox1'])
+                #f_checked=session['mycheckbox1']
+                #d_checked=session['mycheckbox2']
 
-        return render_template("user.html", name=name, max_weight=max_weight, max_width=max_width, max_height=max_height, max_length=max_length)
+                
+
+        return render_template("user.html", name=name, max_weight=max_weight, max_width=max_width, max_height=max_height, max_length=max_length,f_checked=f_checked,d_checked=d_checked)
     else:
         flash("You are not logged in!")
         return redirect(url_for("login"))
