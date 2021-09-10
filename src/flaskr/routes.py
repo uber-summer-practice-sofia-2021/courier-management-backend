@@ -1,3 +1,7 @@
+from os import SEEK_CUR
+import re
+
+from flask.json import tag
 from flaskr import app, db
 from flaskr.models import *
 from flaskr.producer import Producer
@@ -61,7 +65,9 @@ def user():
     max_width = None
     max_height = None
     max_length = None
-    tags = None
+    tags=None
+    f_checked=False
+    d_checked=False
 
     if "Email" in session:
         email = session["Email"]
@@ -86,10 +92,22 @@ def user():
             max_length = request.form["length"]
             session["length"] = max_length
 
-            arr = request.form.getlist("mycheckbox")
-            if arr:
-                tags = ",".join(arr)
+            #f_checked=request.form['mycheckbox']
+            #print(f_checked)
 
+            arr=request.form.getlist('mycheckbox1')
+            # if arr:
+            #     session['mycheckbox1']=True
+            # else:
+            #     session['mycheckbox1']=False
+            if request.form.get('mycheckbox2'):
+                arr.append(str(request.form.get('mycheckbox2')))
+            #     session['mycheckbox2']=True
+            # else:
+            #     session['mycheckbox2']=False
+            if arr:
+                tags=','.join(arr)
+                      
             found_user.name = name
             found_user.max_weight = max_weight
             found_user.max_width = max_width
@@ -114,6 +132,14 @@ def user():
                 max_width = session["width"]
                 max_height = session["height"]
                 max_length = session["length"]
+                #print(found_user.tags)
+                if found_user.tags:
+                    tag_arr=found_user.tags.split(",")
+                    for t in tag_arr:
+                        if t=='FRAGILE':
+                            f_checked=True
+                        elif t=='DANGEROUS':
+                            d_checked=True
 
         return render_template(
             "user.html",
@@ -122,6 +148,8 @@ def user():
             max_width=max_width,
             max_height=max_height,
             max_length=max_length,
+            f_checked=f_checked,
+            d_checked=d_checked
         )
     else:
         flash("You are not logged in!")
