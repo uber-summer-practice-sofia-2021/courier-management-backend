@@ -22,6 +22,7 @@ import requests
 def home():
     return redirect(url_for("login"))
 
+
 # For debug purposes
 @app.route("/view")
 def view():
@@ -29,33 +30,29 @@ def view():
         "view.html", couriers=Courier.query.all(), trips=Trip.query.all()
     )
 
+
 # Error page
 @app.route("/error")
 def error(err):
     return render_template("error.html", error=err)
+
 
 # Login page
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
         session.permanent = True
-        email = request.form["Email"]
-        session["Email"] = email
+        email = request.form["email"]
+        session["email"] = email
 
         found_user = Courier.query.filter_by(email=email).first()
-        if found_user:
-            session["nm"] = found_user.name
-            session["weight"] = found_user.max_weight
-            session["width"] = found_user.max_width
-            session["height"] = found_user.max_height
-            session["length"] = found_user.max_length
-        else:
+        if not found_user:
             insert_courier(Courier(email))
 
         flash("Login successful!")
         return redirect(url_for("user"))
     else:
-        if "Email" in session:
+        if "email" in session:
             flash("Already logged in!")
             return redirect(url_for("user"))
         return render_template("login.html")
@@ -71,8 +68,8 @@ def user():
     max_length = None
     tags = None
 
-    if "Email" in session:
-        email = session["Email"]
+    if "email" in session:
+        email = session["email"]
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
             return redirect(url_for("active"))
@@ -80,19 +77,10 @@ def user():
         if request.method == "POST":
 
             name = request.form["nm"]
-            session["nm"] = name
-
             max_weight = request.form["weight"]
-            session["weight"] = max_weight
-
             max_width = request.form["width"]
-            session["width"] = max_width
-
             max_height = request.form["height"]
-            session["height"] = max_height
-
             max_length = request.form["length"]
-            session["length"] = max_length
 
             arr = request.form.getlist("mycheckbox")
             if arr:
@@ -110,18 +98,11 @@ def user():
             # flash("Information was saved!")
             return redirect(url_for("active"))
         else:
-            if (
-                "nm" in session
-                and "weight" in session
-                and "width" in session
-                and "height" in session
-                and "length" in session
-            ):
-                name = session["nm"]
-                max_weight = session["weight"]
-                max_width = session["width"]
-                max_height = session["height"]
-                max_length = session["length"]
+            name = found_user.name 
+            max_weight = found_user.max_weight 
+            max_width = found_user.max_width
+            max_height = found_user.max_height
+            max_length = found_user.max_length
 
         return render_template(
             "user.html",
@@ -138,8 +119,8 @@ def user():
 
 @app.route("/logout")
 def logout():
-    if "Email" in session:
-        email = session["Email"]
+    if "email" in session:
+        email = session["email"]
         flash(f"You have been logged out, {email}!", "info")
     for key in [key for key in session]:
         session.pop(key, None)
@@ -156,8 +137,8 @@ def active():
     data = json.load(file)
     file.close()
 
-    if "Email" in session:
-        email = session["Email"]
+    if "email" in session:
+        email = session["email"]
         found_user = Courier.query.filter_by(email=email).first()
         name = found_user.name
         found_user.is_validated = True
@@ -180,8 +161,8 @@ def active():
 def inactive():
     found_user = None
     name = None
-    if "Email" in session:
-        email = session["Email"]
+    if "email" in session:
+        email = session["email"]
         found_user = Courier.query.filter_by(email=email).first()
         name = found_user.name
         found_user.is_validated = True
@@ -228,7 +209,7 @@ def get_trip_info():
 # Endpoint for order visualization
 @app.route("/active/<orderID>", methods=["GET"])
 def order_dashboard(orderID):
-    if "Email" not in session:
+    if "email" not in session:
         return redirect(url_for("login"))
 
     try:
@@ -237,7 +218,7 @@ def order_dashboard(orderID):
         requests.post(f"http://localhost:5000/active/{orderID}/assigned")
         return render_template("order.html", orderID=orderID)
     except Exception as err:
-        return redirect(url_for('error', err))
+        return redirect(url_for("error", err))
 
 
 # Endpoint for order status change
@@ -259,4 +240,4 @@ def change_order_status(orderID, status):
 
         db.session.commit()
     except Exception as err:
-        return redirect(url_for('error', err))
+        return redirect(url_for("error", err))
