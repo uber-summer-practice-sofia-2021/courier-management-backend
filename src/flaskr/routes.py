@@ -251,14 +251,24 @@ def order_dashboard(orderID):
 
     found_user = Courier.query.filter_by(email=session["Email"]).first()
     trip = Trip(found_user.id, orderID)
-    print(trip.courier_id)
+    #print(trip.courier_id)
     date = datetime.now()
-    print(str(date))
-    # trip.assigned_at=str(date)
     if not Trip.query.filter_by(id=trip.id):
         db.session.add(trip)
         db.session.commit()
-    return render_template("order.html", orderID=orderID)
+    
+    fixtures_path = "../fixtures/orders.json"
+    file = open(fixtures_path)
+    data = json.load(file)
+    file.close()
+    input=None
+    for item in data:
+         if item["ID"]==orderID:
+             input=item
+             break
+        
+
+    return render_template("order.html", orderID=orderID,input=input)
 
 
 # Endpoint for order status change
