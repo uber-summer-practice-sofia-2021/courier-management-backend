@@ -1,5 +1,6 @@
 {% extends "base.html"%}
 {%block title%} User{%endblock%}
+
 {%block content %}
 {% with messages=get_flashed_messages() %}
 {% if messages %}
@@ -20,9 +21,9 @@
     <p>Maximum length of the package:</p>
     <input type="number" step="0.5" name="length" min="0" value="{{max_length if max_length}}" required />
     <p><span>Select Tags:</span>
-        <ul>
+        <ul> 
             {% if f_checked%}
-            <li><input type="checkbox"  value="FRAGILE" name="mycheckbox1" checked /> Fragile </li>
+            <li><input type="checkbox"  value="FRAGILE" name="mycheckbox1" checked/> Fragile </li>
             {%else%}
             <li><input type="checkbox"  value="FRAGILE" name="mycheckbox1" /> Fragile </li>
             {%endif%}

@@ -1,3 +1,6 @@
+from warnings import resetwarnings
+
+from flask.wrappers import Response
 from flaskr import app, db
 from flaskr.models import *
 from flaskr.producer import message_kafka
@@ -264,5 +267,6 @@ def change_order_status(orderID, status):
             message_kafka("trips", trip.map())
 
         db.session.commit()
+        return make_response(trip.map())
     except Exception as err:
         return redirect(url_for("error", error=err))
