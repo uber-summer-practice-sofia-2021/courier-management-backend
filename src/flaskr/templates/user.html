@@ -20,11 +20,18 @@
     <p>Maximum length of the package:</p>
     <input type="number" step="0.5" name="length" min="0" value="{{max_length if max_length}}" required />
     <p><span>Select Tags:</span>
-    <ul>
-        <li><input type="checkbox" value="fragile" name="mycheckbox" /> Fragile </li>
-        <li><input type="checkbox" value="dangerous" name="mycheckbox" /> Dangerous</li>
-    </ul>
-    </p>
+        <ul>
+            {% if f_checked%}
+            <li><input type="checkbox"  value="FRAGILE" name="mycheckbox1" checked /> Fragile </li>
+            {%else%}
+            <li><input type="checkbox"  value="FRAGILE" name="mycheckbox1" /> Fragile </li>
+            {%endif%}
+            {% if d_checked%}
+            <li><input type="checkbox" value="DANGEROUS" name="mycheckbox2" checked /> Dangerous</li>
+            {% else %}
+            <li><input type="checkbox" value="DANGEROUS" name="mycheckbox2" /> Dangerous</li>
+            {%endif%}
+        </ul></p>
     <p></p>
     <input type="submit" value="Submit" />
 

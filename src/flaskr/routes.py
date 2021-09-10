@@ -1,4 +1,3 @@
-import re
 from flaskr import app, db
 from flaskr.models import *
 from flaskr.producer import message_kafka
@@ -67,7 +66,9 @@ def user():
     max_width = None
     max_height = None
     max_length = None
-    tags = None
+    tags=None
+    f_checked=False
+    d_checked=False
 
     if "email" in session:
         email = session["email"]
@@ -83,10 +84,13 @@ def user():
             max_height = request.form["height"]
             max_length = request.form["length"]
 
-            arr = request.form.getlist("mycheckbox")
+            arr=request.form.getlist('mycheckbox1')
+            if request.form.get('mycheckbox2'):
+                arr.append(str(request.form.get('mycheckbox2')))
+            
             if arr:
-                tags = ",".join(arr)
-
+                tags=','.join(arr)
+                      
             found_user.name = name
             found_user.max_weight = max_weight
             found_user.max_width = max_width
@@ -105,6 +109,14 @@ def user():
             max_height = found_user.max_height
             max_length = found_user.max_length
 
+            if found_user.tags:
+                tag_arr=found_user.tags.split(",")
+                for t in tag_arr:
+                    if t=='FRAGILE':
+                        f_checked=True
+                    elif t=='DANGEROUS':
+                        d_checked=True
+
         return render_template(
             "user.html",
             name=name,
@@ -112,6 +124,8 @@ def user():
             max_width=max_width,
             max_height=max_height,
             max_length=max_length,
+            f_checked=f_checked,
+            d_checked=d_checked
         )
     else:
         flash("You are not logged in!")
@@ -217,10 +231,20 @@ def order_dashboard(orderID):
         found_user = Courier.query.filter_by(email=session["email"]).first()
         insert_trip(Trip(found_user.id, orderID), db)
         requests.post(f"http://localhost:5000/active/{orderID}/assigned")
-        return render_template("order.html", orderID=orderID)
+
+        fixtures_path = "../fixtures/orders.json"
+        file = open(fixtures_path)
+        data = json.load(file)
+        file.close()
+        input=None
+        for item in data:
+            if item["ID"]==orderID:
+                input=item
+                break
+
+        return render_template("order.html", orderID=orderID, input=input)
     except Exception as err:
         return redirect(url_for("error", error=err))
-
 
 # Endpoint for order status change
 @app.route("/active/<orderID>/<status>", methods=["POST"])
