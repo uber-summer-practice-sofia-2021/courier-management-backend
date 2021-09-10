@@ -1,5 +1,5 @@
 from flaskr import app, db
-from flaskr.models import *
+from flaskr.database
 from flaskr.producer import message_kafka
 from flask import (
     render_template,
