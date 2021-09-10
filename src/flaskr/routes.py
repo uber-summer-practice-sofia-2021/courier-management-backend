@@ -1,6 +1,7 @@
+import re
 from flaskr import app, db
 from flaskr.models import *
-from flaskr.producer import Producer
+from flaskr.producer import message_kafka
 from flask import (
     render_template,
     request,
@@ -12,19 +13,28 @@ from flask import (
     make_response,
     json,
 )
-from datetime import datetime
+from flaskr.utils import insert_courier, insert_trip, timestamp
+import requests
 
 
+# Home page
 @app.route("/", methods=["GET", "POST"])
 def home():
     return redirect(url_for("login"))
 
-
+# For debug purposes
 @app.route("/view")
 def view():
-    return render_template("view.html", values=Courier.query.all())
+    return render_template(
+        "view.html", couriers=Courier.query.all(), trips=Trip.query.all()
+    )
 
+# Error page
+@app.route("/error")
+def error(err):
+    return render_template("error.html", error=err)
 
+# Login page
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
@@ -40,9 +50,7 @@ def login():
             session["height"] = found_user.max_height
             session["length"] = found_user.max_length
         else:
-            usr = Courier(email)
-            db.session.add(usr)
-            db.session.commit()
+            insert_courier(Courier(email))
 
         flash("Login successful!")
         return redirect(url_for("user"))
@@ -217,35 +225,38 @@ def get_trip_info():
         return make_response(jsonify(None), 401)
 
 
-@app.route("/receipt")
-def get_message():
-    try:
-        new_producer = Producer()
-        new_producer.produce("trips", {"checking": 2})
-        return "sent."
-    except:
-        return make_response(jsonify(None), 401)
-
-
 # Endpoint for order visualization
-@app.route("/active/<orderID>", methods=["GET", "POST"])
+@app.route("/active/<orderID>", methods=["GET"])
 def order_dashboard(orderID):
     if "Email" not in session:
         return redirect(url_for("login"))
 
-    found_user = Courier.query.filter_by(email=session["Email"]).first()
-    trip = Trip(found_user.id, orderID)
-    print(trip.courier_id)
-    date = datetime.now()
-    print(str(date))
-    # trip.assigned_at=str(date)
-    if not Trip.query.filter_by(id=trip.id):
-        db.session.add(trip)
-        db.session.commit()
-    return render_template("order.html", orderID=orderID)
+    try:
+        found_user = Courier.query.filter_by(email=session["Email"]).first()
+        insert_trip(Trip(found_user.id, orderID), db)
+        requests.post(f"http://localhost:5000/active/{orderID}/assigned")
+        return render_template("order.html", orderID=orderID)
+    except Exception as err:
+        return redirect(url_for('error', err))
 
 
 # Endpoint for order status change
-@app.route("/orders/<orderID>/<status>", methods=["POST"])
+@app.route("/active/<orderID>/<status>", methods=["POST"])
 def change_order_status(orderID, status):
-    return "test"
+    try:
+        trip = Trip.query.filter_by(order_id=orderID).first()
+
+        if status == "assigned":
+            # send status change request to order management
+            trip.assigned_at = timestamp()
+        elif status == "picked":
+            # send status change request to order management
+            trip.picked_at = timestamp()
+        elif status == "delivered":
+            # send status change request to order management
+            trip.delivered_at = timestamp()
+            message_kafka("trips", trip.map())
+
+        db.session.commit()
+    except Exception as err:
+        return redirect(url_for('error', err))
