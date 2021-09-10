@@ -31,7 +31,7 @@ def login():
             session["height"] = found_user.max_height
             session["length"] = found_user.max_length
         else:
-            usr = Courier(email)
+            usr = Courier(str(uuid.uuid4()), email)
             db.session.add(usr)
             db.session.commit()
         
@@ -125,12 +125,7 @@ def active():
     file = open(fixtures_path)
     data = json.load(file)
     file.close()
-    # print(Response(json.dumps(data), mimetype='application/json'))
-    # print(data)
-    # for item in data:
-    #     print(json.dumps(item))
 
-    # return Response(json.dumps(data), mimetype='application/json')
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
@@ -203,12 +198,12 @@ def order_dashboard(orderID):
         return redirect(url_for('login'))
     
     found_user = Courier.query.filter_by(email=session['Email']).first()
-    trip=Trip(found_user.id,orderID)
+    trip=Trip(str(uuid.uuid4()),found_user.id,orderID)
     print(trip.courier_id)
     date = datetime.now()
     print(str(date))
     #trip.assigned_at=str(date)
-    if not db.session.query(trip.id):
+    if not Trip.query.filter_by(id=trip.id):
         db.session.add(trip)
         db.session.commit()
     return render_template('order.html', orderID=orderID)
