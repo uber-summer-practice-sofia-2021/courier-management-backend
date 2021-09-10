@@ -1,6 +1,3 @@
-from os import SEEK_CUR
-import re
-
 from flask.json import tag
 from flaskr import app, db
 from flaskr.models import *
@@ -92,19 +89,10 @@ def user():
             max_length = request.form["length"]
             session["length"] = max_length
 
-            #f_checked=request.form['mycheckbox']
-            #print(f_checked)
 
             arr=request.form.getlist('mycheckbox1')
-            # if arr:
-            #     session['mycheckbox1']=True
-            # else:
-            #     session['mycheckbox1']=False
             if request.form.get('mycheckbox2'):
                 arr.append(str(request.form.get('mycheckbox2')))
-            #     session['mycheckbox2']=True
-            # else:
-            #     session['mycheckbox2']=False
             if arr:
                 tags=','.join(arr)
                       
