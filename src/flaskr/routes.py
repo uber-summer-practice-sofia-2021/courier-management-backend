@@ -33,8 +33,9 @@ def view():
 
 # Error page
 @app.route("/error")
-def error(err):
-    return render_template("error.html", error=err)
+def error():
+    app.logger.debug(request.args['error'])
+    return render_template("error.html")
 
 
 # Login page
@@ -47,7 +48,7 @@ def login():
 
         found_user = Courier.query.filter_by(email=email).first()
         if not found_user:
-            insert_courier(Courier(email))
+            insert_courier(Courier(email), db)
 
         flash("Login successful!")
         return redirect(url_for("user"))
@@ -76,7 +77,7 @@ def user():
 
         if request.method == "POST":
 
-            name = request.form["nm"]
+            name = request.form["name"]
             max_weight = request.form["weight"]
             max_width = request.form["width"]
             max_height = request.form["height"]
@@ -213,12 +214,12 @@ def order_dashboard(orderID):
         return redirect(url_for("login"))
 
     try:
-        found_user = Courier.query.filter_by(email=session["Email"]).first()
+        found_user = Courier.query.filter_by(email=session["email"]).first()
         insert_trip(Trip(found_user.id, orderID), db)
         requests.post(f"http://localhost:5000/active/{orderID}/assigned")
         return render_template("order.html", orderID=orderID)
     except Exception as err:
-        return redirect(url_for("error", err))
+        return redirect(url_for("error", error=err))
 
 
 # Endpoint for order status change
@@ -240,4 +241,4 @@ def change_order_status(orderID, status):
 
         db.session.commit()
     except Exception as err:
-        return redirect(url_for("error", err))
+        return redirect(url_for("error", error=err))
