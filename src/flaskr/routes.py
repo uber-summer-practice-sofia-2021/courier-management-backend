@@ -12,7 +12,13 @@ from flask import (
     make_response,
     json,
 )
-from flaskr.utils import insert_courier, insert_trip, timestamp, available_tags
+from flaskr.utils import insert_courier, insert_trip, timestamp, AVAILABLE_TAGS
+
+
+# Handles nonexistent pages
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("page-not-found.html"), 404
 
 
 # Home page
@@ -64,8 +70,9 @@ def user_settings():
     if "email" in session:
         email = session["email"]
         found_user = Courier.query.filter_by(email=email).first()
-        if found_user and found_user.is_validated:
-            return redirect(url_for("user_dashboard"))
+        if not found_user:
+            flash("User doesn't exist!")
+            return redirect(url_for("logout"))
 
         if request.method == "POST":
 
@@ -91,7 +98,7 @@ def user_settings():
             max_height=found_user.max_height,
             max_length=found_user.max_length,
             tags=[x for x in found_user.tags.split(",") if x],
-            available_tags=available_tags,
+            available_tags=AVAILABLE_TAGS,
         )
     else:
         flash("You are not logged in!")
@@ -174,7 +181,7 @@ def get_courier_info():
         response.headers["Content-Type"] = "application/json"
         return response
     except:
-        return make_response(jsonify(None), 401)
+        return jsonify(None), 204
 
 
 # Endpoint for requesting trip info
@@ -187,7 +194,7 @@ def get_trip_info():
         response.headers["Content-Type"] = "application/json"
         return response
     except:
-        return make_response(jsonify(None), 401)
+        return jsonify(None), 204
 
 
 # Endpoint for order visualization
@@ -234,6 +241,6 @@ def change_order_status(orderID, status):
             message_kafka("trips", trip.map())
 
         db.session.commit()
-        return make_response(trip.map())
+        return trip.map()
     except Exception as err:
         return redirect(url_for("error", error=err))

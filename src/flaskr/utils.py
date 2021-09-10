@@ -1,6 +1,6 @@
 from datetime import datetime
 
-available_tags = ["fragile", "dangerous"]
+AVAILABLE_TAGS = ["fragile", "dangerous"]
 
 # Retrieves current timestamp
 def timestamp():
