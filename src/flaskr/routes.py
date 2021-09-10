@@ -1,4 +1,3 @@
-from flask.json import tag
 from flaskr import app, db
 from flaskr.models import *
 from flaskr.producer import Producer
