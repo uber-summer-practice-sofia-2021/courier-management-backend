@@ -21,8 +21,6 @@
         <th>To</th>
         <th>Tags</th>
         <th>delivery type</th>
-        
-
     </tr>
 <tr>
     <th>{{input.clientName}}</th>
@@ -39,7 +37,11 @@
 <div class="container">
     <ul class="progressbar">
         <li class="active">Assigned</li>
-        <li>Picked UP</li>
-        <li>Completed</li>
+        <li>
+                <input id="assign order" type="submit" name="PICK_UP" value="PICK_UP" />
+        </li>
+        <li>
+                <input id="assign order" type="submit" name="COMPLETE" value="COMPLETE" />
+        </li>
 </ul>
 {%endblock%}
