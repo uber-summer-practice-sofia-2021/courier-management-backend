@@ -1,15 +1,15 @@
 from flaskr import app, db
 from flaskr.models import *
 from flaskr.producer import Producer
-from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response
+from flask import render_template, request, session, flash, redirect, url_for, jsonify, make_response,json
 import uuid
+from datetime import datetime
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    if request.method == "POST":
-        if request.form["login_button"] == "Login":
-            return redirect(url_for("login"))
-    return render_template("index.html")
+   return redirect(url_for("login"))
+   
 
 @app.route("/view")
 def view():
@@ -31,9 +31,7 @@ def login():
             session["height"] = found_user.max_height
             session["length"] = found_user.max_length
         else:
-            
-            r = uuid.uuid4()
-            usr = Courier(id=str(r), email=email, name=None, max_weight = None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False)
+            usr = Courier(str(uuid.uuid4()), email)
             db.session.add(usr)
             db.session.commit()
         
@@ -53,12 +51,14 @@ def user():
     max_width = None
     max_height = None
     max_length = None
+    tags=None
 
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
             return redirect(url_for("active"))
+        
 
         if request.method=="POST":
 
@@ -77,11 +77,17 @@ def user():
             max_length=request.form["length"]
             session["length"]=max_length
 
+            arr=request.form.getlist('mycheckbox')
+            if arr:
+                tags=','.join(arr)
+
+
             found_user.name = name
             found_user.max_weight = max_weight
             found_user.max_width = max_width
             found_user.max_height = max_height
             found_user.max_length = max_length
+            found_user.tags=tags
             found_user.is_validated=True
             db.session.commit()
 
@@ -105,41 +111,61 @@ def logout():
     if "Email" in session:
         email=session["Email"]
         flash(f"You have been logged out, {email}!","info")
-    session.pop("Email",None)
-    session.pop("nm",None)
-    session.pop("weight",None)
-    session.pop("width",None)
-    session.pop("height",None)
-    session.pop("length",None)
+    for key in [key for key in session]:
+        session.pop(key, None)
     return redirect(url_for("login"))
 
 
 @app.route("/active",methods=["POST","GET"])
 def active():
+    found_user=None
     name=None
+
+    fixtures_path = "../fixtures/orders.json"
+    file = open(fixtures_path)
+    data = json.load(file)
+    file.close()
+
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         name=found_user.name
+        found_user.is_validated=True
+        db.session.commit()
+    else:
+        return redirect(url_for("login"))
+
     if request.method=="POST":
-        if request.form['submit_button']=='Show orders':
-            print("showorders")
-        elif request.form['submit_button']=='Go inactive':
-            return redirect(url_for("inactive"))
-    
-    return render_template("active.html",name=name)
+        if  request.form['submit_button']=='Go inactive':
+             return redirect(url_for("inactive"))
+        elif request.form['submit_button']=='edit_details':
+            found_user.is_validated=False
+            db.session.commit()
+            return redirect(url_for("user"))
+        
+    return render_template("active.html",name=name,data=data)
 
 @app.route("/inactive",methods=["GET","POST"])
 def inactive():
+    found_user=None
     name=None
     if "Email" in session:
         email=session["Email"]
         found_user = Courier.query.filter_by(email=email).first()
         name=found_user.name
-    if request.method=="POST" and request.form['submit_button']=='Go active':  
-        return redirect(url_for("active"))
-    return render_template("inactive.html",name=name)
+        found_user.is_validated=True
+        db.session.commit()
+    else:
+        return redirect(url_for("login"))
 
+    if request.method=="POST": 
+        if request.form['submit_button']=='Go active':  
+            return redirect(url_for("active"))
+        elif request.form['submit_button']=='edit_details':
+            found_user.is_validated=False
+            db.session.commit()
+            return redirect(url_for("user"))
+    return render_template("inactive.html",name=name)
 
 """ Endpoint for requesting courier info """
 @app.route("/couriers", methods=['GET'])
@@ -174,27 +200,24 @@ def get_message():
     except:
         return make_response(jsonify(None), 401)
 
-# @app.route("/user/orders", methods=['GET', 'POST'])
-# def orders():
-#     return render_template("orders.html")
+""" Endpoint for order visualization """
+@app.route('/active/<orderID>', methods=['GET','POST'])
+def order_dashboard(orderID):
+    if "Email" not in session:
+        return redirect(url_for('login'))
+    
+    found_user = Courier.query.filter_by(email=session['Email']).first()
+    trip=Trip(str(uuid.uuid4()),found_user.id,orderID)
+    print(trip.courier_id)
+    date = datetime.now()
+    print(str(date))
+    #trip.assigned_at=str(date)
+    if not Trip.query.filter_by(id=trip.id):
+        db.session.add(trip)
+        db.session.commit()
+    return render_template('order.html', orderID=orderID)
 
-# @app.route("/tags")
-# def tags():
-#     if request.method == "POST":
-#         tags = request.form.getlist("tags")
-#         print(tags)
-#         return "OK"
-
-# @app.route('/user/dashboard')
-# def dashboard():
-#     if inSession:
-#         show-courier-dashboard
-#     else:
-#         redirect-to-login-page
-
-# @app.route('/user/settings')
-# def settings():
-#     if inSession:
-#         show-courier-settings
-#     else:
-#         redirect-to-login-page
+""" Endpoint for order status change """
+@app.route('/orders/<orderID>/<status>', methods=['POST'])
+def change_order_status(orderID, status):
+    return "test"

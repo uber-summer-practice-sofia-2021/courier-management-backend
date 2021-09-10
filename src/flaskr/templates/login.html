@@ -1,18 +1,24 @@
-{% extends "base.html" %}
-{% block title %} Login Page {% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login page</title>
+</head>
+<body>
+    {% with messages=get_flashed_messages() %}
+    {% if messages %}
+    <p> {{messages[-1]}} </p>
+    {% endif %}
+    {% endwith %}
+    <form method="POST">
+    <p> Enter your email: </p>
+    <p><input type="email" name="Email" required/></p>
+    <p><input type="submit" value="Submit"/></p>
 
-{% block content%}
-{% with messages=get_flashed_messages() %}
-{% if messages %}
-{% for msg in messages%}
-<p> {{msg}} </p>
-{% endfor %}
-{% endif %}
-{% endwith %}
-<form method="POST"> 
-<p> Enter your email: </p>
-<p><input type="email" name="Email" required/></p>
-<p><input type="submit" value="Submit"/></p>
+    </form>
+</body>
+</html>
 
-</form> 
-{% endblock %}
+
