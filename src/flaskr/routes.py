@@ -1,6 +1,6 @@
 from flaskr import app, db
 from flaskr.models import *
-from flaskr.producer import Producer
+from flaskr.producer import message_kafka
 from flask import (
     render_template,
     request,
@@ -12,42 +12,47 @@ from flask import (
     make_response,
     json,
 )
-from datetime import datetime
+from flaskr.utils import insert_courier, insert_trip, timestamp
+import requests
 
 
+# Home page
 @app.route("/", methods=["GET", "POST"])
 def home():
     return redirect(url_for("login"))
 
 
+# For debug purposes
 @app.route("/view")
 def view():
-    return render_template("view.html", values=Courier.query.all())
+    return render_template(
+        "view.html", couriers=Courier.query.all(), trips=Trip.query.all()
+    )
 
 
+# Error page
+@app.route("/error")
+def error():
+    app.logger.debug(request.args['error'])
+    return render_template("error.html")
+
+
+# Login page
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
         session.permanent = True
-        email = request.form["Email"]
-        session["Email"] = email
+        email = request.form["email"]
+        session["email"] = email
 
         found_user = Courier.query.filter_by(email=email).first()
-        if found_user:
-            session["nm"] = found_user.name
-            session["weight"] = found_user.max_weight
-            session["width"] = found_user.max_width
-            session["height"] = found_user.max_height
-            session["length"] = found_user.max_length
-        else:
-            usr = Courier(email)
-            db.session.add(usr)
-            db.session.commit()
+        if not found_user:
+            insert_courier(Courier(email), db)
 
         flash("Login successful!")
         return redirect(url_for("user"))
     else:
-        if "Email" in session:
+        if "email" in session:
             flash("Already logged in!")
             return redirect(url_for("user"))
         return render_template("login.html")
@@ -65,28 +70,19 @@ def user():
     f_checked=False
     d_checked=False
 
-    if "Email" in session:
-        email = session["Email"]
+    if "email" in session:
+        email = session["email"]
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
             return redirect(url_for("active"))
 
         if request.method == "POST":
 
-            name = request.form["nm"]
-            session["nm"] = name
-
+            name = request.form["name"]
             max_weight = request.form["weight"]
-            session["weight"] = max_weight
-
             max_width = request.form["width"]
-            session["width"] = max_width
-
             max_height = request.form["height"]
-            session["height"] = max_height
-
             max_length = request.form["length"]
-            session["length"] = max_length
 
             arr=request.form.getlist('mycheckbox1')
             if request.form.get('mycheckbox2'):
@@ -107,26 +103,19 @@ def user():
             # flash("Information was saved!")
             return redirect(url_for("active"))
         else:
-            if (
-                "nm" in session
-                and "weight" in session
-                and "width" in session
-                and "height" in session
-                and "length" in session
-            ):
-                name = session["nm"]
-                max_weight = session["weight"]
-                max_width = session["width"]
-                max_height = session["height"]
-                max_length = session["length"]
-                #print(found_user.tags)
-                if found_user.tags:
-                    tag_arr=found_user.tags.split(",")
-                    for t in tag_arr:
-                        if t=='FRAGILE':
-                            f_checked=True
-                        elif t=='DANGEROUS':
-                            d_checked=True
+            name = found_user.name 
+            max_weight = found_user.max_weight 
+            max_width = found_user.max_width
+            max_height = found_user.max_height
+            max_length = found_user.max_length
+
+            if found_user.tags:
+                tag_arr=found_user.tags.split(",")
+                for t in tag_arr:
+                    if t=='FRAGILE':
+                        f_checked=True
+                    elif t=='DANGEROUS':
+                        d_checked=True
 
         return render_template(
             "user.html",
@@ -145,8 +134,8 @@ def user():
 
 @app.route("/logout")
 def logout():
-    if "Email" in session:
-        email = session["Email"]
+    if "email" in session:
+        email = session["email"]
         flash(f"You have been logged out, {email}!", "info")
     for key in [key for key in session]:
         session.pop(key, None)
@@ -163,8 +152,8 @@ def active():
     data = json.load(file)
     file.close()
 
-    if "Email" in session:
-        email = session["Email"]
+    if "email" in session:
+        email = session["email"]
         found_user = Courier.query.filter_by(email=email).first()
         name = found_user.name
         found_user.is_validated = True
@@ -187,8 +176,8 @@ def active():
 def inactive():
     found_user = None
     name = None
-    if "Email" in session:
-        email = session["Email"]
+    if "email" in session:
+        email = session["email"]
         found_user = Courier.query.filter_by(email=email).first()
         name = found_user.name
         found_user.is_validated = True
@@ -232,35 +221,48 @@ def get_trip_info():
         return make_response(jsonify(None), 401)
 
 
-@app.route("/receipt")
-def get_message():
-    try:
-        new_producer = Producer()
-        new_producer.produce("trips", {"checking": 2})
-        return "sent."
-    except:
-        return make_response(jsonify(None), 401)
-
-
 # Endpoint for order visualization
-@app.route("/active/<orderID>", methods=["GET", "POST"])
+@app.route("/active/<orderID>", methods=["GET"])
 def order_dashboard(orderID):
-    if "Email" not in session:
+    if "email" not in session:
         return redirect(url_for("login"))
 
-    found_user = Courier.query.filter_by(email=session["Email"]).first()
-    trip = Trip(found_user.id, orderID)
-    print(trip.courier_id)
-    date = datetime.now()
-    print(str(date))
-    # trip.assigned_at=str(date)
-    if not Trip.query.filter_by(id=trip.id):
-        db.session.add(trip)
-        db.session.commit()
-    return render_template("order.html", orderID=orderID)
+    try:
+        found_user = Courier.query.filter_by(email=session["email"]).first()
+        insert_trip(Trip(found_user.id, orderID), db)
+        requests.post(f"http://localhost:5000/active/{orderID}/assigned")
 
+        fixtures_path = "../fixtures/orders.json"
+        file = open(fixtures_path)
+        data = json.load(file)
+        file.close()
+        input=None
+        for item in data:
+            if item["ID"]==orderID:
+                input=item
+                break
+
+        return render_template("order.html", orderID=orderID, input=input)
+    except Exception as err:
+        return redirect(url_for("error", error=err))
 
 # Endpoint for order status change
-@app.route("/orders/<orderID>/<status>", methods=["POST"])
+@app.route("/active/<orderID>/<status>", methods=["POST"])
 def change_order_status(orderID, status):
-    return "test"
+    try:
+        trip = Trip.query.filter_by(order_id=orderID).first()
+
+        if status == "assigned":
+            # send status change request to order management
+            trip.assigned_at = timestamp()
+        elif status == "picked":
+            # send status change request to order management
+            trip.picked_at = timestamp()
+        elif status == "delivered":
+            # send status change request to order management
+            trip.delivered_at = timestamp()
+            message_kafka("trips", trip.map())
+
+        db.session.commit()
+    except Exception as err:
+        return redirect(url_for("error", error=err))

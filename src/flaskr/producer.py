@@ -1,5 +1,5 @@
 from kafka import KafkaProducer
-from flask import json, jsonify
+from flask import json
 
 class Producer:
     def __init__(self):
@@ -17,3 +17,6 @@ class Producer:
         # send message to kafka
         producer.send(topic, data)
         producer.flush()
+
+def message_kafka(topic, data):
+    Producer().produce(topic, data)
