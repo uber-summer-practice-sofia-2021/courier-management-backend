@@ -1,5 +1,5 @@
 from flaskr import app, db
-from flaskr.database
+from flaskr.database.models import *
 from flaskr.producer import message_kafka
 from flask import (
     render_template,
@@ -12,12 +12,11 @@ from flask import (
     make_response,
     json,
 )
-from flaskr.utils import insert_courier, insert_trip, timestamp
-import requests
+from flaskr.utils import insert_courier, insert_trip, timestamp, available_tags
 
 
 # Home page
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def home():
     return redirect(url_for("login"))
 
@@ -33,7 +32,7 @@ def view():
 # Error page
 @app.route("/error")
 def error():
-    app.logger.debug(request.args['error'])
+    app.logger.debug(request.args["error"])
     return render_template("error.html")
 
 
@@ -50,88 +49,56 @@ def login():
             insert_courier(Courier(email), db)
 
         flash("Login successful!")
-        return redirect(url_for("user"))
+        return redirect(url_for("user_settings"))
     else:
         if "email" in session:
             flash("Already logged in!")
-            return redirect(url_for("user"))
+            return redirect(url_for("user_settings"))
         return render_template("login.html")
 
 
-@app.route("/user", methods=["POST", "GET"])
-def user():
-
-    name = None
-    max_weight = None
-    max_width = None
-    max_height = None
-    max_length = None
-    tags=None
-    f_checked=False
-    d_checked=False
+# Endpoint for user settings page
+@app.route("/user/settings", methods=["POST", "GET"])
+def user_settings():
 
     if "email" in session:
         email = session["email"]
         found_user = Courier.query.filter_by(email=email).first()
         if found_user and found_user.is_validated:
-            return redirect(url_for("active"))
+            return redirect(url_for("user_dashboard"))
 
         if request.method == "POST":
 
-            name = request.form["name"]
-            max_weight = request.form["weight"]
-            max_width = request.form["width"]
-            max_height = request.form["height"]
-            max_length = request.form["length"]
-
-            arr=request.form.getlist('mycheckbox1')
-            if request.form.get('mycheckbox2'):
-                arr.append(str(request.form.get('mycheckbox2')))
-            
-            if arr:
-                tags=','.join(arr)
-                      
-            found_user.name = name
-            found_user.max_weight = max_weight
-            found_user.max_width = max_width
-            found_user.max_height = max_height
-            found_user.max_length = max_length
-            found_user.tags = tags
+            tags = request.form.getlist("tag-checkbox")
+            app.logger.debug(tags)
+            found_user.name = request.form["name"]
+            found_user.max_weight = request.form["weight"]
+            found_user.max_width = request.form["width"]
+            found_user.max_height = request.form["height"]
+            found_user.max_length = request.form["length"]
+            found_user.tags = ",".join(tags) if tags else None
             found_user.is_validated = True
             db.session.commit()
 
             # flash("Information was saved!")
-            return redirect(url_for("active"))
-        else:
-            name = found_user.name 
-            max_weight = found_user.max_weight 
-            max_width = found_user.max_width
-            max_height = found_user.max_height
-            max_length = found_user.max_length
-
-            if found_user.tags:
-                tag_arr=found_user.tags.split(",")
-                for t in tag_arr:
-                    if t=='FRAGILE':
-                        f_checked=True
-                    elif t=='DANGEROUS':
-                        d_checked=True
+            return redirect(url_for("user_dashboard"))
 
         return render_template(
-            "user.html",
-            name=name,
-            max_weight=max_weight,
-            max_width=max_width,
-            max_height=max_height,
-            max_length=max_length,
-            f_checked=f_checked,
-            d_checked=d_checked
+            "user-settings.html",
+            name=found_user.name,
+            max_weight=found_user.max_weight,
+            max_width=found_user.max_width,
+            max_height=found_user.max_height,
+            max_length=found_user.max_length,
+            tags=[x for x in found_user.tags.split(",") if x],
+            available_tags=available_tags,
         )
     else:
         flash("You are not logged in!")
         return redirect(url_for("login"))
 
 
+# Endpoint for user logout
 @app.route("/logout")
 def logout():
     if "email" in session:
@@ -142,8 +109,9 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/active", methods=["POST", "GET"])
-def active():
+# Endpoint for the user dashboard
+@app.route("/user/dashboard", methods=["POST", "GET"])
+def user_dashboard():
     found_user = None
     name = None
 
@@ -163,17 +131,18 @@ def active():
 
     if request.method == "POST":
         if request.form["submit_button"] == "Go inactive":
-            return redirect(url_for("inactive"))
+            return redirect(url_for("user_inactive"))
         elif request.form["submit_button"] == "edit_details":
             found_user.is_validated = False
             db.session.commit()
-            return redirect(url_for("user"))
+            return redirect(url_for("user_settings"))
 
-    return render_template("active.html", name=name, data=data)
+    return render_template("user-dashboard.html", name=name, data=data)
 
 
-@app.route("/inactive", methods=["GET", "POST"])
-def inactive():
+# User is redirected here upon going inactive
+@app.route("/user/inactive", methods=["GET", "POST"])
+def user_inactive():
     found_user = None
     name = None
     if "email" in session:
@@ -187,12 +156,12 @@ def inactive():
 
     if request.method == "POST":
         if request.form["submit_button"] == "Go active":
-            return redirect(url_for("active"))
+            return redirect(url_for("user_dashboard"))
         elif request.form["submit_button"] == "edit_details":
             found_user.is_validated = False
             db.session.commit()
-            return redirect(url_for("user"))
-    return render_template("inactive.html", name=name)
+            return redirect(url_for("user_settings"))
+    return render_template("user-inactive.html", name=name)
 
 
 # Endpoint for requesting courier info
@@ -222,7 +191,7 @@ def get_trip_info():
 
 
 # Endpoint for order visualization
-@app.route("/active/<orderID>", methods=["GET"])
+@app.route("/user/dashboard/<orderID>", methods=["GET"])
 def order_dashboard(orderID):
     if "email" not in session:
         return redirect(url_for("login"))
@@ -230,24 +199,25 @@ def order_dashboard(orderID):
     try:
         found_user = Courier.query.filter_by(email=session["email"]).first()
         insert_trip(Trip(found_user.id, orderID), db)
-        requests.post(f"http://localhost:5000/active/{orderID}/assigned")
+        change_order_status(orderID, "assigned")
 
         fixtures_path = "../fixtures/orders.json"
         file = open(fixtures_path)
         data = json.load(file)
         file.close()
-        input=None
+        input = None
         for item in data:
-            if item["ID"]==orderID:
-                input=item
+            if item["ID"] == orderID:
+                input = item
                 break
 
         return render_template("order.html", orderID=orderID, input=input)
     except Exception as err:
         return redirect(url_for("error", error=err))
 
+
 # Endpoint for order status change
-@app.route("/active/<orderID>/<status>", methods=["POST"])
+@app.route("/user/dashboard/<orderID>/<status>", methods=["POST"])
 def change_order_status(orderID, status):
     try:
         trip = Trip.query.filter_by(order_id=orderID).first()
@@ -264,5 +234,6 @@ def change_order_status(orderID, status):
             message_kafka("trips", trip.map())
 
         db.session.commit()
+        return make_response(trip.map())
     except Exception as err:
         return redirect(url_for("error", error=err))

@@ -10,6 +10,7 @@
 {% endfor %}
 <p>TRIPS:</p>
 {% for item in trips %}
-<p>ID: {{item.id}}; CourierID: {{item.courier_id}}; OrderID: {{item.order_id}}; Distance: {{item.distance}}; AssignedAt: {{item.assigned_at}}; PickedAt: {{item.picked_at}}; DeliveredAt: {{item.delivered_at}}</p>
+<p>ID: {{item.id}}; CourierID: {{item.courier_id}}; OrderID: {{item.order_id}}; Distance: {{item.distance}}; AssignedAt:
+    {{item.assigned_at}}; PickedAt: {{item.picked_at}}; DeliveredAt: {{item.delivered_at}}</p>
 {% endfor %}
 {% endblock %}

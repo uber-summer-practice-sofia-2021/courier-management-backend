@@ -1,13 +1,17 @@
 import sys
-from flaskr.models import *
+from flaskr.database.models import *
 
+# Removes all the tables in the db
 def drop_db():
     db.drop_all()
     print("Database cleared")
 
+
+# Creates tables in the db based on the imported models
 def create_db():
     db.create_all()
     print("Database created")
+
 
 if __name__ == "__main__":
     try:

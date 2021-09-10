@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+<h1>{%block title%}Inactive courier{%endblock%}</h1>
+{%block content %}
+<p>
+<h1>Courier {{name}} is not working at the moment!</h1>
+</p>
+<form method="POST">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+    <input type="submit" id="go_active" name="submit_button" value="Go active" />
+    <input type="submit" name="submit_button" value="edit_details" />
+</form>
+{%endblock%}

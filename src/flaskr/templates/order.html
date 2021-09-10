@@ -4,13 +4,16 @@
 <!-- <p>{{orderID}}</p>
 <p>{{input['ID']}}</p>
 <p>{{input['clientName']}}</p> -->
+
 <head>
     <style>
-    table, th, td {
-      border: 1px solid black;
-      margin-left: auto;
-      margin-right: auto;
-    }
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
 </head>
 <table class="centered thick-border">
@@ -22,26 +25,26 @@
         <th>Tags</th>
         <th>delivery type</th>
     </tr>
-<tr>
-    <th>{{input.clientName}}</th>
-    <th>{{input.phoneNumber}}</th>
-    <th>{{input.from['addressName']}}</th>
-    <th>{{input.to['addressName']}}</th>
-    <th>{{','.join(input.tags)}}</th>
-    <th>{{input.deliveryType}}</th>
+    <tr>
+        <th>{{input.clientName}}</th>
+        <th>{{input.phoneNumber}}</th>
+        <th>{{input.from['addressName']}}</th>
+        <th>{{input.to['addressName']}}</th>
+        <th>{{','.join(input.tags)}}</th>
+        <th>{{input.deliveryType}}</th>
 
-</tr>
+    </tr>
 </table>
 <p></p>
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='order_status_style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/order_status_style.css')}}">
 <div class="container">
     <ul class="progressbar">
         <li class="active">Assigned</li>
         <li>
-                <input id="assign order" type="submit" name="PICK_UP" value="PICK_UP" />
+            <input id="assign order" type="submit" name="PICK_UP" value="PICK_UP" />
         </li>
         <li>
-                <input id="assign order" type="submit" name="COMPLETE" value="COMPLETE" />
+            <input id="assign order" type="submit" name="COMPLETE" value="COMPLETE" />
         </li>
-</ul>
-{%endblock%}
+    </ul>
+    {%endblock%}
