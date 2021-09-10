@@ -227,7 +227,6 @@ def order_dashboard(orderID):
     if "email" not in session:
         return redirect(url_for("login"))
 
-<<<<<<< HEAD
     try:
         found_user = Courier.query.filter_by(email=session["email"]).first()
         insert_trip(Trip(found_user.id, orderID), db)
@@ -246,29 +245,6 @@ def order_dashboard(orderID):
         return render_template("order.html", orderID=orderID, input=input)
     except Exception as err:
         return redirect(url_for("error", error=err))
-=======
-    found_user = Courier.query.filter_by(email=session["Email"]).first()
-    trip = Trip(found_user.id, orderID)
-    #print(trip.courier_id)
-    date = datetime.now()
-    if not Trip.query.filter_by(id=trip.id):
-        db.session.add(trip)
-        db.session.commit()
-    
-    fixtures_path = "../fixtures/orders.json"
-    file = open(fixtures_path)
-    data = json.load(file)
-    file.close()
-    input=None
-    for item in data:
-         if item["ID"]==orderID:
-            input=item
-            break
-        
-
-    return render_template("order.html", orderID=orderID,input=input)
-
->>>>>>> 4bbfbe301485fb0c1a1f2691b36f6915a587ed37
 
 # Endpoint for order status change
 @app.route("/active/<orderID>/<status>", methods=["POST"])
