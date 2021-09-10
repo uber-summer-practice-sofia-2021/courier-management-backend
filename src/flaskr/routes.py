@@ -88,10 +88,10 @@ def user():
             max_length = request.form["length"]
             session["length"] = max_length
 
-
             arr=request.form.getlist('mycheckbox1')
             if request.form.get('mycheckbox2'):
                 arr.append(str(request.form.get('mycheckbox2')))
+            
             if arr:
                 tags=','.join(arr)
                       
