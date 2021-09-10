@@ -20,8 +20,8 @@
             "weight": 10
         },
         "tags": [
-            "dangerous",
-            "fragile"
+            "FRAGILE",
+            "DANGEROUS"
         ],
         "deliveryType": "Uber Express",
         "ID": "123e4567-e89b-12d3-a456-426614174000",
@@ -53,11 +53,43 @@
             "weight": 10
         },
         "tags": [
-            "dangerous",
-            "fragile"
+            "FRAGILE",
+            "DANGEROUS"
         ],
         "deliveryType": "Uber Express",
         "ID": "1234e567-e89b-12d3-a456-426614174000",
+        "status": {
+            "state": "open",
+            "assigned": false
+        },
+        "createdAt": "2012-04-23T18:25:43.511Z"
+    },
+    {
+        "clientName": "John Smith",
+        "from": {
+            "latitude": 1,
+            "longtitude": 2,
+            "addressName": "Graf Ignatiev 17, Sofia"
+        },
+        "to": {
+            "latitude": 4,
+            "longtitude": 5,
+            "addressName": "Opulchenska 117, Sofia"
+        },
+        "clientEmail": "jsmith@mail.bg",
+        "phoneNumber": "0894546512",
+        "dimensions": {
+            "length": 5,
+            "depth": 2,
+            "height": 3,
+            "weight": 10
+        },
+        "tags": [
+            "FRAGILE",
+            "DANGEROUS"
+        ],
+        "deliveryType": "Uber Express",
+        "ID": "1434e567-e89b-12d3-a456-426614174000",
         "status": {
             "state": "open",
             "assigned": false
