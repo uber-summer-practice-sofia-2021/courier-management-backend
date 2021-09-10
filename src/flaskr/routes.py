@@ -191,6 +191,15 @@ def get_trip_info():
     except:
         return make_response(jsonify(None), 401)
 
+@app.route("/receipt")
+def get_message():
+    try:
+        new_producer = Producer()
+        new_producer.produce("trips", {"checking" : 2})
+        return "sent."
+    except:
+        return make_response(jsonify(None), 401)
+
 """ Endpoint for order visualization """
 @app.route('/active/<orderID>', methods=['GET','POST'])
 def order_dashboard(orderID):
@@ -207,7 +216,6 @@ def order_dashboard(orderID):
         db.session.add(trip)
         db.session.commit()
     return render_template('order.html', orderID=orderID)
-    
 
 """ Endpoint for order status change """
 @app.route('/orders/<orderID>/<status>', methods=['POST'])
