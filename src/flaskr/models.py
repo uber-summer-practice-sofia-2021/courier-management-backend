@@ -2,7 +2,7 @@ from flaskr import db
 import uuid
 
 class Courier(db.Model):
-    id=db.Column('id', db.String(36), primary_key=True, default=str(uuid.uuid4()))
+    id=db.Column('id', db.String(36), primary_key=True)
     email=db.Column('email', db.String(100), nullable=False)
     name=db.Column('name', db.String(30), default=None)
     max_weight = db.Column('max_weight', db.Float, default=None)
@@ -12,18 +12,9 @@ class Courier(db.Model):
     tags=db.Column('tags', db.Text, default=None)
     is_validated=db.Column('is_validated',db.Boolean,default=False)
 
-    def __init__(self, email, name=None, max_weight=None, max_width=None, max_length=None, max_height=None, tags=None,is_validated=False):
+    def __init__(self, email):
+        self.id=str(uuid.uuid4())
         self.email=email
-        self.name=name
-        self.max_weight=max_weight
-        self.max_width=max_width
-        self.max_length=max_length
-        self.max_height=max_height
-        self.is_validated=is_validated
-        try:
-            self.tags=','.join(tags)
-        except:
-            self.tags=None
 
     def __repr__(self):
         return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_weight}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}','{self.is_validated}')"
@@ -49,7 +40,7 @@ class Courier(db.Model):
         return data
         
 class Trip(db.Model):
-    id=db.Column('id', db.String(36), primary_key=True, default=str(uuid.uuid4()))
+    id=db.Column('id', db.String(36), primary_key=True)
     courier_id=db.Column('courier_id', db.String(36), db.ForeignKey('courier.id'), nullable=False)
     order_id=db.Column('order_id', db.String(36), nullable=False, unique=True)
     distance=db.Column('distance', db.Float,default=None)
@@ -59,13 +50,10 @@ class Trip(db.Model):
 
     courier = db.relationship('Courier', backref=db.backref('trips', lazy=True))
 
-    def __init__(self, courier_id, order_id): #, distance, assigned_at, picked_at, delivered_at):
+    def __init__(self, courier_id, order_id):
+        self.id = str(uuid.uuid4())
         self.courier_id=courier_id
         self.order_id=order_id
-        # self.distance=distance
-        # self.assigned_at=assigned_at
-        # self.picked_at=picked_at
-        # self.delivered_at=delivered_at
 
     def __repr__(self):
         return f"Trip('{self.id}', '{self.courier_id}', '{self.order_id}', '{self.distance}', '{self.assigned_at}', '{self.picked_at}', '{self.delivered_at}',)"
