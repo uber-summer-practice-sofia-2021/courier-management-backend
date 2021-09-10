@@ -1,2 +1,11 @@
 {% extends "base.html" %}
 {%block title%} Order {%endblock%}
+{%block content%}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='order_status_style.css')}}">
+<div class="container">
+    <ul class="progressbar">
+        <li class="active">Assigned</li>
+        <li>Picked UP</li>
+        <li>Completed</li>
+</ul>
+{%endblock%}
