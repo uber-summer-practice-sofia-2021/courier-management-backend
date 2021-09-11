@@ -12,7 +12,12 @@ from flask import (
     make_response,
     json,
 )
-from flaskr.utils import insert_courier, insert_trip, timestamp, AVAILABLE_TAGS
+from flaskr.utils import (
+    clear_session,
+    insert_into_db,
+    timestamp,
+    AVAILABLE_TAGS,
+)
 
 
 # Handles nonexistent pages
@@ -45,130 +50,128 @@ def error():
 # Login page
 @app.route("/login", methods=["POST", "GET"])
 def login():
+
     if request.method == "POST":
+        email = request.form["email"].strip()
+
+        if not Courier.query.filter_by(email=email).first():
+            insert_into_db(Courier(email), db)
+        
+        found_user = Courier.query.filter_by(email=email).first()
+
         session.permanent = True
-        email = request.form["email"]
+        session["status"] = "active"
         session["email"] = email
 
-        found_user = Courier.query.filter_by(email=email).first()
-        if not found_user:
-            insert_courier(Courier(email), db)
-
         flash("Login successful!")
+        if found_user.is_validated:
+            return redirect(url_for("user_dashboard"))
         return redirect(url_for("user_settings"))
-    else:
-        if "email" in session:
-            flash("Already logged in!")
-            return redirect(url_for("user_settings"))
-        return render_template("login.html")
+
+    found_user = Courier.query.filter_by(email=session.get('email')).first()
+
+    if found_user:
+        flash("Already logged in!")
+
+        if found_user.is_validated:
+            return redirect(url_for("user_dashboard"))
+        return redirect(url_for("user_settings"))
+
+    return render_template("login.html")
 
 
 # Endpoint for user settings page
 @app.route("/user/settings", methods=["POST", "GET"])
 def user_settings():
+    found_user = Courier.query.filter_by(email=session.get('email')).first()
 
-    if "email" in session:
-        email = session["email"]
-        found_user = Courier.query.filter_by(email=email).first()
-        if not found_user:
-            flash("User doesn't exist!")
-            return redirect(url_for("logout"))
+    if not found_user:
+        flash("Invalid user or session expired!")
+        return redirect(url_for("logout"))
 
-        if request.method == "POST":
+    if request.method == "POST":
 
-            tags = request.form.getlist("tag-checkbox")
-            app.logger.debug(tags)
-            found_user.name = request.form["name"]
-            found_user.max_weight = request.form["weight"]
-            found_user.max_width = request.form["width"]
-            found_user.max_height = request.form["height"]
-            found_user.max_length = request.form["length"]
-            found_user.tags = ",".join(tags) if tags else None
-            found_user.is_validated = True
-            db.session.commit()
+        tags = request.form.getlist("tag-checkbox")
+        found_user.name = request.form["name"]
+        found_user.max_weight = request.form["weight"]
+        found_user.max_width = request.form["width"]
+        found_user.max_height = request.form["height"]
+        found_user.max_length = request.form["length"]
+        found_user.tags = ",".join(tags) if tags else ""
+        found_user.is_validated = True
+        db.session.commit()
 
-            # flash("Information was saved!")
-            return redirect(url_for("user_dashboard"))
+        flash("Information was saved!")
 
-        return render_template(
-            "user-settings.html",
-            name=found_user.name,
-            max_weight=found_user.max_weight,
-            max_width=found_user.max_width,
-            max_height=found_user.max_height,
-            max_length=found_user.max_length,
-            tags=[x for x in found_user.tags.split(",") if x],
-            available_tags=AVAILABLE_TAGS,
-        )
-    else:
-        flash("You are not logged in!")
-        return redirect(url_for("login"))
+    return render_template(
+        "user-settings.html",
+        name=found_user.name,
+        max_weight=found_user.max_weight,
+        max_width=found_user.max_width,
+        max_height=found_user.max_height,
+        max_length=found_user.max_length,
+        tags=[x for x in found_user.tags.split(",") if x],
+        available_tags=AVAILABLE_TAGS,
+    )
 
 
 # Endpoint for user logout
 @app.route("/logout")
 def logout():
-    if "email" in session:
-        email = session["email"]
-        flash(f"You have been logged out, {email}!", "info")
-    for key in [key for key in session]:
-        session.pop(key, None)
+    found_user = Courier.query.filter_by(email=session.get('email')).first()
+
+    if found_user:
+        flash(f"You have been logged out, {found_user.name}!", "info")
+
+    clear_session(session)
     return redirect(url_for("login"))
 
 
 # Endpoint for the user dashboard
 @app.route("/user/dashboard", methods=["POST", "GET"])
 def user_dashboard():
-    found_user = None
-    name = None
+    found_user = Courier.query.filter_by(email=session.get('email')).first()
+
+    if not found_user:
+        flash("Invalid user or session expired!")
+        return redirect(url_for("login"))
+
+    if session["status"] == "inactive":
+        flash("You are currently inactive!")
+        return redirect(url_for("user_inactive"))
+
+    if not found_user.is_validated:
+        flash("You need to complete your profile first!")
+        return redirect(url_for("user_settings"))
 
     fixtures_path = "../fixtures/orders.json"
     file = open(fixtures_path)
     data = json.load(file)
     file.close()
 
-    if "email" in session:
-        email = session["email"]
-        found_user = Courier.query.filter_by(email=email).first()
-        name = found_user.name
-        found_user.is_validated = True
-        db.session.commit()
-    else:
-        return redirect(url_for("login"))
-
     if request.method == "POST":
         if request.form["submit_button"] == "Go inactive":
+            session["status"] = "inactive"
             return redirect(url_for("user_inactive"))
-        elif request.form["submit_button"] == "edit_details":
-            found_user.is_validated = False
-            db.session.commit()
-            return redirect(url_for("user_settings"))
 
-    return render_template("user-dashboard.html", name=name, data=data)
+    return render_template("user-dashboard.html", name=found_user.name, data=data)
 
 
 # User is redirected here upon going inactive
 @app.route("/user/inactive", methods=["GET", "POST"])
 def user_inactive():
-    found_user = None
-    name = None
-    if "email" in session:
-        email = session["email"]
-        found_user = Courier.query.filter_by(email=email).first()
-        name = found_user.name
-        found_user.is_validated = True
-        db.session.commit()
-    else:
+    found_user = Courier.query.filter_by(email=session.get('email')).first()
+
+    if not found_user:
+        flash("Invalid user or session expired!")
         return redirect(url_for("login"))
 
     if request.method == "POST":
         if request.form["submit_button"] == "Go active":
+            session["status"] = "active"
             return redirect(url_for("user_dashboard"))
-        elif request.form["submit_button"] == "edit_details":
-            found_user.is_validated = False
-            db.session.commit()
-            return redirect(url_for("user_settings"))
-    return render_template("user-inactive.html", name=name)
+
+    return render_template("user-inactive.html", name=found_user.name)
 
 
 # Endpoint for requesting courier info
@@ -200,12 +203,14 @@ def get_trip_info():
 # Endpoint for order visualization
 @app.route("/user/dashboard/<orderID>", methods=["GET"])
 def order_dashboard(orderID):
-    if "email" not in session:
+    found_user = Courier.query.filter_by(email=session.get('email')).first()
+
+    if not found_user or "email" not in session:
+        flash("Invalid user or session expired!")
         return redirect(url_for("login"))
 
     try:
-        found_user = Courier.query.filter_by(email=session["email"]).first()
-        insert_trip(Trip(found_user.id, orderID), db)
+        insert_into_db(Trip(found_user.id, orderID), db)
         change_order_status(orderID, "assigned")
 
         fixtures_path = "../fixtures/orders.json"

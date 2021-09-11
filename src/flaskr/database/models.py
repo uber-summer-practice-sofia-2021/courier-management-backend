@@ -4,7 +4,7 @@ import uuid
 
 class Courier(db.Model):
     id = db.Column("id", db.String(36), primary_key=True)
-    email = db.Column("email", db.String(100), nullable=False)
+    email = db.Column("email", db.String(100), nullable=False, unique=True)
     name = db.Column("name", db.String(30), default="")
     max_weight = db.Column("max_weight", db.Float, default=0)
     max_width = db.Column("max_width", db.Float, default=0)
