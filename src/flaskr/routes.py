@@ -205,7 +205,7 @@ def get_trip_info():
 def order_dashboard(orderID):
     found_user = Courier.query.filter_by(email=session.get('email')).first()
 
-    if not found_user or "email" not in session:
+    if not found_user:
         flash("Invalid user or session expired!")
         return redirect(url_for("login"))
 
