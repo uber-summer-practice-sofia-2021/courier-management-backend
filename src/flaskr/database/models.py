@@ -1,16 +1,18 @@
-from flaskr import db
 import uuid
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 class Courier(db.Model):
     id = db.Column("id", db.String(36), primary_key=True)
     email = db.Column("email", db.String(100), nullable=False, unique=True)
-    name = db.Column("name", db.String(30), default="")
-    max_weight = db.Column("max_weight", db.Float, default=0)
-    max_width = db.Column("max_width", db.Float, default=0)
-    max_length = db.Column("max_length", db.Float, default=0)
-    max_height = db.Column("max_height", db.Float, default=0)
-    tags = db.Column("tags", db.Text, default="")
+    name = db.Column("name", db.String(30),nullable=False,default='')
+    max_weight = db.Column("max_weight", db.Float,nullable=False, default=0)
+    max_width = db.Column("max_width", db.Float,nullable=False, default=0)
+    max_length = db.Column("max_length", db.Float,nullable=False, default=0)
+    max_height = db.Column("max_height", db.Float,nullable=False, default=0)
+    tags = db.Column("tags", db.Text, nullable=False,default='')
     is_validated = db.Column("is_validated", db.Boolean, default=False)
 
     def __init__(self, email):
@@ -33,12 +35,8 @@ class Courier(db.Model):
                 "maxLength": self.max_length,
                 "maxHeight": self.max_height,
             },
-            "tags": None,
+            "tags": [x for x in self.tags.split(",") if x],
         }
-        try:
-            data["tags"] = self.tags.split(",")
-        except:
-            pass
         return data
 
 
@@ -49,9 +47,9 @@ class Trip(db.Model):
     )
     order_id = db.Column("order_id", db.String(36), nullable=False, unique=True)
     distance = db.Column("distance", db.Float, default=0)
-    assigned_at = db.Column("assigned_at", db.String(30), default=None)
-    picked_at = db.Column("picked_at", db.String(30), default=None)
-    delivered_at = db.Column("delivered_at", db.String(30), default=None)
+    assigned_at = db.Column("assigned_at", db.String(30))
+    picked_at = db.Column("picked_at", db.String(30))
+    delivered_at = db.Column("delivered_at", db.String(30))
 
     courier = db.relationship("Courier", backref=db.backref("trips", lazy=True))
 
