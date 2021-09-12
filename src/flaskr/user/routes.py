@@ -141,6 +141,8 @@ def order_dashboard(orderID):
         flash("Invalid user or session expired!")
         return redirect(url_for("user.login"))
 
+    # check if order is present in the db
+
     insert_into_db(Trip(found_user.id, orderID), db)   
     change_order_status(orderID, "assigned")
 
