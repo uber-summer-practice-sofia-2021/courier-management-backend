@@ -1,5 +1,6 @@
 from datetime import datetime
-from sqlite3 import IntegrityError
+import requests
+from flaskr.producer import Producer
 
 AVAILABLE_TAGS = ["fragile", "dangerous"]
 
@@ -14,11 +15,25 @@ def insert_into_db(obj, db):
         db.session.add(obj)
     except:
         db.session.rollback()
-        raise IntegrityError
-    db.session.commit()
+        raise
+    else:
+        db.session.commit()
 
 
-# Clear session data
+# Clears session data
 def clear_session(session):
     for key in [key for key in session]:
         session.pop(key, None)
+
+
+# Requests orders
+def get_orders(**params):
+    try:
+        return requests.get("http://localhost:5000/orders", params).json()
+    except:
+        return None
+
+
+# Sends message to kafka
+def message_kafka(topic, data):
+    Producer().produce(topic, data)
