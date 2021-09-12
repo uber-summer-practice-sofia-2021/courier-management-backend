@@ -54,10 +54,14 @@ def login():
     if request.method == "POST":
         email = request.form["email"].strip()
 
-        if not Courier.query.filter_by(email=email).first():
+        try:
             insert_into_db(Courier(email), db)
-        
+        except:
+            pass
+
         found_user = Courier.query.filter_by(email=email).first()
+
+        app.logger.debug("here")
 
         session.permanent = True
         session["status"] = "active"

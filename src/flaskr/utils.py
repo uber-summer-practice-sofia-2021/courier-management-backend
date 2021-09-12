@@ -1,5 +1,5 @@
+from sqlalchemy.orm import Session
 from datetime import datetime
-from sqlite3 import IntegrityError
 
 AVAILABLE_TAGS = ["fragile", "dangerous"]
 
@@ -10,12 +10,14 @@ def timestamp():
 
 # Inserts object into database
 def insert_into_db(obj, db):
-    try:
-        db.session.add(obj)
-    except:
-        db.session.rollback()
-        raise IntegrityError
-    db.session.commit()
+    with Session(db) as session:
+        try:
+            session.add(obj)
+        except:
+            session.rollback()
+            raise
+        else:
+            session.commit()
 
 
 # Clear session data
