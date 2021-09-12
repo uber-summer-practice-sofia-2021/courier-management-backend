@@ -102,6 +102,7 @@ def user_settings():
         db.session.commit()
 
         flash("Information was saved!")
+        return redirect(url_for("user_dashboard"))
 
     return render_template(
         "user-settings.html",
