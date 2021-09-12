@@ -18,16 +18,27 @@ from flaskr.utils import (
     timestamp,
     AVAILABLE_TAGS,
 )
+from werkzeug.exceptions import HTTPException
 
 
-# Handles nonexistent pages
-@app.errorhandler(404)
-def page_not_found(error):
-    return render_template("page-not-found.html"), 404
+# Exception handling
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    try:
+        return render_template(f"{e.code}.html"), e.code
+    except:
+        response = e.get_response()
+        response.data = json.dumps({
+            "code": e.code,
+            "name": e.name,
+            "description": e.description,
+        })
+        response.content_type = "application/json"
+        return response
 
 
 # Home page
-@app.route("/", methods=["GET"])
+@app.route("/")
 def home():
     return redirect(url_for("login"))
 
@@ -38,13 +49,6 @@ def view():
     return render_template(
         "view.html", couriers=Courier.query.all(), trips=Trip.query.all()
     )
-
-
-# Error page
-@app.route("/error")
-def error():
-    app.logger.debug(request.args["error"])
-    return render_template("error.html")
 
 
 # Login page
