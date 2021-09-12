@@ -216,7 +216,7 @@ def get_trip_info():
     except:
         return make_response(jsonify(None), 401)
 
-
+#Endpoint for sending a message to kafka. Has to be updated (info it sends)
 @app.route("/receipt")
 def get_message():
     try:
@@ -243,6 +243,20 @@ def order_dashboard(orderID):
         db.session.add(trip)
         db.session.commit()
     return render_template("order.html", orderID=orderID)
+
+# Creating an endpoint for the history of the courier
+#In case the courier is not logged in - gets redirected to the loginpage
+@app.route("/history")
+def return_trips_history():
+    if "Email" not in session:
+        return redirect(url_for("login"))
+    found_user = Courier.query.filter_by(email=session["Email"]).first()
+    print(session["Email"])
+    print(found_user.id)
+    #unique user id from which we will generate the hostory orders.
+    user_id = found_user.id
+    return "this is it."
+
 
 
 # Endpoint for order status change
