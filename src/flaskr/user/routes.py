@@ -171,12 +171,6 @@ def change_order_status(orderID):
         flash("Invalid user or session expired!")
         return redirect(url_for("user.login"))
 
-<<<<<<< HEAD
-    insert_into_db(Trip(found_user.id, orderID), db)
-    change_order_status(orderID, "assigned")
-
-=======
->>>>>>> 879fa2ad3e7efb9032dba98d620062eaac4e0946
     fixtures_path = "../fixtures/orders.json"
     file = open(fixtures_path)
     data = json.load(file)
