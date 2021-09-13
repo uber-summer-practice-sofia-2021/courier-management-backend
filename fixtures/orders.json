@@ -14,22 +14,18 @@
             },
             "clientEmail": "jsmith@mail.bg",
             "phoneNumber": "0894546512",
-            "dimensions": {
-                "length": 5,
-                "depth": 2,
-                "height": 3,
-                "weight": 10
-            },
+            
+            "length": 5,
+            "depth": 2,
+            "height": 3,
+            "weight": 10,
             "tags": [
                 "FRAGILE",
                 "DANGEROUS"
             ],
             "deliveryType": "Uber Express",
             "ID": "123e4567-e89b-12d3-a456-426614174000",
-            "status": {
-                "state": "open",
-                "assigned": false
-            },
+            "status": "OPEN",
             "createdAt": "2012-04-23T18:25:43.511Z"
         },
         {
@@ -46,22 +42,18 @@
             },
             "clientEmail": "jsmith@mail.bg",
             "phoneNumber": "0894546512",
-            "dimensions": {
-                "length": 5,
-                "depth": 2,
-                "height": 3,
-                "weight": 10
-            },
+            
+            "length": 5,
+            "depth": 2,
+            "height": 3,
+            "weight": 10,
             "tags": [
                 "FRAGILE",
                 "DANGEROUS"
             ],
             "deliveryType": "Uber Express",
             "ID": "1234e567-e89b-12d3-a456-426614174000",
-            "status": {
-                "state": "open",
-                "assigned": false
-            },
+            "status": "OPEN",
             "createdAt": "2012-04-23T18:25:43.511Z"
         },
         {
@@ -78,22 +70,18 @@
             },
             "clientEmail": "jsmith@mail.bg",
             "phoneNumber": "0894546512",
-            "dimensions": {
-                "length": 5,
-                "depth": 2,
-                "height": 3,
-                "weight": 10
-            },
+
+            "length": 5,
+            "depth": 2,
+            "height": 3,
+            "weight": 10,
             "tags": [
                 "FRAGILE",
                 "DANGEROUS"
             ],
             "deliveryType": "Uber Express",
             "ID": "1434e567-e89b-12d3-a456-426614174000",
-            "status": {
-                "state": "open",
-                "assigned": false
-            },
+            "status": "OPEN",
             "createdAt": "2012-04-23T18:25:43.511Z"
         }
     ],
