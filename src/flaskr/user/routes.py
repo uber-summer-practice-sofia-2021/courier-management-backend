@@ -126,22 +126,6 @@ def dashboard():
              max_width=found_user.max_width,
              max_length=found_user.max_length,
              tags=found_user.tags.split(','))
-    # arr=found_user.tags.split(",")
-    # if len(arr)==2:
-    #     orders = get_orders(
-    #         max_weight=found_user.max_weight,
-    #         max_height=found_user.max_height,
-    #         max_width=found_user.max_width,
-    #         max_length=found_user.max_length,
-    #         tags=arr[0],
-    #         tags=arr[1])
-    # elif len(arr)==1 :
-    #     orders = get_orders(
-    #         max_weight=found_user.max_weight,
-    #         max_height=found_user.max_height,
-    #         max_width=found_user.max_width,
-    #         max_length=found_user.max_length,
-    #         tags=arr[0])
 
     data = orders.get("data")
     pagination = orders.get("pagination")
