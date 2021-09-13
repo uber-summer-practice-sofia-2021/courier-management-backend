@@ -10,6 +10,7 @@ from flask import (
 )
 from flaskr.user.utils import *
 from flaskr.database.models import *
+import requests
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
