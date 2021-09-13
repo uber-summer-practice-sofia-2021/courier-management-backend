@@ -6,6 +6,7 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY requirements.txt \
+     fixtures/ \
      src/ ./
 
 RUN pip install -r requirements.txt
@@ -13,6 +14,6 @@ RUN pip install -r requirements.txt
 EXPOSE 5000
 
 ENV FLASK_ENV=development \
-    FLASK_APP=server.py
+    FLASK_APP=flaskr
 
 CMD ["flask", "run", "--host=0.0.0.0"]

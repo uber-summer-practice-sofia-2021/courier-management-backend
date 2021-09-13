@@ -10,6 +10,7 @@ from flask import (
 )
 from flaskr.user.utils import *
 from flaskr.database.models import *
+import os
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
@@ -181,3 +182,7 @@ def change_order_status(orderID):
     order = requests.get(f"http://localhost:5000/orders/{orderID}").json()
 
     return render_template("user/order.html", order=order)
+
+@user.route('/test')
+def test():
+    return str(os.listdir())
