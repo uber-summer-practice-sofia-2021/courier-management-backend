@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, json, current_app
-from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import HTTPException, NotFound
 from flaskr.database.models import *
 
 main = Blueprint("main", __name__)
