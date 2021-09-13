@@ -1,5 +1,5 @@
-from types import DynamicClassAttribute
-from flask import Blueprint, make_response, request, jsonify, json, Response
+from threading import current_thread
+from flask import Blueprint, make_response, request, jsonify, json, Response, current_app
 from flaskr.database.models import *
 
 api = Blueprint("api", __name__)
@@ -13,7 +13,7 @@ def couriers_api():
         courier = Courier.query.filter_by(id=courier_id).first().map()
         return Response(response=json.dumps(courier), content_type="application/json")
     except:
-        return Response(response=jsonify(None), status=204, content_type="application/json")
+        return Response(response=json.dumps(None), status=204, content_type="application/json")
 
 
 # Endpoint for requesting trip info
@@ -37,5 +37,16 @@ def orders_api():
         file.close()
         return Response(response=json.dumps(data), content_type="application/json")
     except:
-        return Response(response=jsonify(None), status=204, content_type="application/json")
+        return Response(response=json.dumps(None), status=204, content_type="application/json")
 
+
+# Endpoint for testing orders requests
+@api.route("/orders/<orderID>", methods=["GET"])
+def orders_id_api(orderID):
+    try:
+        fixtures_path = "../fixtures/orders.json"
+        file = open(fixtures_path)
+        data = next(x for x in json.load(file)['data'] if x['ID']==orderID)
+        return Response(response=json.dumps(data), content_type="application/json")
+    except:
+        return Response(response=json.dumps(None), status=204, content_type="application/json")

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, json, current_app
+from flask import Blueprint, render_template, redirect, url_for, json
 from werkzeug.exceptions import HTTPException
 from flaskr.database.models import *
 
@@ -21,6 +21,7 @@ def handle_http_exception(e):
         )
         response.content_type = "mainlication/json"
         return response
+            
 
 
 # Home page
