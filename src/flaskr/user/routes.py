@@ -168,14 +168,17 @@ def change_order_status(orderID):
             return redirect(url_for("user.dashboard"))
 
         # send status change request to order management
+        #requests.post('http://localhost:5000/orders/orderID',status=ASSINGED)
         insert_into_db(Trip(found_user.id, orderID), db)
         trip = Trip.query.filter_by(order_id=orderID).first()
         trip.assigned_at = timestamp()
     elif status == "picked":
         # send status change request to order management
+        #requests.post('http://localhost:5000/orders/orderID',status=PICKED)
         trip.picked_at = timestamp()
     elif status == "delivered":
         # send status change request to order management
+        #requests.post('http://localhost:5000/orders/orderID',status=DELIVERED)
         trip.delivered_at = timestamp()
         message_kafka("trips", trip.map())
     db.session.commit()
