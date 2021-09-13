@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, json, current_app
-from werkzeug.exceptions import HTTPException, NotFound
+from flask import Blueprint, render_template, redirect, url_for, json
+from werkzeug.exceptions import HTTPException
 from flaskr.database.models import *
 
 main = Blueprint("main", __name__)
 
 
 # Exception handling
-@main.app_errorhandler(Exception)
+@main.app_errorhandler(HTTPException)
 def handle_http_exception(e):
     try:
         return render_template(f"errors/{e.code}.html"), e.code
@@ -21,6 +21,7 @@ def handle_http_exception(e):
         )
         response.content_type = "mainlication/json"
         return response
+            
 
 
 # Home page
