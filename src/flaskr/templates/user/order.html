@@ -45,7 +45,7 @@
 
 <p>From:{{order.from['latitude']}}, {{order.from['longtitude']}}</p>
 <p>To: {{order.to['latitude']}}, {{order.to['longtitude']}}</p>
-<p>Distance: {{calculateDistance("1.1,1,2", "3.3,4.3")}}</p> -->
+<p >Distance: calculateDistance("1.1,1,2", "3.3,4.3")</p> -->
 
 
 
@@ -56,12 +56,12 @@
         <li class="active">Assigned</li>
         <li>
             <form method="POST" action="/user/dashboard/{{order.ID}}?status=picked">
-                <input id="assign order" type="submit" name="PICK_UP" />
+                <input id="assign order" type="submit" name="PICK_UP" value="PICKED UP" />
             </form>
         </li>
         <li>
             <form method="POST" action="/user/dashboard/{{order.ID}}?status=delivered">
-                <input id="assign order" type="submit" name="DELIVERED" />
+                <input id="assign order" type="submit" name="DELIVERED" value="DELIVERED" />
             </form>
         </li>
     </ul>
