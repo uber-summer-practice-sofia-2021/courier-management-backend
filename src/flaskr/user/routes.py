@@ -60,6 +60,7 @@ def settings():
         db.session.commit()
 
         flash("Information was saved!")
+        # return redirect(url_for("user.dashboard"))
 
     return render_template(
         "user/settings.html",
@@ -141,9 +142,7 @@ def order_dashboard(orderID):
         flash("Invalid user or session expired!")
         return redirect(url_for("user.login"))
 
-    # check if order is present in the db
-
-    insert_into_db(Trip(found_user.id, orderID), db)   
+    insert_into_db(Trip(found_user.id, orderID), db)
     change_order_status(orderID, "assigned")
 
     fixtures_path = "../fixtures/orders.json"
