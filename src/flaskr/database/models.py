@@ -14,6 +14,7 @@ class Courier(db.Model):
     max_height = db.Column("max_height", db.Float,nullable=False, default=0)
     tags = db.Column("tags", db.Text, nullable=False,default='')
     is_validated = db.Column("is_validated", db.Boolean, default=False)
+    current_order_id = db.Column("current_order_id", db.String(36), default=None)
 
     def __init__(self, email):
         self.id = str(uuid.uuid4())
