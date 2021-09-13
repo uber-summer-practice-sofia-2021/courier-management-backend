@@ -40,10 +40,14 @@
     <ul class="progressbar">
         <li class="active">Assigned</li>
         <li>
-            <input id="assign order" type="submit" name="PICK_UP" value="PICK_UP" />
+            <form method="POST" action="/user/dashboard/{{input.ID}}?status=picked">
+                <input id="assign order" type="submit" name="PICK_UP" />
+            </form>
         </li>
         <li>
-            <input id="assign order" type="submit" name="COMPLETE" value="COMPLETE" />
+            <form method="POST" action="/user/dashboard/{{input.ID}}?status=delivered">
+                <input id="assign order" type="submit" name="DELIVERED" />
+            </form>
         </li>
     </ul>
 </div>
