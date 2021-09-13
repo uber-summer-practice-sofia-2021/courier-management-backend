@@ -6,7 +6,7 @@ main = Blueprint("main", __name__)
 
 
 # Exception handling
-@main.app_errorhandler(Exception)
+@main.app_errorhandler(HTTPException)
 def handle_http_exception(e):
     try:
         return render_template(f"errors/{e.code}.html"), e.code
