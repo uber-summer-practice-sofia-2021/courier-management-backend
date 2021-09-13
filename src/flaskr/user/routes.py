@@ -160,11 +160,13 @@ def change_order_status(orderID):
         return redirect(url_for("user.login"))
 
     status = request.args["status"]
-    
-    order = requests.get(f"http://localhost:5000/orders/{orderID}").json()
     trip = Trip.query.filter_by(order_id=orderID).first()
 
     if status == "assigned":
+        if trip:
+            flash("Order is already taken")
+            return redirect(url_for("user.dashboard"))
+
         # send status change request to order management
         insert_into_db(Trip(found_user.id, orderID), db)
         trip = Trip.query.filter_by(order_id=orderID).first()
@@ -176,6 +178,8 @@ def change_order_status(orderID):
         # send status change request to order management
         trip.delivered_at = timestamp()
         message_kafka("trips", trip.map())
-
     db.session.commit()
+
+    order = requests.get(f"http://localhost:5000/orders/{orderID}").json()
+
     return render_template("user/order.html", order=order)
