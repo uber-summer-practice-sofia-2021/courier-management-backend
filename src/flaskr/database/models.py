@@ -30,11 +30,9 @@ class Courier(db.Model):
             "email": self.email,
             "name": self.name,
             "maxWeight": self.max_weight,
-            "maxDimension": {
-                "maxWidth": self.max_width,
-                "maxLength": self.max_length,
-                "maxHeight": self.max_height,
-            },
+            "maxWidth": self.max_width,
+            "maxLength": self.max_length,
+            "maxHeight": self.max_height,
             "tags": [x for x in self.tags.split(",") if x],
         }
         return data
