@@ -185,4 +185,4 @@ def change_order_status(orderID):
 
     order = requests.get(f"http://localhost:5000/orders/{orderID}").json()
 
-    return render_template("user/order.html", order=order)
+    return render_template("user/order.html", order=order, status=status)
