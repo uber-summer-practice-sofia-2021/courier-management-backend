@@ -158,7 +158,7 @@ def change_order_status(orderID):
         return redirect(url_for("user.login"))
 
     status = request.args["status"]
-
+    
     order = requests.get(f"http://localhost:5000/orders/{orderID}")
     trip = Trip.query.filter_by(order_id=orderID).first()
 
