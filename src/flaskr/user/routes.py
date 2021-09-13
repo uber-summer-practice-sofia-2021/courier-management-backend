@@ -1,4 +1,13 @@
-from flask import Blueprint, session, request, flash, redirect, url_for, render_template, json
+from flask import (
+    Blueprint,
+    session,
+    request,
+    flash,
+    redirect,
+    url_for,
+    render_template,
+    json,
+)
 from flaskr.user.utils import *
 from flaskr.database.models import *
 
@@ -122,11 +131,12 @@ def dashboard():
 
     # Request orders from order management
     orders = get_orders(
-             max_weight=found_user.max_weight,
-             max_height=found_user.max_height,
-             max_width=found_user.max_width,
-             max_length=found_user.max_length,
-             tags=found_user.tags.split(','))
+        maxWeight=found_user.max_weight,
+        maxHeight=found_user.max_height,
+        maxWidth=found_user.max_width,
+        maxLength=found_user.max_length,
+        tags=found_user.tags.split(","),
+    )
 
     data = orders.get("data")
     pagination = orders.get("pagination")
@@ -139,49 +149,24 @@ def dashboard():
     return render_template("user/dashboard.html", name=found_user.name, data=data)
 
 
-# # Endpoint for order visualization
-# @user.route("/dashboard/<orderID>", methods=["GET"])
-# def order_dashboard(orderID):
-#     found_user = Courier.query.filter_by(email=session.get("email")).first()
-
-#     if not found_user:
-#         flash("Invalid user or session expired!")
-#         return redirect(url_for("user.login"))
-
-#     insert_into_db(Trip(found_user.id, orderID), db)   
-#     change_order_status(orderID, "assigned")
-
-#     fixtures_path = "../fixtures/orders.json"
-#     file = open(fixtures_path)
-#     data = json.load(file)
-#     file.close()
-#     input = next(item for item in data['data'] if item["ID"]==orderID)
-
-#     return render_template("user/order.html", orderID=orderID, input=input)
-
-
 # Endpoint for order status change
 @user.route("/dashboard/<orderID>", methods=["POST"])
 def change_order_status(orderID):
-    status=request.args['status']
-    print(status)
 
     found_user = Courier.query.filter_by(email=session.get("email")).first()
     if not found_user:
         flash("Invalid user or session expired!")
         return redirect(url_for("user.login"))
 
-    fixtures_path = "../fixtures/orders.json"
-    file = open(fixtures_path)
-    data = json.load(file)
-    file.close()
-    input = next(item for item in data['data'] if item["ID"]==orderID)
+    status = request.args["status"]
+
+    order = requests.get(f"http://localhost:5000/orders/{orderID}")
     trip = Trip.query.filter_by(order_id=orderID).first()
 
     if status == "assigned":
         # send status change request to order management
         insert_into_db(Trip(found_user.id, orderID), db)
-        trip = Trip.query.filter_by(order_id=orderID).first()   
+        trip = Trip.query.filter_by(order_id=orderID).first()
         trip.assigned_at = timestamp()
     elif status == "picked":
         # send status change request to order management
@@ -192,4 +177,4 @@ def change_order_status(orderID):
         message_kafka("trips", trip.map())
 
     db.session.commit()
-    return render_template("user/order.html", orderID=orderID, input=input)
+    return render_template("user/order.html", order=order)
