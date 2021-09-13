@@ -14,16 +14,16 @@ class Courier(db.Model):
     max_height = db.Column("max_height", db.Float,nullable=False, default=0)
     tags = db.Column("tags", db.Text, nullable=False,default='')
     is_validated = db.Column("is_validated", db.Boolean, default=False)
+    current_order_id = db.Column("current_order_id", db.String(36), default=None)
 
     def __init__(self, email):
         self.id = str(uuid.uuid4())
         self.email = email
 
     def __repr__(self):
-        return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_weight}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}','{self.is_validated}')"
+        return str(self.map())
 
-    """ Returns a dictionary of the object """
-
+    # Returns a dictionary of the object
     def map(self):
         data = {
             "ID": self.id,
@@ -57,10 +57,9 @@ class Trip(db.Model):
         self.order_id = order_id
 
     def __repr__(self):
-        return f"Trip('{self.id}', '{self.courier_id}', '{self.order_id}', '{self.distance}', '{self.assigned_at}', '{self.picked_at}', '{self.delivered_at}',)"
+        return str(self.map())
 
-    """ Returns a dictionary of the object """
-
+    # Returns a dictionary of the object
     def map(self):
         data = {
             "ID": self.id,
