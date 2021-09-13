@@ -9,7 +9,5 @@
     "tags": [
         "fragile",
         "dangerous"
-    ],
-    "isActive": true,
-    "isAvailable": true
+    ]
 }
