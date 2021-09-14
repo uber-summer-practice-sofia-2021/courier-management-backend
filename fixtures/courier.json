@@ -1,18 +1,13 @@
 {
-    "courier": {
-        "ID": "7f4dc6b6-f8ba-477b-8b21-25446c9c72b3",
-        "email": "example@gimal.com",
-
-        "maxweight": 50.00,
-      
-        "maxDimmension": {
-            "maxwidth": 30.00,
-            "maxheight": 20.00,
-            "maxlength": 20.00
-        },
-        "name": "Jhon Nash",
-        "tags": [ "fragile", "dangerous" ],
-        "isActive": true,
-        "isAvailable": true  
-    }
+    "ID": "7f4dc6b6-f8ba-477b-8b21-25446c9c72b3",
+    "email": "example@gimal.com",
+    "maxweight": 50.00,
+    "maxwidth": 30.00,
+    "maxheight": 20.00,
+    "maxlength": 20.00,
+    "name": "Jhon Nash",
+    "tags": [
+        "fragile",
+        "dangerous"
+    ]
 }

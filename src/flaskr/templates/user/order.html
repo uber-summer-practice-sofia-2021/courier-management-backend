@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{%block title%} Order {%endblock%}
+
+{%block content%}
+
+<head>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<table class="centered thick-border">
+    <tr>
+        <th>client name</th>
+        <th>phone number</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Tags</th>
+        <th>delivery type</th>
+    </tr>
+    <tr>
+        <th>{{order.clientName}}</th>
+        <th>{{order.phoneNumber}}</th>
+        <th>{{order.from['addressName']}}</th>
+        <th>{{order.to['addressName']}}</th>
+        <th>{{','.join(order.tags)}}</th>
+        <th>{{order.deliveryType}}</th>
+
+    </tr>
+</table>
+<p></p>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/order_status_style.css')}}">
+<div class="container">
+    <ul class="progressbar">
+        <li class="active">Assigned</li>
+        <li>
+            <form method="POST" action="/user/dashboard/{{order.ID}}?status=picked">
+                <input id="assign order" type="submit" name="PICK_UP" />
+            </form>
+        </li>
+        <li>
+            <form method="POST" action="/user/dashboard/{{order.ID}}?status=delivered">
+                <input id="assign order" type="submit" name="DELIVERED" />
+            </form>
+        </li>
+    </ul>
+</div>
+
+{%endblock%}

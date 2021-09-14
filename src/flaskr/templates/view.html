@@ -1,8 +1,20 @@
 {% extends "base.html" %}
+
 {% block title%}View All Users{% endblock %}
 
 {% block content %}
-    {% for item in values %}
-        <p>ID: {{item.id}}; Email: {{item.email}}; Name: {{item.name}}; Max Weight: {{item.max_weight}}; Max Width: {{item.max_width}}; Max Length: {{item.max_length}}; Max Height: {{item.max_height}}; Tags: {{item.tags}}; isValidated: {{item.is_validated}}</p>
-    {% endfor %}
+
+<p>COURIERS:</p>
+{% for item in couriers %}
+<p>ID: {{item.id}}; Email: {{item.email}}; Name: {{item.name}}; Max Weight: {{item.max_weight}}; Max Width:
+    {{item.max_width}}; Max Length: {{item.max_length}}; Max Height: {{item.max_height}}; Tags: {{item.tags}};
+    isValidated: {{item.is_validated}}</p>
+{% endfor %}
+
+<p>TRIPS:</p>
+{% for item in trips %}
+<p>ID: {{item.id}}; CourierID: {{item.courier_id}}; OrderID: {{item.order_id}}; Distance: {{item.distance}}; AssignedAt:
+    {{item.assigned_at}}; PickedAt: {{item.picked_at}}; DeliveredAt: {{item.delivered_at}}</p>
+{% endfor %}
+
 {% endblock %}

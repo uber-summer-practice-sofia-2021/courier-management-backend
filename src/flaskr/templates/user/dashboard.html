@@ -1,0 +1,46 @@
+{% extends "base.html" %} 
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+
+<p>Courier {{name}} is now active!</p>
+<p></p>
+<form method="POST">
+    <input type="submit" name="submit_button" value="Go inactive" />
+</form>
+<p></p>
+
+<head>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<table class="centered thick-border">
+    <tr>
+        <th>From</th>
+        <th>To</th>
+        <th>Tags</th>
+        <th>Assign</th>
+    </tr>
+    {% for item in data %}
+
+    <tr>
+        <th>{{item.from['addressName']}}</th>
+        <th>{{item.to['addressName']}}</th>
+        <th>{{','.join(item.tags)}}</th>
+        <td>
+            <form method="POST" action="/user/dashboard/{{item.ID}}?status=assigned">
+                <input id="assign order" type="submit" name="assign order" />
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{%endblock%}
