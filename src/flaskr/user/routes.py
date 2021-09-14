@@ -14,6 +14,16 @@ import requests
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
+@user.route('/pagination', methods=['GET'], defaults={"page": 1}) 
+@user.route('/pagination/<int:page>', methods=['GET'])
+def pagination(page):
+    page = page
+    per_page = 2
+    trips = Trip.query.paginate(page,per_page,error_out=False)
+    # print("Result......", users)
+    return render_template("user/pagination.html", trips=trips)
+
+
 
 # Login page
 @user.route("/login", methods=["POST", "GET"])
