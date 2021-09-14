@@ -6,6 +6,7 @@ from flask import (
     redirect,
     url_for,
     render_template,
+    jsonify
 )
 from flask.globals import current_app
 from flaskr.user.utils import *
@@ -220,4 +221,4 @@ def order_dashboard(orderID):
     change_order_status(orderID, status)
     order = get_order_by_id(orderID)
 
-    return render_template("user/order.html", order=order, status=status)
+    return render_template("user/order.html", order=order,status=status)
