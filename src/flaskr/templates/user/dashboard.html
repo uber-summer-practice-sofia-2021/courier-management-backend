@@ -42,7 +42,14 @@
     </tr>
     {% endfor %}
 
+    
+
 </table>
+<a href="#">&laquo;</a>
+{% for page in range(1, pagination.totalPages+1) %}
+        <a href="{{ url_for('user.dashboard', page=page) }}">{{page}}</a>
+{% endfor %}
+<a href="#">&raquo;</a>
 
 <!-- <div class="pagination">
     <a href="#">&laquo;</a>

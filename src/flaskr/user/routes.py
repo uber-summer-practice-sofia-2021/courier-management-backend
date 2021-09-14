@@ -19,7 +19,7 @@ user = Blueprint("user", __name__, url_prefix="/user")
 @user.route('/pagination/<int:page>', methods=['GET'])
 def pagination(page):
     page = page
-    per_page = 2
+    per_page = 1
     trips = Trip.query.paginate(page,per_page,error_out=False)
     # print("Result......", users)
     return render_template("user/pagination.html", trips=trips)
@@ -134,6 +134,8 @@ def inactive():
 # Endpoint for the user dashboard
 @user.route("/dashboard", methods=["POST", "GET"])
 def dashboard():
+    page = request.args.get("page") if request.args.get("page") else 1
+    limit = 10
     found_user = Courier.query.filter_by(email=session.get("email")).first()
 
     if not found_user:
@@ -167,12 +169,14 @@ def dashboard():
         maxWidth=found_user.max_width,
         maxLength=found_user.max_length,
         tags=found_user.tags.split(","),
+        page=page,
+        limit=limit
     )
 
     data = orders.get("data")
     pagination = orders.get("pagination")
 
-    return render_template("user/dashboard.html", name=found_user.name, data=data)
+    return render_template("user/dashboard.html", name=found_user.name, data=data, pagination=pagination)
 
 
 # Endpoint for order status change

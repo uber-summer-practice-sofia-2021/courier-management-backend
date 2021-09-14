@@ -4,36 +4,41 @@
 
 {% block content %}
 
-<form method="POST">
-    <p>Full Name:</p>
-    <input type="text" name="name" placeholder="Enter name" value="{{name if name}}" required />
-    <p>Maximum weight of the package:</p>
-    <input type="number" step="0.5" name="weight" min="5" value="{{max_weight if max_weight}}" required />
-    <p>Maximum width of the package:</p>
-    <input type="number" step="0.5" name="width" min="0" value="{{max_width if max_width}}" required />
-    <p>Maximum height of the package:</p>
-    <input type="number" step="0.5" name="height" min="0" value="{{max_height if max_height}}" required />
-    <p>Maximum length of the package:</p>
-    <input type="number" step="0.5" name="length" min="0" value="{{max_length if max_length}}" required />
-    <ul id="tags-selected">Tags: 
-        {% for tag in tags %}
-        <li>{{tag}}</li>
-        {% endfor %}
-    </ul>
-    <details id="tags-select-menu" ontoggle="filterTags({{tags}}, {{available_tags}});">
-        <summary>Tags</summary>
-        <details-menu>
-            <div id="tags-menu-list">
-                <div>
-                    <input id='tags_search' type="text" placeholder="Search tags.."
-                        oninput="filterTags({{tags}}, {{available_tags}});" />
-                </div>
-            </div>
-        </details-menu>
-    </details>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_settings.css')}}">
 
-    <input type="submit" value="Submit" />
-</form>
+
+    <form method="POST">
+        <p>Full Name:</p>
+        <input type="text" name="name" placeholder="Enter name" value="{{name if name}}" required />
+        <p>Maximum weight of the package:</p>
+        <input type="number" step="0.5" name="weight" min="5" value="{{max_weight if max_weight}}" required />
+        <p>Maximum width of the package:</p>
+        <input type="number" step="0.5" name="width" min="0" value="{{max_width if max_width}}" required />
+        <p>Maximum height of the package:</p>
+        <input type="number" step="0.5" name="height" min="0" value="{{max_height if max_height}}" required />
+        <p>Maximum length of the package:</p>
+        <input type="number" step="0.5" name="length" min="0" value="{{max_length if max_length}}" required />
+        <ul id="tags-selected">Tags: 
+            {% for tag in tags %}
+            <li>{{tag}}</li>
+            {% endfor %}
+        </ul>
+        <details id="tags-select-menu" ontoggle="filterTags({{tags}}, {{available_tags}});">
+            <summary>Tags</summary>
+            <details-menu>
+                <div id="tags-menu-list">
+                    <div>
+                        <input id='tags_search' type="text" placeholder="Search tags.."
+                            oninput="filterTags({{tags}}, {{available_tags}});" />
+                    </div>
+                </div>
+            </details-menu>
+        </details>
+
+        <input type="submit" value="Submit" />
+    </form>
+
+
 
 <script src="{{ url_for('static', filename='js/tags.js' )}}"></script>
 
