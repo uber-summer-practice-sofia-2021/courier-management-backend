@@ -4,12 +4,12 @@
             "clientName": "John Smith",
             "from": {
                 "latitude": 1,
-                "longtitude": 2,
+                "longitude": 2,
                 "addressName": "Mladost 5, Sofia"
             },
             "to": {
                 "latitude": 4,
-                "longtitude": 5,
+                "longitude": 5,
                 "addressName": "Mladost 1, Sofia"
             },
             "clientEmail": "jsmith@mail.bg",
@@ -36,12 +36,12 @@
             "clientName": "John Smith",
             "from": {
                 "latitude": 1,
-                "longtitude": 2,
+                "longitude": 2,
                 "addressName": "Mladost 4, Sofia"
             },
             "to": {
                 "latitude": 4,
-                "longtitude": 5,
+                "longitude": 5,
                 "addressName": "Mladost 1, Sofia"
             },
             "clientEmail": "jsmith@mail.bg",
@@ -68,12 +68,12 @@
             "clientName": "John Smith",
             "from": {
                 "latitude": 1,
-                "longtitude": 2,
+                "longitude": 2,
                 "addressName": "Graf Ignatiev 17, Sofia"
             },
             "to": {
                 "latitude": 4,
-                "longtitude": 5,
+                "longitude": 5,
                 "addressName": "Opulchenska 117, Sofia"
             },
             "clientEmail": "jsmith@mail.bg",
