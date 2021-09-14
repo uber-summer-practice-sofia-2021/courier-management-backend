@@ -2,18 +2,20 @@ version: '3.7'
 services:
 
   server:
+    image: courier
     container_name: courier-server
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
+      - ./fixtures:/app/fixtures
       - ./src:/app
     ports:
       - target: 5000
         published: 5000
         protocol: tcp
     environment:
-      - FLASK_APP=server.py
+      - FLASK_APP=flaskr
       - FLASK_ENV=development
   
   zookeeper:

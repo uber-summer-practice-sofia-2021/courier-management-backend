@@ -21,10 +21,9 @@ class Courier(db.Model):
         self.email = email
 
     def __repr__(self):
-        return f"Courier('{self.id}', '{self.email}', '{self.name}', '{self.max_weight}', '{self.max_width}', '{self.max_length}', '{self.max_height}', '{self.tags}','{self.is_validated}')"
+        return str(self.map())
 
-    """ Returns a dictionary of the object """
-
+    # Returns a dictionary of the object
     def map(self):
         data = {
             "ID": self.id,
@@ -58,10 +57,9 @@ class Trip(db.Model):
         self.order_id = order_id
 
     def __repr__(self):
-        return f"Trip('{self.id}', '{self.courier_id}', '{self.order_id}', '{self.distance}', '{self.assigned_at}', '{self.picked_at}', '{self.delivered_at}',)"
+        return str(self.map())
 
-    """ Returns a dictionary of the object """
-
+    # Returns a dictionary of the object
     def map(self):
         data = {
             "ID": self.id,

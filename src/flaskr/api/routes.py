@@ -32,6 +32,7 @@ def trips_api():
 def orders_api():
     try:
         fixtures_path = "../fixtures/orders.json"
+        #fixtures_path = "fixtures/orders.json"
         file = open(fixtures_path)
         data = json.load(file)
         file.close()
@@ -45,6 +46,7 @@ def orders_api():
 def orders_id_api(orderID):
     try:
         fixtures_path = "../fixtures/orders.json"
+        #fixtures_path = "fixtures/orders.json"
         file = open(fixtures_path)
         data = next(x for x in json.load(file)['data'] if x['ID']==orderID)
         return Response(response=json.dumps(data), content_type="application/json")

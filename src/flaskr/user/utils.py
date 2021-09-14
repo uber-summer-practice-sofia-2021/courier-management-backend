@@ -31,9 +31,28 @@ def get_orders(**params):
     try:
         return requests.get("http://localhost:5000/orders", params).json()
     except:
-        return None
+        return {}
+
+
+# Requests order by id
+def get_order_by_id(orderID):
+    try:
+        return requests.get(f"http://localhost:5000/orders/{orderID}").json()
+    except:
+        return {}
+
+
+# Send order status change
+def change_order_status(orderID, status):
+    try:
+        requests.post(f"http://ordermanagement/orders/{orderID}?status={status.upper()}")
+    except:
+        pass
 
 
 # Sends message to kafka
 def message_kafka(topic, data):
-    Producer().produce(topic, data)
+    try:
+        Producer().produce(topic, data)
+    except:
+        pass

@@ -6,8 +6,8 @@ from flask import (
     redirect,
     url_for,
     render_template,
-    json,
 )
+from flask.globals import current_app
 from flaskr.user.utils import *
 from flaskr.database.models import *
 import requests
@@ -23,10 +23,7 @@ def login():
 
     if found_user:
         flash("Already logged in!")
-
-        if found_user.is_validated:
-            return redirect(url_for("user.dashboard"))
-        return redirect(url_for("user.settings"))
+        return redirect(url_for("user.dashboard"))
 
     if request.method == "POST":
         email = request.form["email"].strip()
@@ -41,9 +38,7 @@ def login():
         session["email"] = email
 
         flash("Login successful!")
-        if found_user.is_validated:
-            return redirect(url_for("user.dashboard"))
-        return redirect(url_for("user.settings"))
+        return redirect(url_for("user.dashboard"))
 
     return render_template("user/login.html")
 
@@ -56,6 +51,10 @@ def settings():
     if not found_user:
         flash("Invalid user or session expired!")
         return redirect(url_for("user.logout"))
+
+    if found_user.current_order_id:
+        flash("You have a trip in progress!")
+        return redirect(url_for("user.dashboard", orderID=found_user.current_order_id))
 
     if request.method == "POST":
 
@@ -105,8 +104,16 @@ def inactive():
         flash("Invalid user or session expired!")
         return redirect(url_for("user.login"))
 
+    if not found_user.is_validated:
+        flash("You need to complete your profile first!")
+        return redirect(url_for("user.settings"))
+
+    if found_user.current_order_id:
+        flash("You have a trip in progress!")
+        return redirect(url_for("user.dashboard", orderID=found_user.current_order_id))
+
     if request.method == "POST":
-        if request.form["submit_button"] == "Go active":
+        if request.form.get("submit") == "active":
             session["status"] = "active"
             return redirect(url_for("user.dashboard"))
 
@@ -130,6 +137,17 @@ def dashboard():
         flash("You need to complete your profile first!")
         return redirect(url_for("user.settings"))
 
+    if found_user.current_order_id:
+        flash("You have a trip in progress!")
+        return redirect(
+            url_for("user.order_dashboard", orderID=found_user.current_order_id)
+        )
+
+    if request.method == "POST":
+        if request.form.get("submit") == "inactive":
+            session["status"] = "inactive"
+            return redirect(url_for("user.inactive"))
+
     # Request orders from order management
     orders = get_orders(
         maxWeight=found_user.max_weight,
@@ -142,24 +160,34 @@ def dashboard():
     data = orders.get("data")
     pagination = orders.get("pagination")
 
-    if request.method == "POST":
-        if request.form["submit_button"] == "Go inactive":
-            session["status"] = "inactive"
-            return redirect(url_for("user.inactive"))
-
     return render_template("user/dashboard.html", name=found_user.name, data=data)
 
 
 # Endpoint for order status change
-@user.route("/dashboard/<orderID>", methods=["POST"])
-def change_order_status(orderID):
+@user.route("/dashboard/<orderID>", methods=["GET", "POST"])
+def order_dashboard(orderID):
 
     found_user = Courier.query.filter_by(email=session.get("email")).first()
+
     if not found_user:
         flash("Invalid user or session expired!")
         return redirect(url_for("user.login"))
 
-    status = request.args["status"]
+    if session["status"] == "inactive":
+        flash("You are currently inactive!")
+        return redirect(url_for("user.inactive"))
+
+    if not found_user.is_validated:
+        flash("You need to complete your profile first!")
+        return redirect(url_for("user.settings"))
+
+    if found_user.current_order_id and found_user.current_order_id != orderID:
+        flash("You are already assigned an order!")
+        return redirect(
+            url_for("user.order_dashboard", orderID=found_user.current_order_id)
+        )
+
+    status = request.form.get("status")
     trip = Trip.query.filter_by(order_id=orderID).first()
 
     if status == "assigned":
@@ -167,22 +195,19 @@ def change_order_status(orderID):
             flash("Order is already taken")
             return redirect(url_for("user.dashboard"))
 
-        # send status change request to order management
-        #requests.post('http://localhost:5000/orders/orderID',status=ASSINGED)
         insert_into_db(Trip(found_user.id, orderID), db)
         trip = Trip.query.filter_by(order_id=orderID).first()
         trip.assigned_at = timestamp()
-    elif status == "picked":
-        # send status change request to order management
-        #requests.post('http://localhost:5000/orders/orderID',status=PICKED)
+        found_user.current_order_id = orderID
+    elif status == "picked_up":
         trip.picked_at = timestamp()
-    elif status == "delivered":
-        # send status change request to order management
-        #requests.post('http://localhost:5000/orders/orderID',status=DELIVERED)
+    elif status == "completed":
         trip.delivered_at = timestamp()
+        found_user.current_order_id = None
         message_kafka("trips", trip.map())
     db.session.commit()
 
-    order = requests.get(f"http://localhost:5000/orders/{orderID}").json()
+    change_order_status(orderID, status)
+    order = get_order_by_id(orderID)
 
     return render_template("user/order.html", order=order, status=status)
