@@ -10,7 +10,8 @@ from flask import (
 )
 from flaskr.user.utils import *
 from flaskr.database.models import *
-
+import numpy as np
+import pandas as pd
 user = Blueprint("user", __name__, url_prefix="/user")
 
 
@@ -195,10 +196,11 @@ def return_trips_history():
     found_user = Courier.query.filter_by(email=session["email"]).first()
     print(session["email"])
     print(found_user.id)
-
     history = Trip.query.filter_by(courier_id = found_user.id).all()
+
+    print(history[0].array())
+    for i in range(len(history)):
+        history[i] = history[i].array()
     print(history)
-    #unique user id from which we will generate the hostory orders.
-    user_id = found_user.id
-    return "this is it."
+    return render_template('user/history.html', items=history)
 
