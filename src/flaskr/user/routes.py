@@ -139,6 +139,7 @@ def dashboard():
 
     if found_user.current_order_id:
         flash("You have a trip in progress!")
+
         return redirect(
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
@@ -166,7 +167,6 @@ def dashboard():
 # Endpoint for order status change
 @user.route("/dashboard/<orderID>", methods=["GET", "POST"])
 def order_dashboard(orderID):
-
     found_user = Courier.query.filter_by(email=session.get("email")).first()
 
     if not found_user:
