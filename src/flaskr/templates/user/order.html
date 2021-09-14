@@ -17,6 +17,9 @@
 {% block content %}
 
 <body>
+    <script id="script_id" src=" {{url_for('static',filename='js/order-progress.js') }}" status="{{status}}">
+
+    </script>
     <table class="centered thick-border">
         <tr>
             <th>client name</th>
@@ -41,14 +44,14 @@
     <div class="container">
         <ul class="progressbar">
             <li class="active">Assigned</li>
-            <li>
+            <li id="progressbar_picked">
                 <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
-                    <button type="submit" name="status" value="picked_up">Picked Up</button>
+                    <button id="btn_picked" class="btn-submit" type="submit" name="status" value="picked_up">Picked Up</button>
                 </form>
             </li>
-            <li>
+            <li id="progressbar_delivered">
                 <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
-                    <button type="submit" name="status" value="completed">Delivered</button>
+                    <button  id='btn_delivered' type="submit" name="status" value="completed">Delivered</button>
                 </form>
             </li>
         </ul>
