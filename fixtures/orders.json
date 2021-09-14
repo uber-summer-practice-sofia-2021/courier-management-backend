@@ -86,6 +86,10 @@
         }
     ],
     "pagination": {
-
+        "next": null,
+        "prev": null,
+        "totalItems": 2,
+        "totalPages": 10,
+        "currentPage": 0
     }
 }
