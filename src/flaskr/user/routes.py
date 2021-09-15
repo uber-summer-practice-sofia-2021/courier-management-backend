@@ -230,16 +230,44 @@ def order_dashboard(orderID):
 
 @user.route("/history")
 def return_trips_history():
+    limit = 2
+    next_cursor = request.args.getlist("next_cursor")
+    prev_cursor = request.args.getlist("prev_cursor")
+
     if "email" not in session:
         return redirect(url_for("user.login"))
 
+
     found_user = Courier.query.filter_by(email=session["email"]).first()
-    # print(session["email"])
-    # print(found_user.id)
-    history = Trip.query.filter_by(courier_id = found_user.id).all()
-    # print(history)
-    # print(history[0].array())
+    history = Trip.query.filter_by(courier_id = found_user.id).order_by(Trip.delivered_at.desc()).all()
+
+    if prev_cursor:
+        print(prev_cursor)
+        index = max(next(x for (x, e) in enumerate(history) if e.id==prev_cursor[0])-1, 0)
+        next_cursor = [history[index].id, index]
+        index1 = max(next(x for (x, e) in enumerate(history) if e.id==prev_cursor[0])-limit, 0)
+        prev_cursor = [history[index1].id, index1]
+    elif next_cursor:
+        index = min(next(x for (x, e) in enumerate(history) if e.id==next_cursor[0])+1, len(history)-1)
+        prev_cursor = [history[index].id, index]
+        print(prev_cursor)
+        index1 = min(next(x for (x, e) in enumerate(history) if e.id==next_cursor[0])+limit, len(history)-1)
+        next_cursor = [history[index1].id, index1]
+    else:
+        if len(history) > 0:
+            prev_cursor = [history[0].id, 0]
+        if len(history) >= limit:
+            next_cursor = [history[limit-1].id, limit-1]
+        else:
+            next_cursor = [history[-1].id, len(history)-1]
+
+    
+    history = history[int(prev_cursor[1]):int(next_cursor[1])+1]
+
+
     for i in range(len(history)):
         history[i] = history[i].array()
-    # print(history)
-    return render_template('user/history.html', items=reversed(history))
+
+    
+
+    return render_template('user/history.html', items=history, prev_cursor=prev_cursor, next_cursor=next_cursor, limit=limit)
