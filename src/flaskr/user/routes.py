@@ -11,7 +11,19 @@ from flask import (
 from flask.globals import current_app
 from flaskr.user.utils import *
 from flaskr.database.models import *
+import requests
+
 user = Blueprint("user", __name__, url_prefix="/user")
+
+@user.route('/pagination', methods=['GET'], defaults={"page": 1}) 
+@user.route('/pagination/<int:page>', methods=['GET'])
+def pagination(page):
+    page = page
+    per_page = 1
+    trips = Trip.query.paginate(page,per_page,error_out=False)
+    # print("Result......", users)
+    return render_template("user/pagination.html", trips=trips)
+
 
 
 # Login page
@@ -68,6 +80,7 @@ def settings():
         db.session.commit()
 
         flash("Information was saved!")
+        # return redirect(url_for("user.dashboard"))
 
     return render_template(
         "user/settings.html",
@@ -121,6 +134,8 @@ def inactive():
 # Endpoint for the user dashboard
 @user.route("/dashboard", methods=["POST", "GET"])
 def dashboard():
+    page = request.args.get("page") if request.args.get("page") else 1
+    limit = 10
     found_user = Courier.query.filter_by(email=session.get("email")).first()
 
     if not found_user:
@@ -137,6 +152,7 @@ def dashboard():
 
     if found_user.current_order_id:
         flash("You have a trip in progress!")
+
         return redirect(
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
@@ -153,18 +169,19 @@ def dashboard():
         maxWidth=found_user.max_width,
         maxLength=found_user.max_length,
         tags=found_user.tags.split(","),
+        page=page,
+        limit=limit
     )
 
     data = orders.get("data")
     pagination = orders.get("pagination")
 
-    return render_template("user/dashboard.html", name=found_user.name, data=data)
+    return render_template("user/dashboard.html", name=found_user.name, data=data, pagination=pagination)
 
 
 # Endpoint for order status change
 @user.route("/dashboard/<orderID>", methods=["GET", "POST"])
 def order_dashboard(orderID):
-
     found_user = Courier.query.filter_by(email=session.get("email")).first()
 
     if not found_user:
