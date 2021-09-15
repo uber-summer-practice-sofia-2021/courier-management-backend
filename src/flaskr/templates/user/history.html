@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<body>
+
+<h2>History of my trips</h2>
+
+<table style="width:100%">
+  <tr>
+    <th>Trip ID:</th>
+    <th>Courier ID</th>
+    <th>Order ID:</th>
+    <th>Distance:</th>
+    <th>Assigned at:</th>
+    <th>Picked up at:</th>
+    <th>Delivered at:</th>
+  </tr>
+  {% for item in items %}
+  <tr>
+    <td>{{item[0]}}</td>
+    <td>{{item[1]}}</td>
+    <td>{{item[2]}}</td>
+    <td>{{item[3]}}</td>
+    <td>{{item[4]}}</td>
+    <td>{{item[5]}}</td>
+    <td>{{item[6]}}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p>Here are all the available trips for this Courier.</p>
+
+</body>
+</html>
+

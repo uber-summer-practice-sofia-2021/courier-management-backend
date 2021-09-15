@@ -11,7 +11,6 @@ from flask import (
 from flask.globals import current_app
 from flaskr.user.utils import *
 from flaskr.database.models import *
-
 user = Blueprint("user", __name__, url_prefix="/user")
 
 
@@ -210,3 +209,20 @@ def order_dashboard(orderID):
     order = get_order_by_id(orderID)
 
     return render_template("user/order.html", order=order,status=status)
+
+
+@user.route("/history")
+def return_trips_history():
+    if "email" not in session:
+        return redirect(url_for("user.login"))
+
+    found_user = Courier.query.filter_by(email=session["email"]).first()
+    # print(session["email"])
+    # print(found_user.id)
+    history = Trip.query.filter_by(courier_id = found_user.id).all()
+    # print(history)
+    # print(history[0].array())
+    for i in range(len(history)):
+        history[i] = history[i].array()
+    # print(history)
+    return render_template('user/history.html', items=history)
