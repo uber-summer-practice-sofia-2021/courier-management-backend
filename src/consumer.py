@@ -1,11 +1,9 @@
 from kafka import KafkaConsumer
-import json
-
-KAFKA_TOPIC = "trips"
+import json, os
 
 consumer = KafkaConsumer(
-    KAFKA_TOPIC,
-    bootstrap_servers=["localhost:9092", "kafka:9092"],
+    "trips",
+    bootstrap_servers=os.environ['KAFKA_BROKERS'].split(','),
     value_deserializer=lambda v: json.loads(v.decode("utf-8")),
     auto_offset_reset="earliest",
     enable_auto_commit=True,

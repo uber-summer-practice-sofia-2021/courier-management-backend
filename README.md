@@ -8,8 +8,7 @@
  
  venv\Scripts\activate
 
-# Start up local Kafka broker:
+# Start up Kafka with Docker:
 
-While in the kafka folder write the following lines in separate terminals in the given order:
-- ```bin/zookeeper-server-start.sh config/zookeeper.properties```
-- ```bin/kafka-server-start.sh config/server.properties```
+- Use ```docker-compose up -d``` to start services in the docker-compose.yml file
+- To consume messages from kafka type ```docker exec -it courier-server python consumer.py``` in a separate terminal to start up the consumer who will start printing the incoming messages

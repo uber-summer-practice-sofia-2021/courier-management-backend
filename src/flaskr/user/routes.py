@@ -6,7 +6,7 @@ from flask import (
     redirect,
     url_for,
     render_template,
-    jsonify
+    jsonify,
 )
 from flask.globals import current_app
 from flaskr.user.utils import *
@@ -15,15 +15,15 @@ import requests
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
-@user.route('/pagination', methods=['GET'], defaults={"page": 1}) 
-@user.route('/pagination/<int:page>', methods=['GET'])
+
+@user.route("/pagination", methods=["GET"], defaults={"page": 1})
+@user.route("/pagination/<int:page>", methods=["GET"])
 def pagination(page):
     page = page
     per_page = 1
-    trips = Trip.query.paginate(page,per_page,error_out=False)
+    trips = Trip.query.paginate(page, per_page, error_out=False)
     # print("Result......", users)
     return render_template("user/pagination.html", trips=trips)
-
 
 
 # Login page
@@ -170,13 +170,18 @@ def dashboard():
         maxLength=found_user.max_length,
         tags=found_user.tags.split(","),
         page=page,
-        limit=limit
+        limit=limit,
     )
+
+    if not orders:
+        return render_template("errors/error")
 
     data = orders.get("data")
     pagination = orders.get("pagination")
 
-    return render_template("user/dashboard.html", name=found_user.name, data=data, pagination=pagination)
+    return render_template(
+        "user/dashboard.html", name=found_user.name, data=data, pagination=pagination
+    )
 
 
 # Endpoint for order status change
@@ -225,7 +230,7 @@ def order_dashboard(orderID):
     change_order_status(orderID, status)
     order = get_order_by_id(orderID)
 
-    return render_template("user/order.html", order=order,status=status)
+    return render_template("user/order.html", order=order, status=status)
 
 
 @user.route("/history")
@@ -237,37 +242,53 @@ def return_trips_history():
     if "email" not in session:
         return redirect(url_for("user.login"))
 
-
     found_user = Courier.query.filter_by(email=session["email"]).first()
-    history = Trip.query.filter_by(courier_id = found_user.id).order_by(Trip.delivered_at.desc()).all()
+    history = (
+        Trip.query.filter_by(courier_id=found_user.id)
+        .order_by(Trip.delivered_at.desc())
+        .all()
+    )
 
     if prev_cursor:
         print(prev_cursor)
-        index = max(next(x for (x, e) in enumerate(history) if e.id==prev_cursor[0])-1, 0)
+        index = max(
+            next(x for (x, e) in enumerate(history) if e.id == prev_cursor[0]) - 1, 0
+        )
         next_cursor = [history[index].id, index]
-        index1 = max(next(x for (x, e) in enumerate(history) if e.id==prev_cursor[0])-limit, 0)
+        index1 = max(
+            next(x for (x, e) in enumerate(history) if e.id == prev_cursor[0]) - limit,
+            0,
+        )
         prev_cursor = [history[index1].id, index1]
     elif next_cursor:
-        index = min(next(x for (x, e) in enumerate(history) if e.id==next_cursor[0])+1, len(history)-1)
+        index = min(
+            next(x for (x, e) in enumerate(history) if e.id == next_cursor[0]) + 1,
+            len(history) - 1,
+        )
         prev_cursor = [history[index].id, index]
         print(prev_cursor)
-        index1 = min(next(x for (x, e) in enumerate(history) if e.id==next_cursor[0])+limit, len(history)-1)
+        index1 = min(
+            next(x for (x, e) in enumerate(history) if e.id == next_cursor[0]) + limit,
+            len(history) - 1,
+        )
         next_cursor = [history[index1].id, index1]
     else:
         if len(history) > 0:
             prev_cursor = [history[0].id, 0]
         if len(history) >= limit:
-            next_cursor = [history[limit-1].id, limit-1]
+            next_cursor = [history[limit - 1].id, limit - 1]
         else:
-            next_cursor = [history[-1].id, len(history)-1]
+            next_cursor = [history[-1].id, len(history) - 1]
 
-    
-    history = history[int(prev_cursor[1]):int(next_cursor[1])+1]
-
+    history = history[int(prev_cursor[1]) : int(next_cursor[1]) + 1]
 
     for i in range(len(history)):
         history[i] = history[i].array()
 
-    
-
-    return render_template('user/history.html', items=history, prev_cursor=prev_cursor, next_cursor=next_cursor, limit=limit)
+    return render_template(
+        "user/history.html",
+        items=history,
+        prev_cursor=prev_cursor,
+        next_cursor=next_cursor,
+        limit=limit,
+    )
