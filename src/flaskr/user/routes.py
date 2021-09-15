@@ -234,7 +234,7 @@ def order_dashboard(orderID):
 
 
 @user.route("/history")
-def return_trips_history():
+def history():
     limit = 2
     next_cursor = request.args.getlist("next_cursor")
     prev_cursor = request.args.getlist("prev_cursor")

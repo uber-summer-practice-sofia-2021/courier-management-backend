@@ -1,11 +1,16 @@
-<!DOCTYPE html>
-<html>
+{% extends "navbar.html" %}
+
+{% block style %}
 <style>
-table, th, td {
-  border:1px solid black;
-}
+  table,
+  th,
+  td {
+    border: 1px solid black;
+  }
 </style>
-<body>
+{% endblock %}
+
+{% block content %}
 
 <h2>History of my trips</h2>
 
@@ -33,8 +38,7 @@ table, th, td {
 </table>
 <p>Here are all the available trips for this Courier.</p>
 <p></p>
-<a href="{{ url_for('user.return_trips_history', prev_cursor=prev_cursor)}}">Prev</a>
-<a href="{{ url_for('user.return_trips_history', next_cursor=next_cursor)}}">Next</a>
-</body>
-</html>
+<a href="{{ url_for('user.history', prev_cursor=prev_cursor)}}">Prev</a>
+<a href="{{ url_for('user.history', next_cursor=next_cursor)}}">Next</a>
 
+{% endblock %}
