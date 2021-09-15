@@ -242,4 +242,4 @@ def return_trips_history():
     for i in range(len(history)):
         history[i] = history[i].array()
     # print(history)
-    return render_template('user/history.html', items=history)
+    return render_template('user/history.html', items=reversed(history))
