@@ -26,7 +26,6 @@ def trips_api():
     except:
         return Response(response=json.dumps(None), status=204, content_type="application/json")
 
-
 # Endpoint for testing orders requests
 @api.route("/orders", methods=["GET"])
 def orders_api():
