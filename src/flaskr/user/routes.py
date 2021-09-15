@@ -197,10 +197,9 @@ def return_trips_history():
     print(session["email"])
     print(found_user.id)
     history = Trip.query.filter_by(courier_id = found_user.id).all()
-
+    print(history)
     print(history[0].array())
     for i in range(len(history)):
         history[i] = history[i].array()
     print(history)
     return render_template('user/history.html', items=history)
-
