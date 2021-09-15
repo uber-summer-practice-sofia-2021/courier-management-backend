@@ -223,6 +223,7 @@ def order_dashboard(orderID):
         trip.picked_at = timestamp()
     elif status == "completed":
         trip.delivered_at = timestamp()
+        trip.sorter = trip.delivered_at + trip.id
         found_user.current_order_id = None
         message_kafka("trips", trip.map())
     db.session.commit()
@@ -243,6 +244,7 @@ def history():
         return redirect(url_for("user.login"))
 
     found_user = Courier.query.filter_by(email=session["email"]).first()
+
     history = (
         Trip.query.filter_by(courier_id=found_user.id)
         .order_by(Trip.delivered_at.desc())
@@ -281,6 +283,8 @@ def history():
             next_cursor = [history[-1].id, len(history) - 1]
 
     history = history[int(prev_cursor[1]) : int(next_cursor[1]) + 1]
+
+    #history = get_before(prev_cursor, limit, found_user.id) if prev_cursor else get_after(next_cursor, limit, found_user.id)
 
     for i in range(len(history)):
         history[i] = history[i].array()

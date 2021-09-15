@@ -2,6 +2,7 @@ from datetime import datetime
 from threading import current_thread
 import requests
 from flaskr.producer import Producer
+from flaskr.database.models import db, Trip
 from flask import current_app
 
 AVAILABLE_TAGS = ["fragile", "dangerous"]
@@ -59,3 +60,33 @@ def message_kafka(topic, data):
         Producer().produce(topic, data)
     except Exception as e:
         current_app.logger.debug(e)
+
+
+# def get_before(courier_id, cursor = Trip.query.order_by(Trip.sorter.desc()).last().sorter, limit = 10):
+#     try:
+#         return db.session.execute(
+#             f"SELECT *\
+#             FROM (SELECT *\
+#                 FROM Trips\
+#                 WHERE courier_id LIKE '{courier_id}'\
+#                     AND sorter > '{cursor}'\
+#                 ORDER BY sorter ASC\
+#                 LIMIT {limit}) x\
+#             ORDER BY sorter DESC;"
+#         )
+#     except:
+#         return None
+
+
+# def get_after(courier_id, cursor = Trip.query.order_by(Trip.sorter.desc()).first().sorter, limit = 10):
+#     try:
+#         return db.session.execute(
+#             f"SELECT *\
+#             FROM Trip\
+#             WHERE courier_id LIKE '{courier_id}'\
+#                 AND sorter < '{cursor}'\
+#             ORDER BY sorter DESC\
+#             LIMIT {limit}"
+#         )
+#     except:
+#         return None

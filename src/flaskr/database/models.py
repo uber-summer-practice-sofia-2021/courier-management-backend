@@ -7,7 +7,7 @@ db = SQLAlchemy()
 class Courier(db.Model):
     id = db.Column("id", db.String(36), primary_key=True)
     email = db.Column("email", db.String(100), nullable=False, unique=True)
-    name = db.Column("name", db.String(30),nullable=False,default='')
+    name = db.Column("name", db.String(24),nullable=False,default='')
     max_weight = db.Column("max_weight", db.Float,nullable=False, default=0)
     max_width = db.Column("max_width", db.Float,nullable=False, default=0)
     max_length = db.Column("max_length", db.Float,nullable=False, default=0)
@@ -45,9 +45,10 @@ class Trip(db.Model):
     )
     order_id = db.Column("order_id", db.String(36), nullable=False, unique=True)
     distance = db.Column("distance", db.Float, default=0)
-    assigned_at = db.Column("assigned_at", db.String(30))
-    picked_at = db.Column("picked_at", db.String(30))
-    delivered_at = db.Column("delivered_at", db.String(30))
+    assigned_at = db.Column("assigned_at", db.String(24))
+    picked_at = db.Column("picked_at", db.String(24))
+    delivered_at = db.Column("delivered_at", db.String(24))
+    sorter = db.Column("sorter", db.String(60), index=True)
 
     courier = db.relationship("Courier", backref=db.backref("trips", lazy=True))
 
