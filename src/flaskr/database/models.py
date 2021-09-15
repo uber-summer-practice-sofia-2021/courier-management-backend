@@ -71,3 +71,7 @@ class Trip(db.Model):
             "deliveredAt": self.delivered_at,
         }
         return data
+
+    def array(self):
+        return [self.id,self.courier_id,self.order_id,self.distance,self.assigned_at,self.picked_at,self.delivered_at,]
+
