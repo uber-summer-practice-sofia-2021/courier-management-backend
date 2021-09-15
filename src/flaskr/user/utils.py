@@ -4,9 +4,6 @@ from flaskr.producer import Producer
 
 AVAILABLE_TAGS = ["fragile", "dangerous"]
 
-def paginate(cursor=None, page_limit=10):
-    
-    return Trip.query.order_by()
 
 # Retrieves current timestamp
 def timestamp():
