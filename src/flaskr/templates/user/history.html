@@ -38,7 +38,7 @@
 </table>
 <p>Here are all the available trips for this Courier.</p>
 <p></p>
-<a href="{{ url_for('user.history', action='prev', cursors=cursors) }}">Prev</a>
-<a href="{{ url_for('user.history', action='next', cursors=cursors) }}">Next</a>
+<a href="{{ url_for('user.history', newer_than=items[-1][7]) }}">Newer</a>
+<a href="{{ url_for('user.history', older_than=items[0][7]) }}">Older</a>
 
 {% endblock %}

@@ -63,39 +63,67 @@ def message_kafka(topic, data):
         current_app.logger.debug(e)
 
 
-def get_before(courier_id, cursor, limit = 10):
+# def get_before(courier_id, cursor, limit = 10):
+#     try:
+#         with current_app.app_context():
+#             cursor = Trip.query.order_by(Trip.sorter.desc()).limit(limit).order_by(Trip.sorter).sorter if not cursor else cursor
+
+#             results = db.session.execute(
+#                 f"SELECT *\
+#                 FROM (SELECT *\
+#                     FROM Trips\
+#                     WHERE courier_id LIKE '{courier_id}'\
+#                         AND sorter NOT NULL AND sorter > '{cursor}'\
+#                     ORDER BY sorter ASC\
+#                     LIMIT {limit}) x\
+#                 ORDER BY sorter DESC;"
+#             )
+
+#             return [list(x) for x in (results if results else [])]
+#     except Exception as e:
+#         current_app.logger.debug(e)
+#         return None
+
+
+# def get_after(courier_id, older_than, newer_than, limit = 10):
+#     try:
+#         with current_app.app_context():
+#             cursor = Trip.query.order_by(Trip.sorter.desc()).first().sorter if not cursor else cursor
+
+#             if not inc:
+#                 results = db.session.execute(
+#                     f"SELECT *\
+#                     FROM Trip\
+#                     WHERE courier_id LIKE '{courier_id}'\
+#                         AND sorter NOT NULL AND sorter < '{cursor}'\
+#                     ORDER BY sorter DESC\
+#                     LIMIT {limit}"
+#                 )
+#             else:
+#                 results = db.session.execute(
+#                     f"SELECT *\
+#                     FROM Trip\
+#                     WHERE courier_id LIKE '{courier_id}'\
+#                         AND sorter NOT NULL AND sorter <= '{cursor}'\
+#                     ORDER BY sorter DESC\
+#                     LIMIT {limit}"
+#                 )
+
+#             return [list(x) for x in (results if results else [])]
+#     except Exception as e:
+#         current_app.logger.debug(e)
+#         return None
+
+
+def paginate(courier_id, older_than, newer_than, limit = 10):
     try:
         with current_app.app_context():
-            cursor = Trip.query.order_by(Trip.sorter.desc()).limit(limit).order_by(Trip.sorter).sorter if not cursor else cursor
-
-            results = db.session.execute(
-                f"SELECT *\
-                FROM (SELECT *\
-                    FROM Trips\
-                    WHERE courier_id LIKE '{courier_id}'\
-                        AND sorter NOT NULL AND sorter > '{cursor}'\
-                    ORDER BY sorter ASC\
-                    LIMIT {limit}) x\
-                ORDER BY sorter DESC;"
-            )
-
-            return [list(x) for x in (results if results else [])]
-    except Exception as e:
-        current_app.logger.debug(e)
-        return None
-
-
-def get_after(courier_id, cursor, limit = 10, inc = False):
-    try:
-        with current_app.app_context():
-            cursor = Trip.query.order_by(Trip.sorter.desc()).first().sorter if not cursor else cursor
-
-            if not inc:
+            if older_than:
                 results = db.session.execute(
                     f"SELECT *\
                     FROM Trip\
                     WHERE courier_id LIKE '{courier_id}'\
-                        AND sorter NOT NULL AND sorter < '{cursor}'\
+                        AND sorter NOT NULL AND sorter < '{older_than}'\
                     ORDER BY sorter DESC\
                     LIMIT {limit}"
                 )
@@ -104,7 +132,7 @@ def get_after(courier_id, cursor, limit = 10, inc = False):
                     f"SELECT *\
                     FROM Trip\
                     WHERE courier_id LIKE '{courier_id}'\
-                        AND sorter NOT NULL AND sorter <= '{cursor}'\
+                        AND sorter NOT NULL AND sorter > '{newer_than}'\
                     ORDER BY sorter DESC\
                     LIMIT {limit}"
                 )

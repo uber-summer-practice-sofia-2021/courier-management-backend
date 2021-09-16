@@ -256,14 +256,10 @@ def history():
         )
 
     limit = 1
-    # next_cursor = request.args.get("next_cursor")
-    # prev_cursor = request.args.get("prev_cursor")
+    older_than = request.args.get("older_than")
+    newer_than = request.args.get("newer_than")
     trip = Trip.query.order_by(Trip.sorter.desc()).first()
-    cursors = [] + request.args.getlist("cursors")
-    if not cursors:
-        cursors.append(trip.sorter if trip else None)
-    current_cursor = cursors[-1]
-    action = request.args.get('action')
+
 
     # history = (
     #     Trip.query.filter_by(courier_id=found_user.id)
