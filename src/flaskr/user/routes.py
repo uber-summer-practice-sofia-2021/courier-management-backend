@@ -242,17 +242,20 @@ def return_trips_history():
     history = Trip.query.filter_by(courier_id = found_user.id).order_by(Trip.delivered_at.desc()).all()
 
     if prev_cursor:
-        print(prev_cursor)
+        
         index = max(next(x for (x, e) in enumerate(history) if e.id==prev_cursor[0])-1, 0)
         next_cursor = [history[index].id, index]
         index1 = max(next(x for (x, e) in enumerate(history) if e.id==prev_cursor[0])-limit, 0)
         prev_cursor = [history[index1].id, index1]
+        print(prev_cursor)
+        print(next_cursor)
     elif next_cursor:
         index = min(next(x for (x, e) in enumerate(history) if e.id==next_cursor[0])+1, len(history)-1)
         prev_cursor = [history[index].id, index]
-        print(prev_cursor)
         index1 = min(next(x for (x, e) in enumerate(history) if e.id==next_cursor[0])+limit, len(history)-1)
         next_cursor = [history[index1].id, index1]
+        print(prev_cursor)
+        print(next_cursor)
     else:
         if len(history) > 0:
             prev_cursor = [history[0].id, 0]
