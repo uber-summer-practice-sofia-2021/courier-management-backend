@@ -26,19 +26,18 @@
   </tr>
   {% for item in items %}
   <tr>
-    <td>{{item[0]}}</td>
-    <td>{{item[1]}}</td>
-    <td>{{item[2]}}</td>
-    <td>{{item[3]}}</td>
-    <td>{{item[4]}}</td>
-    <td>{{item[5]}}</td>
-    <td>{{item[6]}}</td>
+    {% for field in item %}
+    <td>{{field}}</td>
+    {% endfor %}
   </tr>
   {% endfor %}
 </table>
 <p>Here are all the available trips for this Courier.</p>
 <p></p>
-<a href="{{ url_for('user.history', newer_than=items[-1][7]) }}">Newer</a>
-<a href="{{ url_for('user.history', older_than=items[0][7]) }}">Older</a>
-
+{% if newer %}
+<a id='lnk-newer' href="{{ url_for('user.history', newer_than=items[0][7]) }}" class="btn btn-outline btn-primary btn-lg">Newer</a>
+{% endif %}
+{% if older %}
+<a id='lnk-older' href="{{ url_for('user.history', older_than=items[-1][7]) }}" class="btn btn-outline btn-primary btn-lg">Older</a>
+{% endif %}
 {% endblock %}

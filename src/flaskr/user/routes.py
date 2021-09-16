@@ -255,83 +255,22 @@ def history():
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
 
-    limit = 1
+    limit = 2
     older_than = request.args.get("older_than")
     newer_than = request.args.get("newer_than")
-    trip = Trip.query.order_by(Trip.sorter.desc()).first()
 
+    # Get paginated history
+    history = paginate(found_user.id, older_than, newer_than, limit+1)
+    # Remove first or last element based on action
+    history = (history[1:] if newer_than else history[:-1]) if len(history)>limit else history
 
-    # history = (
-    #     Trip.query.filter_by(courier_id=found_user.id)
-    #     .order_by(Trip.delivered_at.desc())
-    #     .all()
-    # )
-
-    # if prev_cursor:
-    #     print(prev_cursor)
-    #     index = max(
-    #         next(x for (x, e) in enumerate(history) if e.id == prev_cursor[0]) - 1, 0
-    #     )
-    #     next_cursor = [history[index].id, index]
-    #     index1 = max(
-    #         next(x for (x, e) in enumerate(history) if e.id == prev_cursor[0]) - limit,
-    #         0,
-    #     )
-    #     prev_cursor = [history[index1].id, index1]
-    # elif next_cursor:
-    #     index = min(
-    #         next(x for (x, e) in enumerate(history) if e.id == next_cursor[0]) + 1,
-    #         len(history) - 1,
-    #     )
-    #     prev_cursor = [history[index].id, index]
-    #     print(prev_cursor)
-    #     index1 = min(
-    #         next(x for (x, e) in enumerate(history) if e.id == next_cursor[0]) + limit,
-    #         len(history) - 1,
-    #     )
-    #     next_cursor = [history[index1].id, index1]
-    # else:
-    #     if len(history) > 0:
-    #         prev_cursor = [history[0].id, 0]
-    #     if len(history) >= limit:
-    #         next_cursor = [history[limit - 1].id, limit - 1]
-    #     else:
-    #         next_cursor = [history[-1].id, len(history) - 1]
-
-    # history = history[int(prev_cursor[1]) : int(next_cursor[1]) + 1]
-
-    #history = get_after(found_user.id, next_cursor, limit) if next_cursor else get_before(found_user.id, prev_cursor, limit)
-
-
-    # history = get_after(found_user.id, next_cursor, limit, True if not next_cursor else False)
-    # current_app.logger.debug(prev_cursor)
-
-    # if not history:
-    #     flash("You've reached the end of the list!")
-    #     history = get_after(found_user.id, prev_cursor, limit, True)
-
-    if action == 'prev':
-        for i in range(2):
-            if len(cursors)>1:
-                cursors.pop()
-        current_cursor = cursors[-1] if cursors else None
-        history = get_after(found_user.id, current_cursor, limit, True if not len(cursors)>1 else False)
-    else:
-        history = get_after(found_user.id, current_cursor, limit, True if not len(cursors)>1 else False)
-
-    if not history:
-        current_app.logger.debug(history)
-        flash("You've reached the end of the list!")
-        if len(cursors)>1:
-            cursors.pop()
-        current_cursor = cursors[-1] if cursors else None
-        history = get_after(found_user.id, current_cursor, limit, True if not len(cursors)>1 else False)
-
+    # Check buttons availability
+    older = (older_than and len(history)>limit) or (history and len(paginate(found_user.id, history[-1][7], None, limit+1))>0)
+    newer = (newer_than and len(history)>limit) or (history and len(paginate(found_user.id, None, history[0][7], limit+1))>0)
 
     return render_template(
         "user/history.html",
-        items=history if history else [],
-        # prev_cursor=history[0][7] if history else None,
-        # next_cursor=history[-1][7] if history else None,
-        cursors = cursors + ([history[-1][7]] if history else []),
+        items=history,
+        older = older,
+        newer = newer
     )
