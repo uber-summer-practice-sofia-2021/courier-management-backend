@@ -11,33 +11,43 @@
 {% endblock %}
 
 {% block content %}
+<div class="d-flex justify-content-center bg-dark">
+  <h2 class="text-white">History of my trips</h2>
+</div>
 
-<h2>History of my trips</h2>
-
-<table style="width:100%">
-  <tr>
-    <th>Trip ID:</th>
-    <th>Courier ID</th>
-    <th>Order ID:</th>
-    <th>Distance:</th>
-    <th>Assigned at:</th>
-    <th>Picked up at:</th>
-    <th>Delivered at:</th>
-  </tr>
-  {% for item in items %}
-  <tr>
-    {% for field in item %}
-    <td>{{field}}</td>
+<div>
+  <table class="table table-striped" style="width:100%">
+    <thead class="table-dark">
+      <tr>
+        <th>Trip ID:</th>
+        <th>Courier ID</th>
+        <th>Order ID:</th>
+        <th>Distance:</th>
+        <th>Assigned at:</th>
+        <th>Picked up at:</th>
+        <th>Delivered at:</th>
+      </tr>
+    </thead>
+    {% for item in items %}
+    <tr>
+      {% for field in item %}
+      <td>{{field}}</td>
+      {% endfor %}
+    </tr>
     {% endfor %}
-  </tr>
-  {% endfor %}
-</table>
-<p>Here are all the available trips for this Courier.</p>
-<p></p>
-{% if newer %}
-<a id='lnk-newer' href="{{ url_for('user.history', newer_than=items[0][7]) }}" class="btn btn-outline btn-primary btn-lg">Newer</a>
-{% endif %}
-{% if older %}
-<a id='lnk-older' href="{{ url_for('user.history', older_than=items[-1][7]) }}" class="btn btn-outline btn-primary btn-lg">Older</a>
-{% endif %}
+  </table>
+</div>
+
+<div class="d-flex justify-content-center">
+  <div class="btn-group">
+    {% if newer %}
+    <a id='lnk-newer' href="{{ url_for('user.history', newer_than=items[0][7]) }}"
+      class="btn btn-outline btn-primary btn-lg">Newer</a>
+    {% endif %}
+    {% if older %}
+    <a id='lnk-older' href="{{ url_for('user.history', older_than=items[-1][7]) }}"
+      class="btn btn-outline btn-primary btn-lg">Older</a>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
