@@ -1,6 +1,8 @@
 from datetime import datetime
+from threading import current_thread
 import requests
 from flaskr.producer import Producer
+from flask import current_app
 
 AVAILABLE_TAGS = ["fragile", "dangerous"]
 
@@ -47,13 +49,13 @@ def get_order_by_id(orderID):
 def change_order_status(orderID, status):
     try:
         requests.post(f"http://ordermanagement/orders/{orderID}?status={status.upper()}")
-    except:
-        pass
+    except Exception as e:
+        current_app.logger.debug(e)
 
 
 # Sends message to kafka
 def message_kafka(topic, data):
     try:
         Producer().produce(topic, data)
-    except:
-        pass
+    except Exception as e:
+        current_app.logger.debug(e)
