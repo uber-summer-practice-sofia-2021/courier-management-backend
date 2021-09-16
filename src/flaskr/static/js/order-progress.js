@@ -6,6 +6,7 @@ window.onload = function () {
   var btn_delivered = document.getElementById("btn_delivered");
   if (status == "picked_up" || status == "completed") {
     btn_picked.disabled = true;
+    btn_delivered.disabled=false;
     document.getElementById('progressbar_picked').className="active";
   }
   if (status == "completed") {

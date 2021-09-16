@@ -225,7 +225,7 @@ def order_dashboard(orderID):
     change_order_status(orderID, status)
     order = get_order_by_id(orderID)
 
-    return render_template("user/order.html", order=order,status=status)
+    return render_template("user/boostrap_order.html", order=order,status=status)
 
 
 @user.route("/history")

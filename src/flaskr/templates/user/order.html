@@ -30,7 +30,7 @@
 <body>
     <script id="script_id" src=" {{url_for('static',filename='js/order-progress.js') }}" status="{{status}}">
 
-    </script>
+</script>
     <table class="centered thick-border">
         <tr>
             <th>client name</th>
@@ -54,7 +54,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/order_status_style.css')}}">
     <div class="container">
         <ul class="progressbar">
-            <li class="active">Assigned</li>
+            <li class="active"><strong>Assigned</strong></li>
             <li id="progressbar_picked">
                 <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
                     <button id="btn_picked" class="btn-submit" type="submit" name="status" value="picked_up">Picked Up</button>
