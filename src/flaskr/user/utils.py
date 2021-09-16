@@ -66,39 +66,50 @@ def message_kafka(topic, data):
 def get_before(courier_id, cursor, limit = 10):
     try:
         with current_app.app_context():
-            cursor = Trip.query.order_by(Trip.sorter.desc()).last().sorter if not cursor else cursor
+            cursor = Trip.query.order_by(Trip.sorter.desc()).limit(limit).order_by(Trip.sorter).sorter if not cursor else cursor
 
-            return db.session.execute(
+            results = db.session.execute(
                 f"SELECT *\
                 FROM (SELECT *\
                     FROM Trips\
                     WHERE courier_id LIKE '{courier_id}'\
-                        AND sorter NOT NULL AND sorter => '{cursor}'\
+                        AND sorter NOT NULL AND sorter > '{cursor}'\
                     ORDER BY sorter ASC\
                     LIMIT {limit}) x\
                 ORDER BY sorter DESC;"
             )
-    except:
+
+            return [list(x) for x in (results if results else [])]
+    except Exception as e:
+        current_app.logger.debug(e)
         return None
 
 
-def get_after(courier_id, cursor, limit = 10):
+def get_after(courier_id, cursor, limit = 10, inc = False):
     try:
         with current_app.app_context():
             cursor = Trip.query.order_by(Trip.sorter.desc()).first().sorter if not cursor else cursor
 
-            current_app.logger.debug(cursor)
-
-            results = db.session.execute(
-                f"SELECT *\
-                FROM Trip\
-                WHERE courier_id LIKE '{courier_id}'\
-                    AND sorter NOT NULL AND sorter <= '{cursor}'\
-                ORDER BY sorter DESC\
-                LIMIT {limit}"
-            )
-            #current_app.logger.debug([list(x) for x in results])
+            if not inc:
+                results = db.session.execute(
+                    f"SELECT *\
+                    FROM Trip\
+                    WHERE courier_id LIKE '{courier_id}'\
+                        AND sorter NOT NULL AND sorter < '{cursor}'\
+                    ORDER BY sorter DESC\
+                    LIMIT {limit}"
+                )
+            else:
+                results = db.session.execute(
+                    f"SELECT *\
+                    FROM Trip\
+                    WHERE courier_id LIKE '{courier_id}'\
+                        AND sorter NOT NULL AND sorter <= '{cursor}'\
+                    ORDER BY sorter DESC\
+                    LIMIT {limit}"
+                )
 
             return [list(x) for x in (results if results else [])]
-    except:
+    except Exception as e:
+        current_app.logger.debug(e)
         return None

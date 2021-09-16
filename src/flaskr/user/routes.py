@@ -238,7 +238,7 @@ def order_dashboard(orderID):
 @user.route("/history")
 def history():
 
-    found_user = Courier.query.filter_by(email=session["email"]).first()
+    found_user = Courier.query.filter_by(email=session.get("email")).first()
 
     if not found_user:
         flash("Invalid user or session expired!")
@@ -255,9 +255,15 @@ def history():
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
 
-    limit = 2
-    next_cursor = request.args.getlist("next_cursor")
-    prev_cursor = request.args.getlist("prev_cursor")
+    limit = 1
+    # next_cursor = request.args.get("next_cursor")
+    # prev_cursor = request.args.get("prev_cursor")
+    trip = Trip.query.order_by(Trip.sorter.desc()).first()
+    cursors = [] + request.args.getlist("cursors")
+    if not cursors:
+        cursors.append(trip.sorter if trip else None)
+    current_cursor = cursors[-1]
+    action = request.args.get('action')
 
     # history = (
     #     Trip.query.filter_by(courier_id=found_user.id)
@@ -298,12 +304,38 @@ def history():
 
     # history = history[int(prev_cursor[1]) : int(next_cursor[1]) + 1]
 
-    history = get_before(found_user.id, prev_cursor, limit) if prev_cursor else get_after(found_user.id, next_cursor, limit)
+    #history = get_after(found_user.id, next_cursor, limit) if next_cursor else get_before(found_user.id, prev_cursor, limit)
+
+
+    # history = get_after(found_user.id, next_cursor, limit, True if not next_cursor else False)
+    # current_app.logger.debug(prev_cursor)
+
+    # if not history:
+    #     flash("You've reached the end of the list!")
+    #     history = get_after(found_user.id, prev_cursor, limit, True)
+
+    if action == 'prev':
+        for i in range(2):
+            if len(cursors)>1:
+                cursors.pop()
+        current_cursor = cursors[-1] if cursors else None
+        history = get_after(found_user.id, current_cursor, limit, True if not len(cursors)>1 else False)
+    else:
+        history = get_after(found_user.id, current_cursor, limit, True if not len(cursors)>1 else False)
+
+    if not history:
+        current_app.logger.debug(history)
+        flash("You've reached the end of the list!")
+        if len(cursors)>1:
+            cursors.pop()
+        current_cursor = cursors[-1] if cursors else None
+        history = get_after(found_user.id, current_cursor, limit, True if not len(cursors)>1 else False)
+
 
     return render_template(
         "user/history.html",
-        items=history,
-        prev_cursor=prev_cursor,
-        next_cursor=next_cursor,
-        limit=limit,
+        items=history if history else [],
+        # prev_cursor=history[0][7] if history else None,
+        # next_cursor=history[-1][7] if history else None,
+        cursors = cursors + ([history[-1][7]] if history else []),
     )
