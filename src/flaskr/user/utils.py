@@ -1,6 +1,10 @@
 from datetime import datetime
+from threading import current_thread
+from flask.cli import with_appcontext
 import requests
 from flaskr.producer import Producer
+from flaskr.database.models import db, Trip
+from flask import current_app
 
 AVAILABLE_TAGS = ["fragile", "dangerous"]
 
@@ -47,13 +51,65 @@ def get_order_by_id(orderID):
 def change_order_status(orderID, status):
     try:
         requests.post(f"http://ordermanagement/orders/{orderID}?status={status.upper()}")
-    except:
-        pass
+    except Exception as e:
+        current_app.logger.debug(e)
 
 
 # Sends message to kafka
 def message_kafka(topic, data):
     try:
         Producer().produce(topic, data)
-    except:
-        pass
+    except Exception as e:
+        current_app.logger.debug(e)
+
+
+def get_before(courier_id, cursor, limit = 10):
+    try:
+        with current_app.app_context():
+            cursor = Trip.query.order_by(Trip.sorter.desc()).limit(limit).order_by(Trip.sorter).sorter if not cursor else cursor
+
+            results = db.session.execute(
+                f"SELECT *\
+                FROM (SELECT *\
+                    FROM Trips\
+                    WHERE courier_id LIKE '{courier_id}'\
+                        AND sorter NOT NULL AND sorter > '{cursor}'\
+                    ORDER BY sorter ASC\
+                    LIMIT {limit}) x\
+                ORDER BY sorter DESC;"
+            )
+
+            return [list(x) for x in (results if results else [])]
+    except Exception as e:
+        current_app.logger.debug(e)
+        return None
+
+
+def get_after(courier_id, cursor, limit = 10, inc = False):
+    try:
+        with current_app.app_context():
+            cursor = Trip.query.order_by(Trip.sorter.desc()).first().sorter if not cursor else cursor
+
+            if not inc:
+                results = db.session.execute(
+                    f"SELECT *\
+                    FROM Trip\
+                    WHERE courier_id LIKE '{courier_id}'\
+                        AND sorter NOT NULL AND sorter < '{cursor}'\
+                    ORDER BY sorter DESC\
+                    LIMIT {limit}"
+                )
+            else:
+                results = db.session.execute(
+                    f"SELECT *\
+                    FROM Trip\
+                    WHERE courier_id LIKE '{courier_id}'\
+                        AND sorter NOT NULL AND sorter <= '{cursor}'\
+                    ORDER BY sorter DESC\
+                    LIMIT {limit}"
+                )
+
+            return [list(x) for x in (results if results else [])]
+    except Exception as e:
+        current_app.logger.debug(e)
+        return None
