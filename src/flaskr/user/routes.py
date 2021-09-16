@@ -1,3 +1,4 @@
+from re import I
 from flask import (
     Blueprint,
     session,
@@ -236,58 +237,68 @@ def order_dashboard(orderID):
 
 @user.route("/history")
 def history():
+
+    found_user = Courier.query.filter_by(email=session["email"]).first()
+
+    if not found_user:
+        flash("Invalid user or session expired!")
+        return redirect(url_for("user.login"))
+
+    if not found_user.is_validated:
+        flash("You need to complete your profile first!")
+        return redirect(url_for("user.settings"))
+
+    if found_user.current_order_id:
+        flash("You have a trip in progress!")
+
+        return redirect(
+            url_for("user.order_dashboard", orderID=found_user.current_order_id)
+        )
+
     limit = 2
     next_cursor = request.args.getlist("next_cursor")
     prev_cursor = request.args.getlist("prev_cursor")
 
-    if "email" not in session:
-        return redirect(url_for("user.login"))
+    # history = (
+    #     Trip.query.filter_by(courier_id=found_user.id)
+    #     .order_by(Trip.delivered_at.desc())
+    #     .all()
+    # )
 
-    found_user = Courier.query.filter_by(email=session["email"]).first()
+    # if prev_cursor:
+    #     print(prev_cursor)
+    #     index = max(
+    #         next(x for (x, e) in enumerate(history) if e.id == prev_cursor[0]) - 1, 0
+    #     )
+    #     next_cursor = [history[index].id, index]
+    #     index1 = max(
+    #         next(x for (x, e) in enumerate(history) if e.id == prev_cursor[0]) - limit,
+    #         0,
+    #     )
+    #     prev_cursor = [history[index1].id, index1]
+    # elif next_cursor:
+    #     index = min(
+    #         next(x for (x, e) in enumerate(history) if e.id == next_cursor[0]) + 1,
+    #         len(history) - 1,
+    #     )
+    #     prev_cursor = [history[index].id, index]
+    #     print(prev_cursor)
+    #     index1 = min(
+    #         next(x for (x, e) in enumerate(history) if e.id == next_cursor[0]) + limit,
+    #         len(history) - 1,
+    #     )
+    #     next_cursor = [history[index1].id, index1]
+    # else:
+    #     if len(history) > 0:
+    #         prev_cursor = [history[0].id, 0]
+    #     if len(history) >= limit:
+    #         next_cursor = [history[limit - 1].id, limit - 1]
+    #     else:
+    #         next_cursor = [history[-1].id, len(history) - 1]
 
-    history = (
-        Trip.query.filter_by(courier_id=found_user.id)
-        .order_by(Trip.delivered_at.desc())
-        .all()
-    )
+    # history = history[int(prev_cursor[1]) : int(next_cursor[1]) + 1]
 
-    if prev_cursor:
-        print(prev_cursor)
-        index = max(
-            next(x for (x, e) in enumerate(history) if e.id == prev_cursor[0]) - 1, 0
-        )
-        next_cursor = [history[index].id, index]
-        index1 = max(
-            next(x for (x, e) in enumerate(history) if e.id == prev_cursor[0]) - limit,
-            0,
-        )
-        prev_cursor = [history[index1].id, index1]
-    elif next_cursor:
-        index = min(
-            next(x for (x, e) in enumerate(history) if e.id == next_cursor[0]) + 1,
-            len(history) - 1,
-        )
-        prev_cursor = [history[index].id, index]
-        print(prev_cursor)
-        index1 = min(
-            next(x for (x, e) in enumerate(history) if e.id == next_cursor[0]) + limit,
-            len(history) - 1,
-        )
-        next_cursor = [history[index1].id, index1]
-    else:
-        if len(history) > 0:
-            prev_cursor = [history[0].id, 0]
-        if len(history) >= limit:
-            next_cursor = [history[limit - 1].id, limit - 1]
-        else:
-            next_cursor = [history[-1].id, len(history) - 1]
-
-    history = history[int(prev_cursor[1]) : int(next_cursor[1]) + 1]
-
-    #history = get_before(prev_cursor, limit, found_user.id) if prev_cursor else get_after(next_cursor, limit, found_user.id)
-
-    for i in range(len(history)):
-        history[i] = history[i].array()
+    history = get_before(found_user.id, prev_cursor, limit) if prev_cursor else get_after(found_user.id, next_cursor, limit)
 
     return render_template(
         "user/history.html",
