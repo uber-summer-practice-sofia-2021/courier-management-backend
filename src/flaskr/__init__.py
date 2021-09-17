@@ -8,7 +8,7 @@ import os
 def create_app(test_config=None):
 
     app = Flask(__name__, instance_relative_config=True)
-    app.permanent_session_lifetime = timedelta(minutes=5)
+    app.permanent_session_lifetime = timedelta(minutes=30)
 
     app.config.from_mapping(
         SQLALCHEMY_DATABASE_URI="sqlite:///database/server.db",
