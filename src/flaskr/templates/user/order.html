@@ -18,24 +18,24 @@
     <div class="container px-1 px-md-4 py-5 mx-auto">
         <div class="card">
             <div class="row d-flex justify-content-center col-12">
-                <h2>Order Details:</h2>
+                <h2 class="text-center">Order Details:</h2>
             </div>
             <div class="row d-flex justify-content-between px-3">
                 <div class="row d-flex justify-content-center col-12">
-                    <h5>
+                    <h5 class="text-center">
                         ORDER: {{order.ID}}
                         <span class="text-primary font-weight-bold"></span>
                     </h5>
                 </div>
             </div>
-            <table class="centered thick-border">
+            <table class="centered table table-bordered table-striped">
                 <tr>
-                    <th>client name</th>
-                    <th>phone number</th>
+                    <th>Client name</th>
+                    <th>Phone number</th>
                     <th>From</th>
                     <th>To</th>
                     <th>Tags</th>
-                    <th>delivery type</th>
+                    <th>Delivery type</th>
                 </tr>
                 <tr>
                     <th>{{order.clientName}}</th>

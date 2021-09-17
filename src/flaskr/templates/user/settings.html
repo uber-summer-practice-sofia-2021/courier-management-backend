@@ -3,7 +3,7 @@
 {% block title %} User Settings {% endblock %}
 
 {% block style %}
-<style>
+<!-- <style>
     #tags-search {
         background-color: black;
         color: aliceblue;
@@ -14,7 +14,8 @@
         overflow: auto;
     };
 
-</style>
+</style> -->
+<link rel="stylesheet" href="{{url_for('static', filename='css/settings_style.css')}}"/>
 {% endblock %}
 
 {% block content %}

@@ -30,8 +30,8 @@ def trips_api():
 @api.route("/orders", methods=["GET"])
 def orders_api():
     try:
-        fixtures_path = "../fixtures/orders.json"
-        #fixtures_path = "fixtures/orders.json"
+        #fixtures_path = "../fixtures/orders.json"
+        fixtures_path = "fixtures/orders.json"
         file = open(fixtures_path)
         data = json.load(file)
         file.close()

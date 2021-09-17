@@ -254,7 +254,7 @@ def history():
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
 
-    limit = 2
+    limit = 1
     older_than = request.args.get("older_than")
     newer_than = request.args.get("newer_than")
 
