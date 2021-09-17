@@ -225,7 +225,7 @@ def order_dashboard(orderID):
         trip.delivered_at = timestamp()
         trip.sorter = trip.delivered_at + trip.id
         found_user.current_order_id = None
-        message_kafka("trips", trip.map())
+        message_kafka("trips", trip.get_id())
     db.session.commit()
 
     change_order_status(orderID, status)
