@@ -31,4 +31,3 @@ function filterTags(courier_tags, available_tags) {
         }
     }
 }
-

@@ -1,60 +1,76 @@
-{% extends "navbar.html" %}
+{% extends "navbar.html" %} {% block title %} Order dashboard {% endblock %}
+{%block content%}
 
-{% block title %} Order dashboard {% endblock %}
-
-{% block style %}
-<style>
-    table,
-    th,
-    td {
-        border: 1px solid black;
-        margin-left: auto;
-        margin-right: auto;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="../../static/css/boostrap_order_style.css" />
+</head>
 
 <body>
-    <script id="script_id" src=" {{url_for('static',filename='js/order-progress.js') }}" status="{{status}}">
-
-    </script>
-    <table class="centered thick-border">
-        <tr>
-            <th>client name</th>
-            <th>phone number</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Tags</th>
-            <th>delivery type</th>
-        </tr>
-        <tr>
-            <th>{{order.clientName}}</th>
-            <th>{{order.phoneNumber}}</th>
-            <th>{{order.from['addressName']}}</th>
-            <th>{{order.to['addressName']}}</th>
-            <th>{{','.join(order.tags)}}</th>
-            <th>{{order.deliveryType}}</th>
-
-        </tr>
-    </table>
-    <p></p>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/order_status_style.css')}}">
-    <div class="container">
-        <ul class="progressbar">
-            <li class="active">Assigned</li>
-            <li id="progressbar_picked">
-                <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
-                    <button id="btn_picked" class="btn-submit" type="submit" name="status" value="picked_up">Picked Up</button>
-                </form>
-            </li>
-            <li id="progressbar_delivered">
-                <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
-                    <button  id='btn_delivered' type="submit" name="status" value="completed">Delivered</button>
-                </form>
-            </li>
-        </ul>
+    <script id="script_id" src=" {{url_for('static',filename='js/order-progress.js') }}" status="{{status}}"></script>
+    <div class="container px-1 px-md-4 py-5 mx-auto">
+        <div class="card">
+            <div class="row d-flex justify-content-center col-12">
+                <h2>Order Details:</h2>
+            </div>
+            <div class="row d-flex justify-content-between px-3">
+                <div class="row d-flex justify-content-center col-12">
+                    <h5>
+                        ORDER: {{order.ID}}
+                        <span class="text-primary font-weight-bold"></span>
+                    </h5>
+                </div>
+            </div>
+            <table class="centered thick-border">
+                <tr>
+                    <th>client name</th>
+                    <th>phone number</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Tags</th>
+                    <th>delivery type</th>
+                </tr>
+                <tr>
+                    <th>{{order.clientName}}</th>
+                    <th>{{order.phoneNumber}}</th>
+                    <th>{{order.from['addressName']}}</th>
+                    <th>{{order.to['addressName']}}</th>
+                    <th>{{','.join(order.tags)}}</th>
+                    <th>{{order.deliveryType}}</th>
+                </tr>
+            </table>
+            <div class="row d-flex justify-content-between px-3 top"></div>
+            <!-- Add class 'active' to progress -->
+            <div class="row d-flex justify-content-center">
+                <div class="col-12">
+                    <ul id="progressbar" class="text-center center-block">
+                        <li id="Assigned-text" class="active step0">Assigned</li>
+                        <li class="step0" id="progressbar_picked">
+                            <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
+                                <button id="btn_picked" class="btn-submit" type="submit" name="status"
+                                    value="picked_up">
+                                    Picked Up
+                                </button>
+                            </form>
+                        </li>
+                        <li class="step0" id="progressbar_delivered">
+                            <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
+                                <button id="btn_delivered" type="submit" name="status" value="completed" disabled>
+                                    Delivered
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
-{% endblock %}
+{%endblock%}
