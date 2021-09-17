@@ -18,9 +18,7 @@
 
 <body>
     {% block navbar %}{% endblock %}
-
-    {% block content %}{% endblock %}
-
+     
     {% with messages=get_flashed_messages() %}
     {% if messages %}
     <div class="alert alert-primary alert-dismissible fade show" role="alert">
@@ -30,7 +28,9 @@
         </button>
     </div>
     {% endif %}
-    {% endwith %}
+    {% endwith %}  
+    {% block content %}{% endblock %}
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
