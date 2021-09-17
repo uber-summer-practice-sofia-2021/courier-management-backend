@@ -43,17 +43,21 @@
 
 
     <ul class="pagination justify-content-center">
+        {% if pagination %}
         <li class="page-item">
             <a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
         </li>
+       
         {% for page in range(1, pagination.totalPages+1) %}
         <li class="page-item">
             <a class="page-link" href="{{ url_for('user.dashboard', page=page) }}">{{page}}</a>
         </li>
         {% endfor %}
+        
         <li class="page-item">
             <a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
+        {% endif %}
     </ul>
 </div>
 {%endblock%}

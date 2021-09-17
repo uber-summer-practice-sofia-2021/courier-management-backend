@@ -3,18 +3,14 @@ body {
   width: 100%;
   height: 100%;
 }
+
 body {
-  background: #43cea2; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #43cea2,
-    #185a9d
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to right,
-    #43cea2,
-    #185a9d
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #342e36;
+  /* fallback for old browsers */
+  /* background: -webkit-linear-gradient(to right, #746d778c, #000000); */
+  /* Chrome 10-25, Safari 5.1-6 */
+  /* background: linear-gradient(to right, #3b353d8c, #000000); */
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   /* background-color: #4158D0;
     background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%); */
 }
@@ -22,14 +18,22 @@ body {
 label {
   font-weight: bold;
 }
-#li-id {
-  list-style-type: disc;
-  list-style-position: inside;
-  font-weight: bold;
+
+#tags-container {
+  width: auto;
+  height: 150px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: center;
+  padding: 20px;
 }
-#submit_btn {
-  width: 150px;
-  height: 40px;
-  background-color: rgb(176, 199, 198);
-  color: black;
+
+.tag-label {
+  display: inline-block;
+  padding: 0 7px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  border: 1px solid transparent;
+  border-radius: 2em;
 }

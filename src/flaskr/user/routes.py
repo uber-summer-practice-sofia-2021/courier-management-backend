@@ -80,7 +80,7 @@ def settings():
         db.session.commit()
 
         flash("Information was saved!")
-        # return redirect(url_for("user.dashboard"))
+        return redirect(url_for("user.dashboard"))
 
     return render_template(
         "user/settings.html",
@@ -173,10 +173,10 @@ def dashboard():
         limit=limit,
     )
 
-    if not orders:
-        return render_template("errors/error.html")
+    # if not orders:
+    #     return render_template("errors/error.html")
 
-    data = orders.get("data")
+    data = orders.get("data") if orders.get("data") else []
     pagination = orders.get("pagination")
 
     return render_template(
@@ -259,17 +259,20 @@ def history():
     newer_than = request.args.get("newer_than")
 
     # Get paginated history
-    history = paginate(found_user.id, older_than, newer_than, limit+1)
+    history = paginate(found_user.id, older_than, newer_than, limit + 1)
     # Remove first or last element based on action
-    history = (history[1:] if newer_than else history[:-1]) if len(history)>limit else history
+    history = (
+        (history[1:] if newer_than else history[:-1])
+        if len(history) > limit
+        else history
+    )
 
     # Check buttons availability
-    older = (older_than and len(history)>limit) or (history and len(paginate(found_user.id, history[-1][7], None, limit+1))>0)
-    newer = (newer_than and len(history)>limit) or (history and len(paginate(found_user.id, None, history[0][7], limit+1))>0)
-
-    return render_template(
-        "user/history.html",
-        items=history,
-        older = older,
-        newer = newer
+    older = (older_than and len(history) > limit) or (
+        history and len(paginate(found_user.id, history[-1][7], None, limit + 1)) > 0
     )
+    newer = (newer_than and len(history) > limit) or (
+        history and len(paginate(found_user.id, None, history[0][7], limit + 1)) > 0
+    )
+
+    return render_template("user/history.html", items=history, older=older, newer=newer)

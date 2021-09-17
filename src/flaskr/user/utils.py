@@ -5,6 +5,7 @@ import requests
 from flaskr.producer import Producer
 from flaskr.database.models import db, Trip
 from flask import current_app
+import os
 
 AVAILABLE_TAGS = ["fragile", "dangerous"]
 
@@ -18,7 +19,8 @@ def timestamp():
 def insert_into_db(obj, db):
     try:
         db.session.add(obj)
-    except:
+    except Exception as e:
+        current_app.logger.debug(e)
         db.session.rollback()
         raise
     else:
@@ -34,23 +36,25 @@ def clear_session(session):
 # Requests orders
 def get_orders(**params):
     try:
-        return requests.get("http://localhost:5000/orders", params).json()
-    except:
+        return requests.get(f"http://{os.environ['ORDER_MANAGEMENT_HOST']}:{os.environ['ORDER_MANAGEMENT_PORT']}/orders", params).json()
+    except Exception as e:
+        current_app.logger.debug(e)
         return {}
 
 
 # Requests order by id
 def get_order_by_id(orderID):
     try:
-        return requests.get(f"http://localhost:5000/orders/{orderID}").json()
-    except:
+        return requests.get(f"http://{os.environ['ORDER_MANAGEMENT_HOST']}:{os.environ['ORDER_MANAGEMENT_PORT']}/orders/{orderID}").json()
+    except Exception as e:
+        current_app.logger.debug(e)
         return {}
 
 
 # Send order status change
 def change_order_status(orderID, status):
     try:
-        requests.post(f"http://ordermanagement/orders/{orderID}?status={status.upper()}")
+        requests.post(f"http://{os.environ['ORDER_MANAGEMENT_HOST']}:{os.environ['ORDER_MANAGEMENT_PORT']}/orders/{orderID}?status={status.upper()}")
     except Exception as e:
         current_app.logger.debug(e)
 

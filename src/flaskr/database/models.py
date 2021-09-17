@@ -43,7 +43,7 @@ class Trip(db.Model):
     courier_id = db.Column(
         "courier_id", db.String(36), db.ForeignKey("courier.id"), nullable=False
     )
-    order_id = db.Column("order_id", db.String(36), nullable=False, unique=True)
+    order_id = db.Column("order_id", db.String(36), nullable=False)
     distance = db.Column("distance", db.Float, default=0)
     assigned_at = db.Column("assigned_at", db.String(24))
     picked_at = db.Column("picked_at", db.String(24))
