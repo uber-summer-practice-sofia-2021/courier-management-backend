@@ -44,7 +44,7 @@ def orders_api():
 @api.route("/orders/<orderID>", methods=["GET"])
 def orders_id_api(orderID):
     try:
-        #ixtures_path = "../fixtures/orders.json"
+        #fixtures_path = "../fixtures/orders.json"
         fixtures_path = "fixtures/orders.json"
         file = open(fixtures_path)
         data = next(x for x in json.load(file)['data'] if x['ID']==orderID)
