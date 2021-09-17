@@ -175,7 +175,7 @@ def dashboard():
     )
 
     if not orders:
-        return render_template("errors/error")
+        return render_template("errors/error.html")
 
     data = orders.get("data")
     pagination = orders.get("pagination")
