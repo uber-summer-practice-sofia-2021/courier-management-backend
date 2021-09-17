@@ -5,21 +5,26 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY requirements.txt \
-     fixtures/ \
-     src/ ./
+COPY requirements.txt ./
+COPY fixtures/ ./fixtures/
+COPY src/ ./src/
 
 RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
 ENV FLASK_ENV=development \
-    FLASK_APP=flaskr \
+    FLASK_APP=src/flaskr \
     ORDER_MANAGEMENT_HOST=localhost \
     ORDER_MANAGEMENT_PORT=5000 \
     KAFKA_BROKERS=kafka:9092 \
     KAFKA_TOPIC=trips \
-    DATABASE_HOST='' \
-    DATABASE_PORT=''
+    DATABASE_HOST= \
+    DATABASE_PORT= \
+    DATABASE_USERNAME= \
+    DATABASE_PASSWD= \
+    DATABASE_PATH=database/server.db \
+    DATABASE_DIALECT=sqlite \
+    DATABASE_DRIVER=
 
 CMD ["flask", "run", "--host=0.0.0.0"]

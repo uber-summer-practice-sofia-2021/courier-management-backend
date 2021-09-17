@@ -7,12 +7,12 @@ db = SQLAlchemy()
 class Courier(db.Model):
     id = db.Column("id", db.String(36), primary_key=True)
     email = db.Column("email", db.String(100), nullable=False, unique=True)
-    name = db.Column("name", db.String(24),nullable=False,default='')
-    max_weight = db.Column("max_weight", db.Float,nullable=False, default=0)
-    max_width = db.Column("max_width", db.Float,nullable=False, default=0)
-    max_length = db.Column("max_length", db.Float,nullable=False, default=0)
-    max_height = db.Column("max_height", db.Float,nullable=False, default=0)
-    tags = db.Column("tags", db.Text, nullable=False,default='')
+    name = db.Column("name", db.String(24), nullable=False, default="")
+    max_weight = db.Column("max_weight", db.Float, nullable=False, default=0)
+    max_width = db.Column("max_width", db.Float, nullable=False, default=0)
+    max_length = db.Column("max_length", db.Float, nullable=False, default=0)
+    max_height = db.Column("max_height", db.Float, nullable=False, default=0)
+    tags = db.Column("tags", db.Text, nullable=False, default="")
     is_validated = db.Column("is_validated", db.Boolean, default=False)
     current_order_id = db.Column("current_order_id", db.String(36), default=None)
 
@@ -37,6 +37,9 @@ class Courier(db.Model):
         }
         return data
 
+    def dict(self):
+        return self.__dict__
+
 
 class Trip(db.Model):
     id = db.Column("id", db.String(36), primary_key=True)
@@ -46,8 +49,8 @@ class Trip(db.Model):
     order_id = db.Column("order_id", db.String(36), nullable=False)
     distance = db.Column("distance", db.Float, default=0)
     assigned_at = db.Column("assigned_at", db.String(24))
-    picked_at = db.Column("picked_at", db.String(24))
-    delivered_at = db.Column("delivered_at", db.String(24))
+    picked_up_at = db.Column("picked_up_at", db.String(24))
+    completed_at = db.Column("completed_at", db.String(24))
     status = db.Column("status", db.String(20), default="ASSIGNED")
     sorter = db.Column("sorter", db.String(60), index=True)
 
@@ -69,18 +72,14 @@ class Trip(db.Model):
             "orderID": self.order_id,
             "distance": self.distance,
             "assignedAt": self.assigned_at,
-            "pickedAt": self.picked_at,
-            "deliveredAt": self.delivered_at,
+            "pickedUpAt": self.picked_up_at,
+            "completedAt": self.completed_at,
         }
         return data
-    
+
     def get_id(self):
-        data = {
-            "tripID": self.id
-        }
+        data = {"tripID": self.id}
         return data
 
-    def array(self):
-        return [y for x,y in self.map()]
-        return [self.id,self.courier_id,self.order_id,self.distance,self.assigned_at,self.picked_at,self.delivered_at,]
-
+    def dict(self):
+        return self.__dict__

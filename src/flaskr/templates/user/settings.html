@@ -45,13 +45,6 @@
                         </div>
 
                         <div class="from-group">
-                            <div class="d-flex flex-wrap">
-                                {% for tag in tags %}
-                                <div class="tag-label" style="--label-r:215;--label-g:58;--label-b:74;--label-h:353;--label-s:66;--label-l:53;">
-                                    <span class="css-truncate css-truncate-target width-fit">{{tag}}</span>
-                                </div>
-                                {% endfor %}
-                            </div>
                             <div class="btn-group dropend">
                                 <button type="button" class="btn btn-secondary dropdown-toggle"
                                     data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
@@ -65,10 +58,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="d-inline-flex flex-wrap">
+                                {% for tag in tags %}
+                                <div class="tag-label"
+                                    style="--label-r:215;--label-g:58;--label-b:74;--label-h:353;--label-s:66;--label-l:53;">
+                                    <span class="css-truncate css-truncate-target width-fit">{{tag}}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
 
-                        <div class="btn btn-primary">
-                            <input class="btn btn-primary" type="submit" value="Submit" />
+                        <div class="d-inline-flex btn btn-primary justify-content-center">
+                            <input class="btn btn-primary" type="submit" value="Save" />
                         </div>
                     </form>
                 </div>

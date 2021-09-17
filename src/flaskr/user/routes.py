@@ -11,7 +11,6 @@ from flask import (
 from flask.globals import current_app
 from flaskr.user.utils import *
 from flaskr.database.models import *
-import requests
 
 user = Blueprint("user", __name__, url_prefix="/user")
 
@@ -30,7 +29,7 @@ def pagination(page):
 @user.route("/login", methods=["POST", "GET"])
 def login():
 
-    found_user = Courier.query.filter_by(email=session.get("email")).first()
+    found_user = Courier.query.filter_by(id=session.get("id")).first()
 
     if found_user:
         flash("Already logged in!")
@@ -39,17 +38,23 @@ def login():
     if request.method == "POST":
         email = request.form["email"].strip()
 
-        if not Courier.query.filter_by(email=email).first():
-            insert_into_db(Courier(email), db)
+        insert_into_db(Courier(email), db)
 
         found_user = Courier.query.filter_by(email=email).first()
 
         session.permanent = True
-        session["status"] = "active"
-        session["email"] = email
+        session["status"] = "inactive"
+        session["id"] = found_user.id
+
+        if found_user.current_order_id:
+            flash("You have a trip in progress!")
+            session["status"] = "active"
+            return redirect(
+                url_for("user.order_dashboard", orderID=found_user.current_order_id)
+            )
 
         flash("Login successful!")
-        return redirect(url_for("user.dashboard"))
+        return redirect(url_for("user.inactive"))
 
     return render_template("user/login.html")
 
@@ -57,7 +62,7 @@ def login():
 # Endpoint for user settings page
 @user.route("/settings", methods=["POST", "GET"])
 def settings():
-    found_user = Courier.query.filter_by(email=session.get("email")).first()
+    found_user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not found_user:
         flash("Invalid user or session expired!")
@@ -97,7 +102,7 @@ def settings():
 # Endpoint for user logout
 @user.route("/logout")
 def logout():
-    found_user = Courier.query.filter_by(email=session.get("email")).first()
+    found_user = Courier.query.filter_by(id=session.get("id")).first()
 
     if found_user:
         flash(f"You have been logged out, {found_user.name}!", "info")
@@ -109,7 +114,7 @@ def logout():
 # User is redirected here upon going inactive
 @user.route("/inactive", methods=["GET", "POST"])
 def inactive():
-    found_user = Courier.query.filter_by(email=session.get("email")).first()
+    found_user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not found_user:
         flash("Invalid user or session expired!")
@@ -128,15 +133,15 @@ def inactive():
             session["status"] = "active"
             return redirect(url_for("user.dashboard"))
 
+    session["status"] = "inactive"
+
     return render_template("user/inactive.html", name=found_user.name)
 
 
 # Endpoint for the user dashboard
 @user.route("/dashboard", methods=["POST", "GET"])
 def dashboard():
-    page = request.args.get("page") if request.args.get("page") else 1
-    limit = 10
-    found_user = Courier.query.filter_by(email=session.get("email")).first()
+    found_user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not found_user:
         flash("Invalid user or session expired!")
@@ -157,10 +162,8 @@ def dashboard():
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
 
-    if request.method == "POST":
-        if request.form.get("submit") == "inactive":
-            session["status"] = "inactive"
-            return redirect(url_for("user.inactive"))
+    page = request.args.get("page") if request.args.get("page") else 1
+    limit = 10
 
     # Request orders from order management
     orders = get_orders(
@@ -173,11 +176,11 @@ def dashboard():
         limit=limit,
     )
 
-    # if not orders:
-    #     return render_template("errors/error.html")
-
     data = orders.get("data") if orders.get("data") else []
     pagination = orders.get("pagination")
+
+    if not orders:
+        flash("There was a problem!")
 
     return render_template(
         "user/dashboard.html", name=found_user.name, data=data, pagination=pagination
@@ -187,7 +190,7 @@ def dashboard():
 # Endpoint for order status change
 @user.route("/dashboard/<orderID>", methods=["GET", "POST"])
 def order_dashboard(orderID):
-    found_user = Courier.query.filter_by(email=session.get("email")).first()
+    found_user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not found_user:
         flash("Invalid user or session expired!")
@@ -207,40 +210,26 @@ def order_dashboard(orderID):
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
 
+    # Check if order was not open or there is already a trip for this order
+    trips = Trip.query.filter(
+        (Trip.order_id == orderID)
+        & ((Trip.status != "CANCELLED") & (Trip.courier_id != found_user.id))
+    ).all()
+    order = get_order_by_id(orderID)
+    if (
+        not order
+        or (order.get("status") != "OPEN" and not found_user.current_order_id)
+        or trips
+    ):
+        flash("Order was already taken or cancelled!")
+        found_user.current_order_id = None
+        return redirect(url_for("user.dashboard"))
+
     # Get requested trip status
     status = request.form.get("status")
-
-    # Fetch trip from db
-    trip = Trip.query.filter(Trip.order_id==orderID, Trip.courier_id==found_user.id, Trip.status.in_(['ASSIGNED', 'PICKED_UP'])).first()
-
-    if status == "ASSIGNED":
-
-        # Check if there is already a trip for this order
-        trips = Trip.query.filter(Trip.order_id==orderID, Trip.courier_id!=found_user.id).all()
-        if [x for x in trips if x.status!="CANCELLED"]:
-            flash("Order is already taken!")
-            return redirect(url_for("user.dashboard"))
-
-        # Insert trip into database and set timestamp
-        insert_into_db(Trip(found_user.id, orderID), db)
-        trip = Trip.query.filter_by(order_id=orderID, courier_id=found_user.id).first()
-        trip.assigned_at = timestamp()
-
-        found_user.current_order_id = orderID
-    elif status == "PICKED_UP":
-        trip.picked_at = timestamp()
-    elif status == "COMPLETED" or status == "CANCELLED":
-        # Complete/cancel trip and clear user current trip id
-        trip.delivered_at = timestamp()
-        trip.sorter = trip.delivered_at + trip.id
-        found_user.current_order_id = None
-        message_kafka("trips", trip.get_id())
-
-    trip.status = status
-    db.session.commit()
-
-    change_order_status(orderID, status)
-    order = get_order_by_id(orderID)
+    if status:
+        change_order_status(orderID, status)
+    status = change_trip_status(status, found_user, orderID)
 
     return render_template("user/order.html", order=order, status=status)
 
@@ -248,7 +237,7 @@ def order_dashboard(orderID):
 @user.route("/history")
 def history():
 
-    found_user = Courier.query.filter_by(email=session.get("email")).first()
+    found_user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not found_user:
         flash("Invalid user or session expired!")
@@ -280,10 +269,12 @@ def history():
 
     # Check buttons availability
     older = (older_than and len(history) > limit) or (
-        history and len(paginate(found_user.id, history[-1][7], None, limit + 1)) > 0
+        history
+        and len(paginate(found_user.id, history[-1].get("sorter"), None, limit + 1)) > 0
     )
     newer = (newer_than and len(history) > limit) or (
-        history and len(paginate(found_user.id, None, history[0][7], limit + 1)) > 0
+        history
+        and len(paginate(found_user.id, None, history[0].get("sorter"), limit + 1)) > 0
     )
 
     return render_template("user/history.html", items=history, older=older, newer=newer)

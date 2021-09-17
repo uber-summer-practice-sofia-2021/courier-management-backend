@@ -1,6 +1,5 @@
-import sys
+import sys, subprocess, flaskr, os
 from flaskr.database.models import *
-import flaskr
 
 # Removes all the tables in the db
 def drop_db():
@@ -17,6 +16,10 @@ def create_db():
 
 
 if __name__ == "__main__":
+    for var in subprocess.Popen("egrep '([A-Z_]+)=([^ ]*)' ../Dockerfile -o", shell=True, stdout=subprocess.PIPE).stdout.readlines():
+        var = var.decode('utf-8')[:-1]
+        os.environ[var[:var.find("=")]]=var[var.find("=")+1:]
+
     try:
         for i in range(1, len(sys.argv)):
             globals()[sys.argv[i]]()

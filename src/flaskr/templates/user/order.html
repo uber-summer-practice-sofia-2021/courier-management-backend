@@ -26,7 +26,7 @@
         <div class="row d-flex justify-content-between px-3">
             <div class="row d-flex justify-content-center col-12">
                 <h5 class="text-center">
-                    ORDER: {{order.ID}}
+                    ORDER: {{order.get('id')}}
                     <span class="text-primary font-weight-bold"></span>
                 </h5>
             </div>
@@ -41,12 +41,12 @@
                 <th>Delivery type</th>
             </tr>
             <tr>
-                <th>{{order.clientName}}</th>
-                <th>{{order.phoneNumber}}</th>
-                <th>{{order.from['addressName']}}</th>
-                <th>{{order.to['addressName']}}</th>
-                <th>{{','.join(order.tags)}}</th>
-                <th>{{order.deliveryType}}</th>
+                <th>{{order.get('clientName')}}</th>
+                <th>{{order.get('phoneNumber')}}</th>
+                <th>{{order.get('from').get('addressName')}}</th>
+                <th>{{order.get('to').get('addressName')}}</th>
+                <th>{{','.join(order.get('tags'))}}</th>
+                <th>{{order.get('deliveryType')}}</th>
             </tr>
         </table>
         <div class="row d-flex justify-content-between px-3 top"></div>
@@ -56,14 +56,14 @@
                 <ul id="progressbar" class="text-center center-block">
                     <li id="Assigned-text" class="active step0">Assigned</li>
                     <li class="step0" id="progressbar_picked">
-                        <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
+                        <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.get('id'))}}">
                             <button id="btn_picked" class="btn-submit" type="submit" name="status" value="PICKED_UP">
                                 Picked Up
                             </button>
                         </form>
                     </li>
                     <li class="step0" id="progressbar_delivered">
-                        <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
+                        <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.get('id'))}}">
                             <button id="btn_delivered" type="submit" name="status" value="COMPLETED" disabled>
                                 Delivered
                             </button>
