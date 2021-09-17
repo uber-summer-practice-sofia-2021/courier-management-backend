@@ -175,7 +175,7 @@ def dashboard():
     )
 
     if not orders:
-        return render_template("errors/error")
+        return render_template("errors/error.html")
 
     data = orders.get("data")
     pagination = orders.get("pagination")
@@ -232,11 +232,7 @@ def order_dashboard(orderID):
     change_order_status(orderID, status)
     order = get_order_by_id(orderID)
 
-<<<<<<< HEAD
-    return render_template("user/boostrap_order.html", order=order,status=status)
-=======
     return render_template("user/order.html", order=order, status=status)
->>>>>>> 06f1775a62db5d0332785bda4c154ce2a902c308
 
 
 @user.route("/history")
