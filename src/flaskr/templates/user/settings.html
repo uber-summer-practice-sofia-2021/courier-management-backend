@@ -7,64 +7,75 @@
 {% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-center">
-    <div class="d-inline-flex justify-content-center align-items-center">
-        <div class="card bg-dark text-white">
-            <form method="POST">
+<section class="vh-100 gradient-custom ">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-4 col-md-4 col-lg-10 col-xl-10">
+                <div class="card bg-dark text-white">
+                    <form method="POST">
 
-                <div class="form-group">
-                    <label for="user-full-name">Full Name:</label>
-                    <input class="form-control" id="user-full-name" type="text" name="name" placeholder="Enter name" value="{{name if name}}" required />
-                </div>
-                <div class="form-group">
-                    <label for="package-max-weight">Maximum weight of the package:</label>
-                    <input class="form-control" id="package-max-weight" type="number" step="0.5" name="weight" min="10" value="{{max_weight if max_weight}}"
-                        required />
-                </div>
-                <div class="form-group">
-                    <label for="package-max-weight">Maximum width of the package:</label>
-                    <input class="form-control" id="package-max-weight" type="number" step="0.5" name="width" min="10" value="{{max_width if max_width}}" required />
-                </div>
-                <div class="form-group">
-                    <label for="package-max-height">Maximum height of the package:</label>
-                    <input class="form-control" id="package-max-height" type="number" step="0.5" name="height" min="10" value="{{max_height if max_height}}"
-                        required />
-                </div>
-                <div class="form-group">
-                    <label for="package-max-length">Maximum length of the package:</label>
-                    <input class="form-control" id="package-max-length" type="number" step="0.5" name="length" min="10" value="{{max_length if max_length}}"
-                        required />
-                </div>
-
-
-                <div class="from-group">
-                    <ul id="tags-selected">Tags:
-                        {% for tag in tags %}
-                        <li>{{tag}}</li>
-                        {% endfor %}
-                    </ul>
-                    <div class="btn-group dropend">
-                        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
-                            data-bs-auto-close="outside" aria-expanded="false"
-                            onclick="filterTags({{tags}}, {{available_tags}});">
-                            Tags
-                        </button>
-                        <div id="tags-container" class="dropdown-menu dropdown-menu-dark">
-                            <div>
-                                <input id='tags-search' type="text" placeholder="Search tags.."
-                                    oninput="filterTags({{tags}}, {{available_tags}});" />
+                        <div class="form-group col">
+                            <label for="user-full-name">Full Name:</label>
+                            <input class="form-control" id="user-full-name" type="text" name="name"
+                                placeholder="Enter name" value="{{name if name}}" required />
+                        </div>
+                        <div class="row">
+                            <div class=" col">
+                                <label for="package-max-weight">Maximum weight of the package:</label>
+                                <input class="form-control" id="package-max-weight" type="number" step="0.5"
+                                    name="weight" min="10" value="{{max_weight if max_weight}}" required />
+                            </div>
+                            <div class="col">
+                                <label for="package-max-weight">Maximum width of the package:</label>
+                                <input class="form-control" id="package-max-weight" type="number" step="0.5"
+                                    name="width" min="10" value="{{max_width if max_width}}" required />
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="package-max-height">Maximum height of the package:</label>
+                                <input class="form-control" id="package-max-height" type="number" step="0.5"
+                                    name="height" min="10" value="{{max_height if max_height}}" required />
+                            </div>
+                            <div class="col">
+                                <label for="package-max-length">Maximum length of the package:</label>
+                                <input class="form-control" id="package-max-length" type="number" step="0.5"
+                                    name="length" min="10" value="{{max_length if max_length}}" required />
+                            </div>
+                        </div>
 
-                <div class="btn btn-primary">
-                    <input class="btn btn-primary" type="submit" value="Submit" />
+                        <div class="from-group">
+                            <div class="d-flex flex-wrap">
+                                {% for tag in tags %}
+                                <div class="tag-label" style="--label-r:215;--label-g:58;--label-b:74;--label-h:353;--label-s:66;--label-l:53;">
+                                    <span class="css-truncate css-truncate-target width-fit">{{tag}}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="btn-group dropend">
+                                <button type="button" class="btn btn-secondary dropdown-toggle"
+                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
+                                    onclick="filterTags({{tags}}, {{available_tags}});">
+                                    Tags
+                                </button>
+                                <div id="tags-container" class="dropdown-menu dropdown-menu-dark">
+                                    <div>
+                                        <input id='tags-search' type="text" placeholder="Search tags.."
+                                            oninput="filterTags({{tags}}, {{available_tags}});" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn btn-primary">
+                            <input class="btn btn-primary" type="submit" value="Submit" />
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/tags.js' )}}"></script>
