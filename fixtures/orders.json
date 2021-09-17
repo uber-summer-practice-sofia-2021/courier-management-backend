@@ -3,93 +3,90 @@
         {
             "clientName": "John Smith",
             "from": {
-                "latitude": 1,
-                "longitude": 2,
+                "latitude": 1.0,
+                "longitude": 2.0,
                 "addressName": "Mladost 5, Sofia"
             },
             "to": {
-                "latitude": 4,
-                "longitude": 5,
+                "latitude": 4.0,
+                "longitude": 5.0,
                 "addressName": "Mladost 1, Sofia"
             },
             "clientEmail": "jsmith@mail.bg",
             "phoneNumber": "0894546512",
-            
-            "length": 5,
-            "depth": 2,
-            "height": 3,
-            "weight": 10,
+            "length": 5.0,
+            "depth": 2.0,
+            "height": 3.0,
+            "weight": 10.0,
             "tags": [
-                "FRAGILE",
-                "DANGEROUS"
+                "DANGEROUS",
+                "FRAGILE"
             ],
-            "deliveryType": "Uber Express",
-            "ID": "123e4567-e89b-12d3-a456-426614174000",
+            "deliveryType": "STANDARD",
             "status": "OPEN",
-            "createdAt": "2012-04-23T18:25:43.511Z"
+            "createdAt": "2021-09-09T13:38:22.912",
+            "id": "357c469c-1183-4647-a5c3-41d5ecf32430"
         },
         {
-            "clientName": "John Smith",
+            "clientName": "Will Smith",
             "from": {
-                "latitude": 1,
-                "longitude": 2,
+                "latitude": 1.0,
+                "longitude": 2.0,
                 "addressName": "Mladost 4, Sofia"
             },
             "to": {
-                "latitude": 4,
-                "longitude": 5,
+                "latitude": 4.0,
+                "longitude": 5.0,
                 "addressName": "Mladost 1, Sofia"
             },
             "clientEmail": "jsmith@mail.bg",
             "phoneNumber": "0894546512",
-            
-            "length": 5,
-            "depth": 2,
-            "height": 3,
-            "weight": 10,
+            "length": 5.0,
+            "depth": 2.0,
+            "height": 3.0,
+            "weight": 10.0,
             "tags": [
-                "FRAGILE",
-                "DANGEROUS"
+                "DANGEROUS",
+                "FRAGILE"
             ],
-            "deliveryType": "Uber Express",
-            "ID": "1234e567-e89b-12d3-a456-426614174000",
+            "deliveryType": "STANDARD",
             "status": "OPEN",
-            "createdAt": "2012-04-23T18:25:43.511Z"
+            "createdAt": "2021-09-09T13:38:22.912",
+            "id": "1234e567-e89b-12d3-a456-426614174000"
         },
         {
-            "clientName": "John Smith",
+            "clientName": "Will Williams",
             "from": {
-                "latitude": 1,
-                "longitude": 2,
+                "latitude": 1.0,
+                "longitude": 2.0,
                 "addressName": "Graf Ignatiev 17, Sofia"
             },
             "to": {
-                "latitude": 4,
-                "longitude": 5,
-                "addressName": "Opulchenska 117, Sofia"
+                "latitude": 4.0,
+                "longitude": 5.0,
+                "addressName": "Mladost 1, Sofia"
             },
             "clientEmail": "jsmith@mail.bg",
             "phoneNumber": "0894546512",
-
-            "length": 5,
-            "depth": 2,
-            "height": 3,
-            "weight": 10,
+            "length": 5.0,
+            "depth": 2.0,
+            "height": 3.0,
+            "weight": 10.0,
             "tags": [
-                "FRAGILE",
-                "DANGEROUS"
+                "DANGEROUS",
+                "FRAGILE"
             ],
-            "deliveryType": "Uber Express",
-            "ID": "1434e567-e89b-12d3-a456-426614174000",
+            "deliveryType": "STANDARD",
             "status": "OPEN",
-            "createdAt": "2012-04-23T18:25:43.511Z"
+            "createdAt": "2021-09-09T13:38:22.912",
+            "id": "1434e567-e89b-12d3-a456-426614174000"
         }
     ],
     "pagination": {
         "next": null,
         "prev": null,
-        "totalItems": 2,
-        "totalPages": 10,
+        "totalItems": 3,
+        "totalPages": 1,
         "currentPage": 0
     }
 }

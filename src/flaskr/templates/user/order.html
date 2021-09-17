@@ -1,76 +1,77 @@
-{% extends "navbar.html" %} {% block title %} Order dashboard {% endblock %}
+{% extends "navbar.html" %}
+
+{% block title %} Order dashboard {% endblock %}
+
+
+{% block links %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    crossorigin="anonymous" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"
+    crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+    crossorigin="anonymous" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/boostrap_order_style.css') }}" />
+{% endblock %}
+
+
 {%block content%}
-
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"
-        crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-        crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
-        crossorigin="anonymous" />
-    <link rel="stylesheet" href="../../static/css/boostrap_order_style.css" />
-</head>
-
-<body>
-    <script id="script_id" src=" {{url_for('static',filename='js/order-progress.js') }}" status="{{status}}"></script>
-    <div class="container px-1 px-md-4 py-5 mx-auto">
-        <div class="card">
+<script id="script_id" src=" {{url_for('static',filename='js/order-progress.js') }}" status="{{status}}"></script>
+<div class="container px-1 px-md-4 py-5 mx-auto">
+    <div class="card">
+        <div class="row d-flex justify-content-center col-12">
+            <h2 class="text-center">Order Details:</h2>
+        </div>
+        <div class="row d-flex justify-content-between px-3">
             <div class="row d-flex justify-content-center col-12">
-                <h2 class="text-center">Order Details:</h2>
+                <h5 class="text-center">
+                    ORDER: {{order.ID}}
+                    <span class="text-primary font-weight-bold"></span>
+                </h5>
             </div>
-            <div class="row d-flex justify-content-between px-3">
-                <div class="row d-flex justify-content-center col-12">
-                    <h5 class="text-center">
-                        ORDER: {{order.ID}}
-                        <span class="text-primary font-weight-bold"></span>
-                    </h5>
-                </div>
-            </div>
-            <table class="centered table table-bordered table-striped">
-                <tr>
-                    <th>Client name</th>
-                    <th>Phone number</th>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Tags</th>
-                    <th>Delivery type</th>
-                </tr>
-                <tr>
-                    <th>{{order.clientName}}</th>
-                    <th>{{order.phoneNumber}}</th>
-                    <th>{{order.from['addressName']}}</th>
-                    <th>{{order.to['addressName']}}</th>
-                    <th>{{','.join(order.tags)}}</th>
-                    <th>{{order.deliveryType}}</th>
-                </tr>
-            </table>
-            <div class="row d-flex justify-content-between px-3 top"></div>
-            <!-- Add class 'active' to progress -->
-            <div class="row d-flex justify-content-center">
-                <div class="col-12">
-                    <ul id="progressbar" class="text-center center-block">
-                        <li id="Assigned-text" class="active step0">Assigned</li>
-                        <li class="step0" id="progressbar_picked">
-                            <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
-                                <button id="btn_picked" class="btn-submit" type="submit" name="status"
-                                    value="picked_up">
-                                    Picked Up
-                                </button>
-                            </form>
-                        </li>
-                        <li class="step0" id="progressbar_delivered">
-                            <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
-                                <button id="btn_delivered" type="submit" name="status" value="completed" disabled>
-                                    Delivered
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+        </div>
+        <table class="centered table table-bordered table-striped">
+            <tr>
+                <th>Client name</th>
+                <th>Phone number</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Tags</th>
+                <th>Delivery type</th>
+            </tr>
+            <tr>
+                <th>{{order.clientName}}</th>
+                <th>{{order.phoneNumber}}</th>
+                <th>{{order.from['addressName']}}</th>
+                <th>{{order.to['addressName']}}</th>
+                <th>{{','.join(order.tags)}}</th>
+                <th>{{order.deliveryType}}</th>
+            </tr>
+        </table>
+        <div class="row d-flex justify-content-between px-3 top"></div>
+        <!-- Add class 'active' to progress -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-12">
+                <ul id="progressbar" class="text-center center-block">
+                    <li id="Assigned-text" class="active step0">Assigned</li>
+                    <li class="step0" id="progressbar_picked">
+                        <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
+                            <button id="btn_picked" class="btn-submit" type="submit" name="status" value="picked_up">
+                                Picked Up
+                            </button>
+                        </form>
+                    </li>
+                    <li class="step0" id="progressbar_delivered">
+                        <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
+                            <button id="btn_delivered" type="submit" name="status" value="completed" disabled>
+                                Delivered
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
-</body>
+</div>
 {%endblock%}
