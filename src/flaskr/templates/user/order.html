@@ -57,14 +57,14 @@
                     <li id="Assigned-text" class="active step0">Assigned</li>
                     <li class="step0" id="progressbar_picked">
                         <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
-                            <button id="btn_picked" class="btn-submit" type="submit" name="status" value="picked_up">
+                            <button id="btn_picked" class="btn-submit" type="submit" name="status" value="PICKED_UP">
                                 Picked Up
                             </button>
                         </form>
                     </li>
                     <li class="step0" id="progressbar_delivered">
                         <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.ID)}}">
-                            <button id="btn_delivered" type="submit" name="status" value="completed" disabled>
+                            <button id="btn_delivered" type="submit" name="status" value="COMPLETED" disabled>
                                 Delivered
                             </button>
                         </form>

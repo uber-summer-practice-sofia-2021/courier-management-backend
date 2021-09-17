@@ -207,25 +207,36 @@ def order_dashboard(orderID):
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
 
+    # Get requested trip status
     status = request.form.get("status")
-    trip = Trip.query.filter_by(order_id=orderID).first()
 
-    if status == "assigned":
-        if trip:
-            flash("Order is already taken")
+    # Fetch trip from db
+    trip = Trip.query.filter(Trip.order_id==orderID, Trip.courier_id==found_user.id, Trip.status.in_(['ASSIGNED', 'PICKED_UP'])).first()
+
+    if status == "ASSIGNED":
+
+        # Check if there is already a trip for this order
+        trips = Trip.query.filter(Trip.order_id==orderID, Trip.courier_id!=found_user.id).all()
+        if [x for x in trips if x.status!="CANCELLED"]:
+            flash("Order is already taken!")
             return redirect(url_for("user.dashboard"))
 
+        # Insert trip into database and set timestamp
         insert_into_db(Trip(found_user.id, orderID), db)
-        trip = Trip.query.filter_by(order_id=orderID).first()
+        trip = Trip.query.filter_by(order_id=orderID, courier_id=found_user.id).first()
         trip.assigned_at = timestamp()
+
         found_user.current_order_id = orderID
-    elif status == "picked_up":
+    elif status == "PICKED_UP":
         trip.picked_at = timestamp()
-    elif status == "completed":
+    elif status == "COMPLETED" or status == "CANCELLED":
+        # Complete/cancel trip and clear user current trip id
         trip.delivered_at = timestamp()
         trip.sorter = trip.delivered_at + trip.id
         found_user.current_order_id = None
         message_kafka("trips", trip.get_id())
+
+    trip.status = status
     db.session.commit()
 
     change_order_status(orderID, status)

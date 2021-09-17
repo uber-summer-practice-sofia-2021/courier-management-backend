@@ -48,6 +48,7 @@ class Trip(db.Model):
     assigned_at = db.Column("assigned_at", db.String(24))
     picked_at = db.Column("picked_at", db.String(24))
     delivered_at = db.Column("delivered_at", db.String(24))
+    status = db.Column("status", db.String(20), default="ASSIGNED")
     sorter = db.Column("sorter", db.String(60), index=True)
 
     courier = db.relationship("Courier", backref=db.backref("trips", lazy=True))
@@ -80,5 +81,6 @@ class Trip(db.Model):
         return data
 
     def array(self):
+        return [y for x,y in self.map()]
         return [self.id,self.courier_id,self.order_id,self.distance,self.assigned_at,self.picked_at,self.delivered_at,]
 

@@ -33,8 +33,8 @@
             <th>{{item.to['addressName']}}</th>
             <th>{{','.join(item.tags)}}</th>
             <td>
-                <form method="POST" action="{{ url_for('user.order_dashboard', orderID=item.ID) }}">
-                    <button type="submit" class="btn btn-dark" name="status" value="assigned">Assign</button>
+                <form method="POST" action="{{ url_for('user.order_dashboard', orderID=item.id) }}">
+                    <button type="submit" class="btn btn-dark" name="status" value="ASSIGNED">Assign</button>
                 </form>
             </td>
         </tr>
@@ -45,19 +45,25 @@
     <ul class="pagination justify-content-center">
         {% if pagination %}
         <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+            <a class="page-link"
+                href="{{ url_for('user.dashboard', page=pagination.currentPage) if pagination.currentPage>0 else '#'}}"
+                aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
         </li>
 
-        {% for page in range(1, pagination.totalPages+1) %}
-        <li class="page-item {% if pagination.currentPage+1 == page %}active{% endif %}">
+        {% for page in range(pagination.currentPage+1, pagination.currentPage+5 if pagination.currentPage+5
+        <pagination.totalPages else pagination.totalPages+1) %} <li
+            class="page-item {% if pagination.currentPage+1 == page %}active{% endif %}">
             <a class="page-link" href="{{ url_for('user.dashboard', page=page) }}">{{page}}</a>
-        </li>
-        {% endfor %}
+            </li>
+            {% endfor %}
 
-        <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
-        </li>
-        {% endif %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="{{ url_for('user.dashboard', page=pagination.currentPage+2) if pagination.currentPage+1<pagination.totalPages else '#'}}"
+                    aria-label="Next"><span
+                        aria-hidden="true">&raquo;</span></a>
+            </li>
+            {% endif %}
     </ul>
 </div>
 {%endblock%}
