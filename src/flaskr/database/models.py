@@ -51,6 +51,7 @@ class Trip(db.Model):
     assigned_at = db.Column("assigned_at", db.String(24))
     picked_up_at = db.Column("picked_up_at", db.String(24))
     completed_at = db.Column("completed_at", db.String(24))
+    cancelled_at = db.Column("cancelled_at", db.String(24))
     status = db.Column("status", db.String(20), default="ASSIGNED")
     sorter = db.Column("sorter", db.String(60), index=True)
 

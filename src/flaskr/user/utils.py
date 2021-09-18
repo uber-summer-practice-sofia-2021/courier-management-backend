@@ -142,11 +142,11 @@ def change_trip_status(status, found_user, orderID):
         setattr(trip, status.lower() + "_at", timestamp())
         trip.status = status
 
-        if status == "COMPLETED":
+        if status == "COMPLETED" or status == "CANCELLED":
             # Clear user current order id and msg kafka
-            trip.sorter = trip.completed_at + trip.id
+            trip.sorter = getattr(trip, status.lower() + "_at") + trip.id
             found_user.current_order_id = None
-            message_kafka("trips", trip.get_id())
+            message_kafka("trips", trip.get_id()) if status == "COMPLETED" else None
 
         db.session.commit()
         return status

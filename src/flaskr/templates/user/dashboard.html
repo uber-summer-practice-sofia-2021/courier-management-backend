@@ -27,8 +27,8 @@
             <th>{{item.get('to').get('addressName')}}</th>
             <th>{{','.join(item.get('tags'))}}</th>
             <td>
-                <form method="POST" action="{{ url_for('user.order_dashboard', orderID=item.get('id')) }}">
-                    <button type="submit" class="btn btn-dark" name="status" value="ASSIGNED">Assign</button>
+                <form method="POST" action="{{ url_for('user.order_dashboard', orderID=item.get('id'), status='ASSIGNED') }}">
+                    <button type="submit" class="btn btn-dark" >Assign</button>
                 </form>
             </td>
         </tr>

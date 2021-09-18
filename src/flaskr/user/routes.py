@@ -196,7 +196,7 @@ def order_dashboard(orderID):
         flash("Invalid user or session expired!")
         return redirect(url_for("user.login"))
 
-    if session["status"] == "inactive":
+    if session["status"] == "inactive" and not Trip.query.filter((Trip.order_id == orderID) & (Trip.status == "COMPLETED")):
         flash("You are currently inactive!")
         return redirect(url_for("user.inactive"))
 
@@ -213,20 +213,22 @@ def order_dashboard(orderID):
     # Check if order was not open or there is already a trip for this order
     trips = Trip.query.filter(
         (Trip.order_id == orderID)
-        & ((Trip.status != "CANCELLED") & (Trip.courier_id != found_user.id))
+        & (((Trip.status != "CANCELLED") & (Trip.courier_id != found_user.id)) | ((Trip.status == 'COMPLETED') & (Trip.courier_id==found_user.id)))
     ).all()
+    current_app.logger.debug([x.dict() for x in trips])
     order = get_order_by_id(orderID)
+
     if (
         not order
         or (order.get("status") != "OPEN" and not found_user.current_order_id)
         or trips
     ):
-        flash("Order was already taken or cancelled!")
+        flash("Order was already taken, completed or cancelled!")
         found_user.current_order_id = None
         return redirect(url_for("user.dashboard"))
 
     # Get requested trip status
-    status = request.form.get("status")
+    status = request.args.get("status")
     if status:
         change_order_status(orderID, status)
     status = change_trip_status(status, found_user, orderID)
@@ -249,12 +251,11 @@ def history():
 
     if found_user.current_order_id:
         flash("You have a trip in progress!")
-
         return redirect(
             url_for("user.order_dashboard", orderID=found_user.current_order_id)
         )
 
-    limit = 1
+    limit = 5
     older_than = request.args.get("older_than")
     newer_than = request.args.get("newer_than")
 

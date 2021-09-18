@@ -4,8 +4,13 @@
 }
 
 body {
+    z-index: -1;
     padding: 0;
     margin: 0
+}
+
+div {
+    z-index: 0;
 }
 
 #notfound {
@@ -98,4 +103,9 @@ body {
         padding-right: 15px;
         padding-top: 110px
     }
+}
+
+.overlay {
+    position: absolute;
+    z-index: 9;
 }
