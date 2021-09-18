@@ -4,16 +4,17 @@
 
 {% block content %}
 
-<p>COURIERS:</p>
+<h1>COURIERS:</h1>
 {% for item in couriers %}
-<p>{{item}}</p>
+<p>{{item.dict()}}</p>
 {% endfor %}
 
-<p>TRIPS:</p>
+<h1>TRIPS:</h1>
 
 {% for item in trips %}
-<p>{{item}}</p>
-<p>{{item.sorter}}</p>
+<p>{{item.dict()}}</p>
 {% endfor %}
+
+<h1>{{db_info}}</h1>
 
 {% endblock %}

@@ -20,19 +20,21 @@
     <thead class="table-dark">
       <tr>
         <th>Trip ID:</th>
-        <th>Courier ID</th>
+        <th>Courier ID:</th>
         <th>Order ID:</th>
         <th>Distance:</th>
         <th>Assigned at:</th>
         <th>Picked up at:</th>
         <th>Delivered at:</th>
+        <th>Status:</th>
       </tr>
     </thead>
     {% for item in items %}
     <tr>
-      {% for field in item %}
-      <td>{{field}}</td>
+      {% for key in item %}
+      <td>{{item[key]}}</td>
       {% endfor %}
+      <td><a class="btn btn-primary" href="{{ url_for('user.order_dashboard', orderID=item.get('order_id')) }}">Details</a></td>
     </tr>
     {% endfor %}
   </table>
@@ -41,11 +43,11 @@
 <div class="d-flex justify-content-center">
   <div class="btn-group">
     {% if newer %}
-    <a id='lnk-newer' href="{{ url_for('user.history', newer_than=items[0][7]) }}"
+    <a id='lnk-newer' href="{{ url_for('user.history', newer_than=items[0].get('sorter')) }}"
       class="btn btn-outline btn-primary btn-lg">Newer</a>
     {% endif %}
     {% if older %}
-    <a id='lnk-older' href="{{ url_for('user.history', older_than=items[-1][7]) }}"
+    <a id='lnk-older' href="{{ url_for('user.history', older_than=items[-1].get('sorter')) }}"
       class="btn btn-outline btn-primary btn-lg">Older</a>
     {% endif %}
   </div>

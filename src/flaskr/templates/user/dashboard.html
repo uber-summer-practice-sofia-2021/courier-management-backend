@@ -2,10 +2,6 @@
 
 {% block title %} Dashboard {% endblock %}
 
-{% block links %}
-<!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/order_status_style.css')}}"> -->
-{% endblock %}
-
 {% block content %}
 
 <div>
@@ -13,9 +9,7 @@
         <h1>Courier {{name}} is now active!</h1>
     </div>
     <div class="d-flex justify-content-center text-white bg-dark">
-        <form method="POST" action="{{ url_for('user.dashboard') }}">
-            <button type="submit" class="btn btn-primary" name="submit" value="inactive">Go inactive</button>
-        </form>
+        <a class="btn btn-primary" href="{{ url_for('user.inactive') }}">Go inactive</a>
     </div>
 
     <table class="table table-striped table-hover centered thick-border table-hover">
@@ -29,12 +23,12 @@
         </thead>
         {% for item in data %}
         <tr>
-            <th>{{item.from['addressName']}}</th>
-            <th>{{item.to['addressName']}}</th>
-            <th>{{','.join(item.tags)}}</th>
+            <th>{{item.get('from').get('addressName')}}</th>
+            <th>{{item.get('to').get('addressName')}}</th>
+            <th>{{','.join(item.get('tags'))}}</th>
             <td>
-                <form method="POST" action="{{ url_for('user.order_dashboard', orderID=item.ID) }}">
-                    <button type="submit" class="btn btn-dark" name="status" value="assigned">Assign</button>
+                <form method="POST" action="{{ url_for('user.order_dashboard', orderID=item.get('id'), status='ASSIGNED') }}">
+                    <button type="submit" class="btn btn-dark" >Assign</button>
                 </form>
             </td>
         </tr>
@@ -45,17 +39,22 @@
     <ul class="pagination justify-content-center">
         {% if pagination %}
         <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+            <a class="page-link"
+                href="{{ url_for('user.dashboard', page=pagination.currentPage) if pagination.currentPage>0 else '#'}}"
+                aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
         </li>
 
-        {% for page in range(1, pagination.totalPages+1) %}
-        <li class="page-item">
+        {% for page in range(pagination.get('currentPage')+1, pagination.get('currentPage')+5 if pagination.get('currentPage')+5
+        <pagination.get('totalPages') else pagination.get('totalPages')+1) %} <li
+            class="page-item {% if pagination.currentPage+1 == page %}active{% endif %}">
             <a class="page-link" href="{{ url_for('user.dashboard', page=page) }}">{{page}}</a>
         </li>
         {% endfor %}
 
         <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+            <a class="page-link"
+                href="{{ url_for('user.dashboard', page=pagination.currentPage+2) if pagination.currentPage+1<pagination.totalPages else '#'}}"
+                aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
         </li>
         {% endif %}
     </ul>
