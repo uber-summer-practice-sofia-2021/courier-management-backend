@@ -1,6 +1,4 @@
 from datetime import datetime
-
-from werkzeug.utils import redirect
 from flaskr.producer import Producer
 from flaskr.database.models import *
 from flask import current_app
