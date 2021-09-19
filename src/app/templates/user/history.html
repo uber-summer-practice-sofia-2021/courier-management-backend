@@ -1,6 +1,17 @@
 {% extends "navbar.html" %}
 
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/history.css')}}">
+{% endblock %}
+
 {% block content %}
+
+<script>
+  function goto(url) {
+    window.location.href = url;
+  }
+</script>
+
 <div class="d-flex justify-content-center bg-dark">
   <h2 class="text-white">History of my trips</h2>
 </div>
@@ -21,13 +32,14 @@
       </tr>
     </thead>
     {% for item in items %}
-    <tr>
+    <tr class="table-row" role="link" onclick="goto('{{ url_for('user.trip_dashboard', tripID=item.get('id')) }}');">
       {% for key in item %}
       {% if key != 'sorter' %}
       <td>{{item[key]}}</td>
       {% endif %}
       {% endfor %}
-      <td><a class="btn btn-primary" href="{{ url_for('user.trip_dashboard', tripID=item.get('id')) }}">Details</a></td>
+      <a href="{{ url_for('user.trip_dashboard', tripID=item.get('id')) }}"></a>
+      </a>
     </tr>
     {% endfor %}
   </table>
