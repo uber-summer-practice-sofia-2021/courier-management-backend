@@ -16,7 +16,7 @@ class Producer:
         )
 
         # send message to kafka
-        ack = producer.send(os.environ['KAFKA_TOPIC'], value=data)
+        ack = producer.send(topic, value=data)
         metadata = ack.get()
         current_app.logger.debug(metadata.topic)
         current_app.logger.debug(metadata.partition)

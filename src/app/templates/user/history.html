@@ -1,15 +1,5 @@
 {% extends "navbar.html" %}
 
-{% block style %}
-<style>
-  table,
-  th,
-  td {
-    border: 1px solid black;
-  }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="d-flex justify-content-center bg-dark">
   <h2 class="text-white">History of my trips</h2>
@@ -26,15 +16,18 @@
         <th>Assigned at:</th>
         <th>Picked up at:</th>
         <th>Delivered at:</th>
+        <th>Cancelled at:</th>
         <th>Status:</th>
       </tr>
     </thead>
     {% for item in items %}
     <tr>
       {% for key in item %}
+      {% if key != 'sorter' %}
       <td>{{item[key]}}</td>
+      {% endif %}
       {% endfor %}
-      <td><a class="btn btn-primary" href="{{ url_for('user.order_dashboard', orderID=item.get('order_id')) }}">Details</a></td>
+      <td><a class="btn btn-primary" href="{{ url_for('user.trip_dashboard', tripID=item.get('id')) }}">Details</a></td>
     </tr>
     {% endfor %}
   </table>

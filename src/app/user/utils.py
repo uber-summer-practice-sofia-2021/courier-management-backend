@@ -1,12 +1,13 @@
 from datetime import datetime
-from flaskr.producer import Producer
-from flaskr.database.models import *
-from flask import current_app
+from app.producer import Producer
+from app.db.models import *
+from flask import current_app, g
 import requests, os, inspect as ins
 from sqlalchemy import exc
 
 
 AVAILABLE_TAGS = ["FRAGILE", "DANGEROUS"]
+AVAILABLE_TRIP_STATES = ["ASSIGNED", "PICKED_UP", "COMPLETED", "CANCELLED"]
 
 
 # Retrieves current timestamp
@@ -14,7 +15,7 @@ def timestamp():
     return datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
 
-# Inserts object into database
+# Inserts object into db
 def insert_into_db(obj, db):
     try:
         db.session.add(obj)
@@ -65,13 +66,44 @@ def get_order_by_id(orderID):
 # Send order status change
 def change_order_status(orderID, status):
     try:
-        requests.post(
+        return requests.post(
             f"http://{os.getenv('ORDER_MANAGEMENT_HOST')}:{os.getenv('ORDER_MANAGEMENT_PORT')}/orders/{orderID}?status={status.upper()}"
         )
     except Exception as e:
         current_app.logger.error(
             f"{e} -> {ins.getframeinfo(ins.currentframe()).function}"
         )
+        return None
+
+
+# Checks if order was not open or there is already a trip for this order
+def check_order_availability(orderID):
+    trips = Trip.query.filter(
+        (Trip.order_id == orderID) & (Trip.status != "CANCELLED")
+    ).all()
+    order = get_order_by_id(orderID)
+
+    if (
+        not order
+        or (order.get("status") != "OPEN" and not g.user.current_trip_id)
+        or trips
+    ):
+        return False
+    return True
+
+
+# Initialize trip upon order assignment
+def init_trip(courier, orderID):
+    try:
+        trip = Trip(courier.id, orderID)
+        insert_into_db(trip, db)
+        courier.current_trip_id = trip.id
+        return db.session.commit()
+    except exc.IntegrityError as e:
+        current_app.logger.error(
+            f"{e} -> {ins.getframeinfo(ins.currentframe()).function}"
+        )
+        db.session.rollback()
 
 
 # Sends message to kafka
@@ -119,21 +151,9 @@ def paginate(courier_id, older_than, newer_than, limit=10):
 
 
 # Changes trip status and returns it's status
-def change_trip_status(status, found_user, orderID):
+def change_trip_status(status, found_user, trip):
     try:
-        if status == "ASSIGNED":
-            # Insert trip into database and set timestamp
-            insert_into_db(Trip(found_user.id, orderID), db)
-            found_user.current_order_id = orderID
-
-        # Fetch trip from db
-        trip = Trip.query.filter(
-            Trip.order_id == orderID,
-            Trip.courier_id == found_user.id,
-            Trip.status != "CANCELLED",
-        ).first()
-
-        if not status:
+        if status not in AVAILABLE_TRIP_STATES:
             return trip.status
 
         # Set trip corresponding timestamp
@@ -143,8 +163,10 @@ def change_trip_status(status, found_user, orderID):
         if status == "COMPLETED" or status == "CANCELLED":
             # Clear user current order id and msg kafka
             trip.sorter = getattr(trip, status.lower() + "_at") + trip.id
-            found_user.current_order_id = None
-            message_kafka("trips", trip.get_id()) if status == "COMPLETED" else None
+            found_user.current_trip_id = None
+            message_kafka(
+                os.environ["KAFKA_TOPIC"], trip.get_id()
+            ) if status == "COMPLETED" else None
 
         db.session.commit()
         return status

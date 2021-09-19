@@ -1,5 +1,5 @@
 from flask import Blueprint, request, json, Response, current_app
-from flaskr.database.models import *
+from app.db.models import *
 import inspect as ins
 
 api = Blueprint("api", __name__)
@@ -30,17 +30,17 @@ def trips_api():
     trip_id = request.args["tripID"]
     trip = Trip.query.filter_by(id=trip_id).first_or_404().map()
     return Response(response=json.dumps(trip), content_type="application/json", status=302)
-    try:
-        trip_id = request.args["tripID"]
-        trip = Trip.query.filter_by(id=trip_id).first().map()
-        return Response(response=json.dumps(trip), content_type="application/json", status=302)
-    except Exception as e:
-        current_app.logger.error(
-            f"{e} -> {ins.getframeinfo(ins.currentframe()).function}"
-        )
-        return Response(
-            response=json.dumps(None), status=204, content_type="application/json"
-        )
+    # try:
+    #     trip_id = request.args["tripID"]
+    #     trip = Trip.query.filter_by(id=trip_id).first().map()
+    #     return Response(response=json.dumps(trip), content_type="application/json", status=302)
+    # except Exception as e:
+    #     current_app.logger.error(
+    #         f"{e} -> {ins.getframeinfo(ins.currentframe()).function}"
+    #     )
+    #     return Response(
+    #         response=json.dumps(None), status=204, content_type="application/json"
+    #     )
 
 
 # Endpoint for testing orders requests

@@ -1,16 +1,16 @@
-import sys, subprocess, flaskr, os
-from flaskr.database.models import *
+import sys, subprocess, app, os
+from app.db.models import *
 
 # Removes all the tables in the db
 def drop_db():
-    with flaskr.create_app().app_context():
+    with app.create_app().app_context():
         db.drop_all()
     print("Database cleared")
 
 
 # Creates tables in the db based on the imported models
 def create_db():
-    with flaskr.create_app().app_context():
+    with app.create_app().app_context():
         db.create_all()
     print("Database created")
 
