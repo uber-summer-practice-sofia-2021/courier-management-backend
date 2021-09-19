@@ -121,7 +121,7 @@ def inactive():
 
     if g.user.current_trip_id:
         flash("You have a trip in progress!")
-        return redirect(url_for("user.dashboard", orderID=g.user.current_trip_id))
+        return redirect(url_for("user.trip_dashboard", tripID=g.user.current_trip_id))
 
     if request.method == "POST":
         if request.form.get("submit") == "active":
