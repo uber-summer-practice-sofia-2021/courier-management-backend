@@ -96,6 +96,7 @@ def check_order_availability(orderID):
 def init_trip(courier, orderID):
     try:
         trip = Trip(courier.id, orderID)
+        trip.assigned_at = timestamp()
         insert_into_db(trip, db)
         courier.current_trip_id = trip.id
         return db.session.commit()
