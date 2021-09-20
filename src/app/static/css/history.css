@@ -1,0 +1,12 @@
+.table-row {
+    background-color: whitesmoke !important;
+}
+
+.table-row:hover {
+    cursor: pointer;
+    background: wheat !important;
+}
+
+td {
+    font-weight: bold;
+}

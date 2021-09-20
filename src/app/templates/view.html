@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title%}View All Users{% endblock %}
+
+{% block content %}
+
+<h1>COURIERS:</h1>
+{% for item in couriers %}
+<p>{{item.dict()}}</p>
+{% endfor %}
+
+<h1>TRIPS:</h1>
+
+{% for item in trips %}
+<p>{{item.dict()}}</p>
+{% endfor %}
+
+<h1>{{db_info}}</h1>
+
+{% endblock %}
