@@ -3,10 +3,19 @@
     box-sizing: border-box
 }
 
-html, body {
+html,
+body {
     z-index: -1;
     padding: 0;
-    margin: 0
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
 }
 
 div {
@@ -108,4 +117,17 @@ div {
 .overlay {
     position: absolute;
     z-index: 99;
+}
+
+table {
+    background: whitesmoke;
+}
+
+.container-fluid {
+    margin: 15px;
+}
+
+.row {
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
 }
