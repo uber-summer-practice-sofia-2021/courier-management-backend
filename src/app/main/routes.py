@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, json, current_app
+from flask import Blueprint, render_template, redirect, url_for, json, current_app, session, g
 from werkzeug.exceptions import HTTPException
-from flaskr.database.models import *
+from app.db.models import *
 
 main = Blueprint("main", __name__)
 
@@ -33,5 +33,8 @@ def home():
 @main.route("/view")
 def view():
     return render_template(
-        "view.html", couriers=Courier.query.all(), trips=Trip.query.all(), db_info=current_app.config.get('SQLALCHEMY_DATABASE_URI')
+        "view.html",
+        couriers=Courier.query.all(),
+        trips=Trip.query.all(),
+        db_info=current_app.config.get("SQLALCHEMY_DATABASE_URI"),
     )

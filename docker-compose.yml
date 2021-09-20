@@ -15,7 +15,7 @@ services:
         published: 5000
         protocol: tcp
     # environment:
-    #   - FLASK_APP=flaskr
+    #   - FLASK_APP=src/app
     #   - FLASK_ENV=development
     #   - ORDER_MANAGEMENT_HOST=localhost
     #   - ORDER_MANAGEMENT_PORT=5000

@@ -44,32 +44,35 @@
                             </div>
                         </div>
 
-                        <div class="from-group">
-                            <div class="btn-group dropend">
-                                <button type="button" class="btn btn-secondary dropdown-toggle"
-                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
-                                    onclick="filterTags({{tags}}, {{available_tags}});">
-                                    Tags
-                                </button>
-                                <div id="tags-container" class="dropdown-menu dropdown-menu-dark">
-                                    <div>
-                                        <input id='tags-search' type="text" placeholder="Search tags.."
-                                            oninput="filterTags({{tags}}, {{available_tags}});" />
+                        <div class="row">
+                            <div class="from-group">
+                                <div class="btn-group dropdown">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle"
+                                        data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
+                                        onclick="filterTags({{tags}}, {{available_tags}});">
+                                        Tags
+                                    </button>
+                                    <div id="tags-container" class="dropdown-menu dropdown-menu-dark">
+                                        <div>
+                                            <input id='tags-search' type="text" placeholder="Search tags.."
+                                                oninput="filterTags({{tags}}, {{available_tags}});" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="d-inline-flex flex-wrap">
-                                {% for tag in tags %}
-                                <div class="tag-label"
-                                    style="--label-r:215;--label-g:58;--label-b:74;--label-h:353;--label-s:66;--label-l:53;">
-                                    <span class="css-truncate css-truncate-target width-fit">{{tag}}</span>
+                                <div class="d-inline-flex flex-wrap tags-list">
+                                    {% for tag in tags %}
+                                    <div class="tag-label">
+                                        <span class="css-truncate css-truncate-target width-fit">{{tag}}</span>
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                                {% endfor %}
                             </div>
                         </div>
 
-                        <div class="d-inline-flex btn btn-primary justify-content-center">
-                            <input class="btn btn-primary" type="submit" value="Save" />
+                        <div class="row">
+                            <div class="d-inline-flex justify-content-end">
+                                <input class="btn btn-primary" type="submit" value="Save" />
+                            </div>
                         </div>
                     </form>
                 </div>

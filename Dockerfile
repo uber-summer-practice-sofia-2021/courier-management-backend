@@ -14,7 +14,7 @@ RUN pip install -r requirements.txt
 EXPOSE 5000
 
 ENV FLASK_ENV=development \
-    FLASK_APP=src/flaskr \
+    FLASK_APP=src/app \
     ORDER_MANAGEMENT_HOST=localhost \
     ORDER_MANAGEMENT_PORT=5000 \
     KAFKA_BROKERS=kafka:9092 \
@@ -23,7 +23,7 @@ ENV FLASK_ENV=development \
     DATABASE_PORT= \
     DATABASE_USERNAME= \
     DATABASE_PASSWD= \
-    DATABASE_PATH=database/server.db \
+    DATABASE_PATH=db/server.db \
     DATABASE_DIALECT=sqlite \
     DATABASE_DRIVER=
 

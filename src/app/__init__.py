@@ -1,5 +1,5 @@
 from flask import Flask
-from flaskr.database.models import db
+from app.db.models import db
 from datetime import timedelta
 import os
 
@@ -39,9 +39,9 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
-    from flaskr.user.routes import user
-    from flaskr.api.routes import api
-    from flaskr.main.routes import main
+    from app.user.routes import user
+    from app.api.routes import api
+    from app.main.routes import main
 
     app.register_blueprint(user)
     app.register_blueprint(api)

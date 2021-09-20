@@ -17,13 +17,14 @@
 
 
 {%block content%}
-<script id="script_id" src=" {{url_for('static',filename='js/order-progress.js') }}" status="{{status}}"></script>
+<script id="script_id" src=" {{url_for('static',filename='js/order-progress.js') }}" status="{{trip.status}}">
+</script>
 <div class="container px-1 px-md-4 py-5 mx-auto">
     <div class="card">
         <div class="d-flex justify-content-end">
-            <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.get('id'), status='CANCELLED')}}">
-                <button {% if status!='ASSIGNED' %} hidden {% endif %} class="btn btn-danger"
-                    type="submit">
+            <form method="POST"
+                action="{{ url_for('user.trip_dashboard',  tripID=trip.id, status='CANCELLED') }}">
+                <button {% if trip.status!='ASSIGNED' %} hidden {% endif %} class="btn btn-danger" type="submit">
                     Cancel
                 </button>
             </form>
@@ -57,15 +58,16 @@
                 <th>{{order.get('deliveryType')}}</th>
             </tr>
         </table>
-        <!-- <div class="row d-flex justify-content-between px-3 top"></div> -->
+
         <!-- Add class 'active' to progress -->
         <div class="row d-flex justify-content-center">
             <div class="col-12">
                 <ul id="progressbar" class="text-center center-block">
                     <li class="active step0"><label class="progress-label">Assigned</label></li>
                     <li class="step0" id="progressbar_picked">
-                        <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.get('id'), status='PICKED_UP') }}">
-                            <button {% if status!='ASSIGNED' %} hidden {% endif %} id="btn_picked"
+                        <form method="POST"
+                            action="{{ url_for('user.trip_dashboard', tripID=trip.id, status='PICKED_UP') }}">
+                            <button {% if trip.status!='ASSIGNED' %} hidden {% endif %} id="btn_picked"
                                 class="btn btn-primary" type="submit">
                                 Picked Up
                             </button>
@@ -73,8 +75,10 @@
                         <label class="progress-label">Picked Up</label>
                     </li>
                     <li class="step0" id="progressbar_delivered">
-                        <form method="POST" action="{{ url_for('user.order_dashboard', orderID=order.get('id'), status='COMPLETED') }}">
-                            <button {% if status!='PICKED_UP' %} hidden {% endif %} id="btn_delivered" type="submit" class="btn btn-primary">
+                        <form method="POST"
+                            action="{{ url_for('user.trip_dashboard', tripID=trip.id, status='COMPLETED') }}">
+                            <button {% if trip.status!='PICKED_UP' %} hidden {% endif %} id="btn_delivered"
+                                type="submit" class="btn btn-primary">
                                 Delivered
                             </button>
                         </form>
