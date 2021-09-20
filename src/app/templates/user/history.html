@@ -26,16 +26,22 @@
         <th>Distance:</th>
         <th>Assigned at:</th>
         <th>Picked up at:</th>
-        <th>Delivered at:</th>
-        <th>Cancelled at:</th>
+        <th > Delivered at:</th>
+        <th >Cancelled at:</th>
         <th>Status:</th>
       </tr>
     </thead>
     {% for item in items %}
     <tr class="table-row" role="link" onclick="goto('{{ url_for('user.trip_dashboard', tripID=item.get('id')) }}');">
       {% for key in item %}
-      {% if key != 'sorter' %}
+      {% if key != 'sorter' and key != 'status'%}
       <td>{{item[key]}}</td>
+      {% endif %}
+      {% if key == 'status' and  item[key]  == 'COMPLETED'%}
+      <td style="background-color: hsl(81, 100%, 82%);">{{item[key]}}</td>
+      {% endif %}
+      {% if key == 'status' and  item[key]  == 'CANCELLED'%}
+      <td style="background-color: hsl(0, 100%, 88%);">{{item[key]}}</td>
       {% endif %}
       {% endfor %}
       <a href="{{ url_for('user.trip_dashboard', tripID=item.get('id')) }}"></a>
