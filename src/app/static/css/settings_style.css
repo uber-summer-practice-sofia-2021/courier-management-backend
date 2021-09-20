@@ -1,0 +1,65 @@
+
+label {
+  font-weight: bold;
+}
+
+#tags-container {
+  width: fit-content;
+  height: 150px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: center;
+  padding: 20px;
+  position: absolute;
+  inset: auto auto 0px 0px;
+  margin: 0px;
+  transform: translate(74px);
+  border: 1px solid white;
+  border-radius: 0.5em;
+  z-index: 99;
+  pointer-events: auto;
+}
+
+.tag-label {
+  display: inline-flex;
+  padding: 0 7px;
+  margin: 2px 5px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  border: 1px solid;
+  border-radius: 2em;
+}
+
+.card,
+.row {
+  padding: 20px;
+  z-index: 0;
+}
+
+.row {
+  pointer-events: none;
+}
+
+.col {
+  margin: 0 15px;
+}
+
+.btn, .form-control {
+  pointer-events: auto;
+}
+
+.tags-list {
+  max-width: 200px;
+}
+
+.tag {
+  position: relative;
+  border-collapse: collapse;
+  border: 1px solid whitesmoke;
+  cursor: pointer;
+}
+
+.see-through {
+  pointer-events: none;
+}

@@ -1,0 +1,82 @@
+{% extends "navbar.html"%}
+
+{% block title %} User Settings {% endblock %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/settings_style.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-4 col-md-4 col-lg-10 col-xl-10">
+            <div class="card bg-dark text-white">
+                <form method="POST">
+                    <div class="col">
+                        <label for="user-full-name">Full Name:</label>
+                        <input class="form-control" id="user-full-name" type="text" name="name" placeholder="Enter name"
+                            value="{{name if name}}" required />
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="package-max-weight">Maximum weight of the package:</label>
+                            <input class="form-control" id="package-max-weight" type="number" step="0.5" name="weight"
+                                min="10" value="{{max_weight if max_weight}}" required />
+                        </div>
+                        <div class="col">
+                            <label for="package-max-width">Maximum width of the package:</label>
+                            <input class="form-control" id="package-max-weight" type="number" step="0.5" name="width"
+                                min="10" value="{{max_width if max_width}}" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="package-max-height">Maximum height of the package:</label>
+                            <input class="form-control" id="package-max-height" type="number" step="0.5" name="height"
+                                min="10" value="{{max_height if max_height}}" required />
+                        </div>
+                        <div class="col">
+                            <label for="package-max-length">Maximum length of the package:</label>
+                            <input class="form-control" id="package-max-length" type="number" step="0.5" name="length"
+                                min="10" value="{{max_length if max_length}}" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="from-group">
+                            <div class="btn-group dropdown">
+                                <button type="button" class="btn btn-secondary dropdown-toggle"
+                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
+                                    onclick="filterTags({{tags}}, {{available_tags}});">
+                                    Tags
+                                </button>
+                                <div id="tags-container" class="dropdown-menu dropdown-menu-dark">
+                                    <div>
+                                        <input id='tags-search' type="text" placeholder="Search tags.."
+                                            oninput="filterTags({{tags}}, {{available_tags}});" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-inline-flex flex-wrap tags-list">
+                                {% for tag in tags %}
+                                <div class="tag-label">
+                                    <span class="css-truncate css-truncate-target width-fit">{{tag}}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-inline-flex justify-content-end">
+                            <input class="btn btn-primary" type="submit" value="Save" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tags.js' )}}"></script>
+{% endblock %}
+{%endblock%}

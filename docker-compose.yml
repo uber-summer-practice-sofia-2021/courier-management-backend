@@ -9,15 +9,20 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./fixtures:/app/fixtures
-      - ./src:/app
+      - ./src:/app/src
     ports:
       - target: 5000
         published: 5000
         protocol: tcp
-    environment:
-      - FLASK_APP=flaskr
-      - FLASK_ENV=development
-      - KAFKA_BROKERS=kafka:9092
+    # environment:
+    #   - FLASK_APP=src/app
+    #   - FLASK_ENV=development
+    #   - ORDER_MANAGEMENT_HOST=localhost
+    #   - ORDER_MANAGEMENT_PORT=5000
+    #   - KAFKA_BROKERS=kafka:9092
+    #   - KAFKA_TOPIC=trips
+    #   - DATABASE_HOST=
+    #   - DATABASE_PORT=
   
   zookeeper:
     image: wurstmeister/zookeeper

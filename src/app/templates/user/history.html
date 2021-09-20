@@ -1,0 +1,60 @@
+{% extends "navbar.html" %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/history.css')}}">
+{% endblock %}
+
+{% block content %}
+
+<script>
+  function goto(url) {
+    window.location.href = url;
+  }
+</script>
+
+<div class="d-flex justify-content-center bg-dark">
+  <h2 class="text-white">History of my trips</h2>
+</div>
+
+<div>
+  <table class="table table-striped" style="width:100%">
+    <thead class="table-dark">
+      <tr>
+        <th>Trip ID:</th>
+        <th>Courier ID:</th>
+        <th>Order ID:</th>
+        <th>Distance:</th>
+        <th>Assigned at:</th>
+        <th>Picked up at:</th>
+        <th>Delivered at:</th>
+        <th>Cancelled at:</th>
+        <th>Status:</th>
+      </tr>
+    </thead>
+    {% for item in items %}
+    <tr class="table-row" role="link" onclick="goto('{{ url_for('user.trip_dashboard', tripID=item.get('id')) }}');">
+      {% for key in item %}
+      {% if key != 'sorter' %}
+      <td>{{item[key]}}</td>
+      {% endif %}
+      {% endfor %}
+      <a href="{{ url_for('user.trip_dashboard', tripID=item.get('id')) }}"></a>
+      </a>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="d-flex justify-content-center">
+  <div class="btn-group">
+    {% if newer %}
+    <a id='lnk-newer' href="{{ url_for('user.history', newer_than=items[0].get('sorter')) }}"
+      class="btn btn-outline btn-primary btn-lg">Newer</a>
+    {% endif %}
+    {% if older %}
+    <a id='lnk-older' href="{{ url_for('user.history', older_than=items[-1].get('sorter')) }}"
+      class="btn btn-outline btn-primary btn-lg">Older</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
