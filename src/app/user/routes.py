@@ -157,12 +157,13 @@ def dashboard():
 
     if request.method == "POST":
         orderID = request.args.get("orderID")
+        distance = request.args.get("distance")
         
         if not check_order_availability(orderID):
             flash("Order was already taken, completed or cancelled!")
             return redirect(url_for("user.dashboard"))
 
-        init_trip(g.user, orderID)
+        init_trip(g.user, orderID, distance)
 
         return redirect(url_for("user.trip_dashboard", tripID=g.user.current_trip_id, status="ASSIGNED"))
 
@@ -182,6 +183,9 @@ def dashboard():
 
     data = orders.get("data") if orders.get("data") else []
     pagination = orders.get("pagination")
+
+    for order in data:
+        order['distance'] = round(haversine_distance(order['from']['latitude'], order['from']['longitude'], order['to']['latitude'], order['to']['longitude']), 2)
 
     if not orders:
         flash("There was a problem!")
@@ -219,9 +223,13 @@ def trip_dashboard(tripID):
     # Get requested trip status
     if request.method == "POST":
         status = request.args.get("status")
-        if status:
-            change_order_status(trip.order_id, status)
-        status = change_trip_status(status, g.user, trip)
+
+        if (trip.status == "ASSIGNED" and status in ["CANCELLED", "PICKED_UP"]) or (trip.status == "PICKED_UP" and status == "COMPLETED"):
+            if status:
+                change_order_status(trip.order_id, status)
+            status = change_trip_status(status, g.user, trip)
+        else:
+            flash("Invalid operation!")
 
     return render_template("user/order.html", order=order, trip=trip)
 

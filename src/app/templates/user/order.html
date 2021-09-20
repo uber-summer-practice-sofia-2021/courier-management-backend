@@ -46,6 +46,7 @@
                 <th>Phone number</th>
                 <th>From</th>
                 <th>To</th>
+                <th>Distance (km)</th>
                 <th>Tags</th>
                 <th>Delivery type</th>
             </tr>
@@ -54,6 +55,7 @@
                 <th>{{order.get('phoneNumber')}}</th>
                 <th>{{order.get('from').get('addressName')}}</th>
                 <th>{{order.get('to').get('addressName')}}</th>
+                <th>{{trip.distance}}</th>
                 <th>{{','.join(order.get('tags'))}}</th>
                 <th>{{order.get('deliveryType')}}</th>
             </tr>

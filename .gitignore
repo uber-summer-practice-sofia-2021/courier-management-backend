@@ -170,3 +170,6 @@ dmypy.json
 
 #vscode
 .vscode/*
+
+# Project unnecessaries
+server.db
