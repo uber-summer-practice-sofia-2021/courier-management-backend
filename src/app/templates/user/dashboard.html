@@ -16,6 +16,7 @@
             <tr>
                 <th>From</th>
                 <th>To</th>
+                <th>Distance (km)</th>
                 <th>Tags</th>
                 <th>Assign</th>
             </tr>
@@ -24,9 +25,10 @@
         <tr>
             <th>{{item.get('from').get('addressName')}}</th>
             <th>{{item.get('to').get('addressName')}}</th>
+            <th>{{item.get('distance')}}</th>
             <th>{{','.join(item.get('tags'))}}</th>
             <td>
-                <form method="POST" action="{{ url_for('user.dashboard', orderID=item.get('id')) }}">
+                <form method="POST" action="{{ url_for('user.dashboard', orderID=item.get('id'), distance=item.get('distance')) }}">
                     <button type="submit" class="btn btn-dark" >Assign</button>
                 </form>
             </td>

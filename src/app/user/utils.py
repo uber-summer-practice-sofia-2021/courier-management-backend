@@ -4,6 +4,7 @@ from app.db.models import *
 from flask import current_app, g
 import requests, os, inspect as ins
 from sqlalchemy import exc
+from math import radians, asin, sqrt, cos, sin
 
 
 AVAILABLE_TAGS = ["FRAGILE", "DANGEROUS"]
@@ -93,10 +94,11 @@ def check_order_availability(orderID):
 
 
 # Initialize trip upon order assignment
-def init_trip(courier, orderID):
+def init_trip(courier, orderID, distance):
     try:
         trip = Trip(courier.id, orderID)
         trip.assigned_at = timestamp()
+        trip.distance = distance
         insert_into_db(trip, db)
         courier.current_trip_id = trip.id
         return db.session.commit()
@@ -177,3 +179,26 @@ def change_trip_status(status, found_user, trip):
             f"{e} -> {ins.getframeinfo(ins.currentframe()).function}"
         )
         return None
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+
+    # The math module contains a function named
+    # radians which converts from degrees to radians.
+    lon1 = radians(lon1)
+    lon2 = radians(lon2)
+    lat1 = radians(lat1)
+    lat2 = radians(lat2)
+      
+    # Haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+ 
+    c = 2 * asin(sqrt(a))
+    
+    # Radius of earth in kilometers. Use 3956 for miles
+    r = 6371
+      
+    # calculate the result
+    return(c * r)
