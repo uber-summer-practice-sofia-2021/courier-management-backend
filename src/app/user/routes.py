@@ -23,8 +23,6 @@ def load_user():
 @user.route("/login", methods=["POST", "GET"])
 def login():
 
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
-
     if g.user:
         flash("Already logged in!")
         return redirect(url_for("user.dashboard"))
@@ -34,7 +32,6 @@ def login():
 
         insert_into_db(Courier(email), db)
 
-        # g.user = Courier.query.filter_by(email=email).first()
         g.user = Courier.query.filter_by(email=email).first()
 
         session.permanent = True
@@ -57,7 +54,6 @@ def login():
 # Endpoint for user settings page
 @user.route("/settings", methods=["POST", "GET"])
 def settings():
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not g.user:
         flash("Invalid user or session expired!")
@@ -97,19 +93,19 @@ def settings():
 # Endpoint for user logout
 @user.route("/logout")
 def logout():
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if g.user:
-        flash(f"You have been logged out, {g.user.name}!", "info")
+        name = g.user.name
 
     clear_session(session)
+    flash(f"You have been logged out, {g.user.name}!", "info")
+    
     return redirect(url_for("user.login"))
 
 
 # User is redirected here upon going inactive
 @user.route("/inactive", methods=["GET", "POST"])
 def inactive():
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not g.user:
         flash("Invalid user or session expired!")
@@ -136,7 +132,6 @@ def inactive():
 # Endpoint for the user dashboard
 @user.route("/dashboard", methods=["POST", "GET"])
 def dashboard():
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not g.user:
         flash("Invalid user or session expired!")
@@ -196,7 +191,6 @@ def dashboard():
 # Endpoint for order status change
 @user.route("/dashboard/<tripID>", methods=["GET", "POST"])
 def trip_dashboard(tripID):
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     trip = Trip.query.filter_by(id=tripID).first_or_404()
 
@@ -207,10 +201,6 @@ def trip_dashboard(tripID):
     if not g.user.is_validated:
         flash("You need to complete your profile first!")
         return redirect(url_for("user.settings"))
-
-    # if not trip or trip.courier_id != g.user.id:
-    #     flash("You have no such trip!")
-    #     return redirect(url_for("user.dashboard"))
 
     if g.user.current_trip_id and tripID != g.user.current_trip_id:
         flash("You have a trip in progress!")
@@ -235,8 +225,6 @@ def trip_dashboard(tripID):
 
 @user.route("/history")
 def history():
-
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not g.user:
         flash("Invalid user or session expired!")
