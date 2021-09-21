@@ -24,38 +24,45 @@ h1 {
 
 html,
 body {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 body {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
 }
 
 button {
-    background-color: black;
-    color: white;
-    width: 200px;
-    height: 50px;
-    margin: 20px;
+  background-color: black;
+  color: white;
+  width: 200px;
+  height: 50px;
+  margin: 20px;
 }
 
+#image {
+  margin-top: 20px;
+}
+
+#form-text {
+  margin-top: 20px;
+}
 .content-container {
-    margin: 100px 0 0 0;
+  margin: 100px 0 0 0;
 }
 
 @keyframes gradient {
-    0% {
-        background-position: 0% 50%;
-    }
+  0% {
+    background-position: 0% 50%;
+  }
 
-    50% {
-        background-position: 100% 50%;
-    }
+  50% {
+    background-position: 100% 50%;
+  }
 
-    100% {
-        background-position: 0% 50%;
-    }
+  100% {
+    background-position: 0% 50%;
+  }
 }

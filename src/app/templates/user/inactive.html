@@ -6,12 +6,12 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/inactive_style.css')}}">
 
 <div class="d-flex justify-content-center">
-    <div class="content-container row row-cows-2">
+    <div class="">
         <div class="d-flex justify-content-center">
-            <h1>Courier {{name}} is not working at the moment!</h1>
+            <h1 id="form-text">Courier {{name}} is not working at the moment!</h1>
         </div>
         <div class="d-flex justify-content-center img">
-            <img src="{{ url_for('static', filename='img/delivery.png') }}" alt="Not Working Courier">
+            <img id="image" src="{{ url_for('static', filename='img/delivery.png') }}" alt="Not Working Courier">
         </div>
         <div class="d-flex justify-content-center">
             <form method="POST">
