@@ -1,6 +1,9 @@
 import uuid
 from flask_sqlalchemy import SQLAlchemy
-from app.db import db
+
+
+db = SQLAlchemy()
+
 
 class Courier(db.Model):
     id = db.Column("id", db.String(36), primary_key=True)

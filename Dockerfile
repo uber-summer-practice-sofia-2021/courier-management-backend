@@ -15,8 +15,8 @@ EXPOSE 5000
 
 ENV FLASK_ENV=development \
     FLASK_APP=src/app \
-    ORDER_MANAGEMENT_HOST=localhost \
-    ORDER_MANAGEMENT_PORT=5000 \
+    ORDER_MANAGEMENT_HOST=order-Publi-DVY752SUI77Y-1625392201.eu-west-1.elb.amazonaws.com \
+    ORDER_MANAGEMENT_PORT=80 \
     KAFKA_BROKERS=kafka:9092 \
     KAFKA_TOPIC=trips \
     DATABASE_HOST= \

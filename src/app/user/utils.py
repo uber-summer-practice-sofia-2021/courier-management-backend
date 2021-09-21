@@ -37,10 +37,12 @@ def clear_session(session):
 # Requests orders
 def get_orders(**params):
     try:
-        return requests.get(
+        resp = requests.get(
             f"http://{os.getenv('ORDER_MANAGEMENT_HOST')}:{os.getenv('ORDER_MANAGEMENT_PORT')}/orders",
             params,
         ).json()
+
+        return resp
     except Exception as e:
         current_app.logger.error(
             f"{e} -> {ins.getframeinfo(ins.currentframe()).function}"
@@ -51,9 +53,11 @@ def get_orders(**params):
 # Requests order by id
 def get_order_by_id(orderID):
     try:
-        return requests.get(
+        resp = requests.get(
             f"http://{os.getenv('ORDER_MANAGEMENT_HOST')}:{os.getenv('ORDER_MANAGEMENT_PORT')}/orders/{orderID}"
         ).json()
+
+        return resp
     except Exception as e:
         current_app.logger.info(
             f"http://{os.getenv('ORDER_MANAGEMENT_HOST')}:{os.getenv('ORDER_MANAGEMENT_PORT')}/orders/{orderID}"
@@ -68,7 +72,7 @@ def get_order_by_id(orderID):
 def change_order_status(orderID, status):
     try:
         return requests.post(
-            f"http://{os.getenv('ORDER_MANAGEMENT_HOST')}:{os.getenv('ORDER_MANAGEMENT_PORT')}/orders/{orderID}?status={status.upper()}"
+            f"http://{os.getenv('ORDER_MANAGEMENT_HOST')}:{os.getenv('ORDER_MANAGEMENT_PORT')}/orders/{orderID}/{status.upper()}"
         )
     except Exception as e:
         current_app.logger.error(
@@ -100,6 +104,7 @@ def init_trip(courier, orderID, distance):
         trip.assigned_at = timestamp()
         trip.distance = distance
         insert_into_db(trip, db)
+        change_order_status(trip.order_id, "ASSIGNED")
         courier.current_trip_id = trip.id
         return db.session.commit()
     except exc.IntegrityError as e:

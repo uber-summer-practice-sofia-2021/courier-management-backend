@@ -167,8 +167,7 @@ def dashboard():
 
         return redirect(url_for("user.trip_dashboard", tripID=g.user.current_trip_id, status="ASSIGNED"))
 
-    page = request.args.get("page") if request.args.get("page") else 1
-    limit = 10
+    page = int(request.args.get("page")) if request.args.get("page") else 1
 
     # Request orders from order management
     orders = get_orders(
@@ -177,8 +176,7 @@ def dashboard():
         maxWidth=g.user.max_width,
         maxLength=g.user.max_length,
         tags=g.user.tags.split(","),
-        page=page,
-        limit=limit,
+        page=page-1,
     )
 
     data = orders.get("data") if orders.get("data") else []
@@ -226,6 +224,7 @@ def trip_dashboard(tripID):
 
         if (trip.status == "ASSIGNED" and status in ["CANCELLED", "PICKED_UP"]) or (trip.status == "PICKED_UP" and status == "COMPLETED"):
             if status:
+                current_app.logger.debug(status)
                 change_order_status(trip.order_id, status)
             status = change_trip_status(status, g.user, trip)
         else:

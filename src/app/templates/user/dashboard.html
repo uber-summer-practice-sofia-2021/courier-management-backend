@@ -45,7 +45,7 @@
                 aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
         </li>
 
-        {% for page in range(pagination.get('currentPage')+1, pagination.get('currentPage')+5 if pagination.get('currentPage')+5
+        {% for page in range(pagination.get('currentPage')-5 if pagination.get('currentPage')-5>0 else 1, pagination.get('currentPage')+5 if pagination.get('currentPage')+5
         <pagination.get('totalPages') else pagination.get('totalPages')+1) %} <li
             class="page-item {% if pagination.currentPage+1 == page %}active{% endif %}">
             <a class="page-link" href="{{ url_for('user.dashboard', page=page) }}">{{page}}</a>

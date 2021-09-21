@@ -6,41 +6,21 @@ api = Blueprint("api", __name__)
 
 
 # Endpoint for requesting courier info
-@api.route("/couriers", methods=["GET"])
-def couriers_api():
-    courier_id = request.args["courierID"]
-    courier = Courier.query.filter_by(id=courier_id).first_or_404().map()
-    return Response(response=json.dumps(courier), content_type="application/json", status=302)
-    # try:
-    #     courier_id = request.args["courierID"]
-    #     courier = Courier.query.filter_by(id=courier_id).first().map()
-    #     return Response(response=json.dumps(courier), content_type="application/json", status=302)
-    # except Exception as e:
-    #     current_app.logger.error(
-    #         f"{e} -> {ins.getframeinfo(ins.currentframe()).function}"
-    #     )
-    #     return Response(
-    #         response=json.dumps(None), status=204, content_type="application/json"
-    #     )
+@api.route("/couriers/<courierID>", methods=["GET"])
+def couriers_api(courierID):
+    courier = Courier.query.filter_by(id=courierID).first_or_404().map()
+    return Response(
+        response=json.dumps(courier), content_type="application/json", status=302
+    )
 
 
 # Endpoint for requesting trip info
-@api.route("/trips", methods=["GET"])
-def trips_api():
-    trip_id = request.args["tripID"]
-    trip = Trip.query.filter_by(id=trip_id).first_or_404().map()
-    return Response(response=json.dumps(trip), content_type="application/json", status=302)
-    # try:
-    #     trip_id = request.args["tripID"]
-    #     trip = Trip.query.filter_by(id=trip_id).first().map()
-    #     return Response(response=json.dumps(trip), content_type="application/json", status=302)
-    # except Exception as e:
-    #     current_app.logger.error(
-    #         f"{e} -> {ins.getframeinfo(ins.currentframe()).function}"
-    #     )
-    #     return Response(
-    #         response=json.dumps(None), status=204, content_type="application/json"
-    #     )
+@api.route("/trips/<tripID>", methods=["GET"])
+def trips_api(tripID):
+    trip = Trip.query.filter_by(id=tripID).first_or_404().map()
+    return Response(
+        response=json.dumps(trip), content_type="application/json", status=302
+    )
 
 
 # Endpoint for testing orders requests
