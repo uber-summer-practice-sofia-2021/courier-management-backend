@@ -1,7 +1,7 @@
 FROM python:3.8-slim
 
 RUN apt-get update \
- && apt-get install -y vim curl
+ && apt-get install -y vim curl python3-dev default-libmysqlclient-dev gcc
 
 WORKDIR /app
 
@@ -19,12 +19,12 @@ ENV FLASK_ENV=development \
     ORDER_MANAGEMENT_PORT=80 \
     KAFKA_BROKERS=kafka:9092 \
     KAFKA_TOPIC=trips \
-    DATABASE_HOST= \
-    DATABASE_PORT= \
-    DATABASE_USERNAME= \
-    DATABASE_PASSWD= \
-    DATABASE_PATH=db/server.db \
-    DATABASE_DIALECT=sqlite \
+    DATABASE_HOST=database \
+    DATABASE_PORT=3306 \
+    DATABASE_USERNAME=root \
+    DATABASE_PASSWD=secret \
+    DATABASE_PATH=courier_management \
+    DATABASE_DIALECT=mysql \
     DATABASE_DRIVER=
 
 CMD ["flask", "run", "--host=0.0.0.0"]

@@ -1,3 +1,4 @@
+from threading import current_thread
 from flask import Flask
 from app.db.models import db
 from datetime import timedelta
@@ -36,6 +37,8 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    app.logger.debug(app.config['SQLALCHEMY_DATABASE_URI'])
 
     db.init_app(app)
     with app.app_context():
