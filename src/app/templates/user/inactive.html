@@ -6,19 +6,15 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/inactive_style.css')}}">
 
 <div class="d-flex justify-content-center">
-    <div class="">
-        <div class="d-flex justify-content-center">
-            <h1 id="form-text">Courier {{name}} is not working at the moment!</h1>
-        </div>
-        <div class="d-flex justify-content-center img">
-            <img id="image" src="{{ url_for('static', filename='img/delivery.png') }}" alt="Not Working Courier">
-        </div>
-        <div class="d-flex justify-content-center">
-            <form method="POST">
-                <button class="btn btn-dark btn-lg btn-hover" type="submit" name="submit" value="active">Go
-                    active</button>
-            </form>
-        </div>
-    </div>
+    <h1 id="form-text">Courier {{name}} is not working at the moment!</h1>
+</div>
+<div class="d-flex justify-content-center img">
+    <img id="image" src="{{ url_for('static', filename='img/delivery.png') }}" alt="Not Working Courier">
+</div>
+<div class="d-flex justify-content-center">
+    <form method="POST">
+        <button class="btn btn-dark btn-lg btn-hover" type="submit" name="submit" value="active">Go
+            active</button>
+    </form>
 </div>
 {%endblock%}
