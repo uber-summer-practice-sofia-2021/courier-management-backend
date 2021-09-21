@@ -98,7 +98,7 @@ def logout():
         name = g.user.name
 
     clear_session(session)
-    flash(f"You have been logged out, {g.user.name}!", "info")
+    flash(f"You have been logged out, {name}!", "info")
     
     return redirect(url_for("user.login"))
 
