@@ -158,14 +158,18 @@ def dashboard():
     if request.method == "POST":
         orderID = request.args.get("orderID")
         distance = request.args.get("distance")
-        
+
         if not check_order_availability(orderID):
             flash("Order was already taken, completed or cancelled!")
             return redirect(url_for("user.dashboard"))
 
         init_trip(g.user, orderID, distance)
 
-        return redirect(url_for("user.trip_dashboard", tripID=g.user.current_trip_id, status="ASSIGNED"))
+        return redirect(
+            url_for(
+                "user.trip_dashboard", tripID=g.user.current_trip_id, status="ASSIGNED"
+            )
+        )
 
     page = int(request.args.get("page")) if request.args.get("page") else 1
 
@@ -176,14 +180,22 @@ def dashboard():
         maxWidth=g.user.max_width,
         maxLength=g.user.max_length,
         tags=g.user.tags.split(","),
-        page=page-1,
+        page=page - 1,
     )
 
     data = orders.get("data") if orders.get("data") else []
     pagination = orders.get("pagination")
 
     for order in data:
-        order['distance'] = round(haversine_distance(order['from']['latitude'], order['from']['longitude'], order['to']['latitude'], order['to']['longitude']), 2)
+        order["distance"] = round(
+            haversine_distance(
+                order["from"]["latitude"],
+                order["from"]["longitude"],
+                order["to"]["latitude"],
+                order["to"]["longitude"],
+            ),
+            2,
+        )
 
     if not orders:
         flash("There was a problem!")
@@ -222,7 +234,9 @@ def trip_dashboard(tripID):
     if request.method == "POST":
         status = request.args.get("status")
 
-        if (trip.status == "ASSIGNED" and status in ["CANCELLED", "PICKED_UP"]) or (trip.status == "PICKED_UP" and status == "COMPLETED"):
+        if (trip.status == "ASSIGNED" and status in ["CANCELLED", "PICKED_UP"]) or (
+            trip.status == "PICKED_UP" and status == "COMPLETED"
+        ):
             if status:
                 current_app.logger.debug(status)
                 change_order_status(trip.order_id, status)
@@ -233,6 +247,7 @@ def trip_dashboard(tripID):
     return render_template("user/order.html", order=order, trip=trip)
 
 
+# Endpoint for trips history
 @user.route("/history")
 def history():
 
@@ -274,3 +289,24 @@ def history():
     )
 
     return render_template("user/history.html", items=history, older=older, newer=newer)
+
+
+# Endpoint for courier stats
+@user.route("/statistics")
+def statistics():
+
+    if not g.user:
+        flash("Invalid user or session expired!")
+        return redirect(url_for("user.login"))
+
+    if not g.user.is_validated:
+        flash("You need to complete your profile first!")
+        return redirect(url_for("user.settings"))
+
+    return render_template(
+        "user/statistics.html",
+        completed_trips=get_count_completed_trips(g.user.id),
+        cancelled_trips=get_count_cancelled_trips(g.user.id),
+        total_distance=get_total_distance(g.user.id),
+        earnings=get_earnings(g.user.id),
+    )
