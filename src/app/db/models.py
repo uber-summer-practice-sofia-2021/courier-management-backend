@@ -29,7 +29,7 @@ class Courier(db.Model):
         data = {
             "ID": self.id,
             "email": self.email,
-            "name": self.name,
+            "courierName": self.name,
             "maxWeight": self.max_weight,
             "maxWidth": self.max_width,
             "maxLength": self.max_length,
