@@ -7,3 +7,4 @@ Werkzeug==2.0.1
 kafka-python==2.0.2
 Flask_SQLAlchemy==2.5.1
 requests==2.26.0
+mysqlclient==2.0.3

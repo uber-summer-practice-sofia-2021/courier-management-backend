@@ -172,9 +172,8 @@ def change_trip_status(status, found_user, trip):
             # Clear user current order id and msg kafka
             trip.sorter = getattr(trip, status.lower() + "_at") + trip.id
             found_user.current_trip_id = None
-            message_kafka(
-                os.environ["KAFKA_TOPIC"], trip.get_id()
-            ) if status == "COMPLETED" else None
+            if status == "COMPLETED":
+                message_kafka(os.environ["KAFKA_TOPIC"], trip.get_id())
 
         db.session.commit()
         return status
@@ -186,6 +185,8 @@ def change_trip_status(status, found_user, trip):
         return None
 
 
+# Uses haversine formula to calculate distance
+# between two points on a sphere
 def haversine_distance(lat1, lon1, lat2, lon2):
 
     # The math module contains a function named
@@ -194,16 +195,43 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     lon2 = radians(lon2)
     lat1 = radians(lat1)
     lat2 = radians(lat2)
-      
+
     # Haversine formula
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
- 
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+
     c = 2 * asin(sqrt(a))
-    
+
     # Radius of earth in kilometers. Use 3956 for miles
     r = 6371
-      
+
     # calculate the result
-    return(c * r)
+    return c * r
+
+
+# Returns number of completed trips
+def get_count_completed_trips(courier_id):
+    return Trip.query.filter_by(status="COMPLETED", courier_id=courier_id).count()
+
+
+# Returns number of cancelled trips
+def get_count_cancelled_trips(courier_id):
+    return Trip.query.filter_by(status="CANCELLED", courier_id=courier_id).count()
+
+
+# Sums the total distance of completed trips
+def get_total_distance(courier_id):
+    return sum(
+        [
+            float(x.distance)
+            for x in Trip.query.filter_by(
+                status="COMPLETED", courier_id=courier_id
+            ).all()
+        ]
+    )
+
+
+# Returns courier earnings (maybe to do)
+def get_earnings(courier_id):
+    return 0

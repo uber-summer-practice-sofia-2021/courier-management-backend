@@ -51,8 +51,8 @@
                     <div class="row">
                         <div class="col">
                             <label for="package-max-height">Maximum height of the package (in meters):</label>
-                            <input class="form-control" id="package-max-height" type="number" step="0.1" name="height" placeholder="0.5"
-                                min="0.5" value="{{max_height if max_height}}" required />
+                            <input class="form-control" id="package-max-height" type="number" step="0.1" name="height"
+                                placeholder="0.5" min="0.5" value="{{max_height if max_height}}" required />
                         </div>
                         <div class="col">
                             <label for="package-max-length">Maximum length of the package (in meters):</label>
@@ -63,9 +63,9 @@
                     <div class="row">
                         <div class="from-group">
                             <div class="btn-group dropdown">
-                                <button type="button" class="btn btn-secondary dropdown-toggle"
-                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
-                                    onclick="filterTags({{tags}}, {{available_tags}});">
+                                <div class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside" aria-expanded="false"
+                                    >
                                     Tags
                                 </button>
                                 <div id="tags-container" class="dropdown-menu dropdown-menu">
@@ -96,7 +96,11 @@
 </div>
 
 {% block scripts %}
+<<<<<<< HEAD
 <script src="{{ url_for('static', filename='js/tags.js' )}}"></script>
 <script src="{{ url_for('static', filename='js/vehicle-type.js' )}}"></script>
+=======
+<script id="tags-script" src="{{ url_for('static', filename='js/tags.js') }}" available_tags='{{available_tags}}', courier_tags="{{tags}}"></script>
+>>>>>>> 3e1bc2d588065590c03e5b1d773a06b4c38eaeca
 {% endblock %}
 {%endblock%}

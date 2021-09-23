@@ -2,23 +2,21 @@
 
 {%block title%} Inactive {%endblock%}
 
-{%block content %}
+{% block links %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/inactive_style.css')}}">
+{% endblock %}
 
+{% block content %}
 <div class="d-flex justify-content-center">
-    <div class="content-container row row-cows-2">
-        <div class="d-flex justify-content-center">
-            <h1>Courier {{name}} is not working at the moment!</h1>
-        </div>
-        <div class="d-flex justify-content-center img">
-            <img src="{{ url_for('static', filename='img/delivery.png') }}" alt="Not Working Courier">
-        </div>
-        <div class="d-flex justify-content-center">
-            <form method="POST">
-                <button class="btn btn-dark btn-lg btn-hover" type="submit" name="submit" value="active">Go
-                    active</button>
-            </form>
-        </div>
-    </div>
+    <h1>Courier {{name}} is not working at the moment!</h1>
 </div>
-{%endblock%}
+<div class="d-flex justify-content-center img">
+    <img src="{{ url_for('static', filename='img/delivery.png') }}" alt="Not Working Courier">
+</div>
+<div class="d-flex justify-content-center">
+    <form method="POST">
+        <button class="btn btn-dark btn-lg btn-hover" type="submit" name="submit" value="active" id="btn-active">Go
+            active</button>
+    </form>
+</div>
+{% endblock %}

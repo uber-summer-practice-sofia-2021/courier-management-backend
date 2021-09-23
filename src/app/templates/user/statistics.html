@@ -1,0 +1,35 @@
+{% extends "navbar.html" %}
+
+{% block title %}User Statistics{% endblock %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/statistics.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="wrapper container p-5">
+    <div class="card bg-dark">
+        <div class="row">
+            <div class="col col-md-8 p-3">
+                <div id="piechart"></div>
+            </div>
+            <div class="col-md-4 p-5 categories">
+                <div class="category">
+                    <span>Total Distance</span>
+                    <span>{{total_distance}}</span>
+                </div>
+                <div class="category">
+                    <span>Earnings</span>
+                    <span>{{earnings}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script id="script-statistics" type="text/javascript" src="{{ url_for('static', filename='js/statistics.js') }}"
+    completed="{{completed_trips}}" cancelled="{{cancelled_trips}}"></script>
+{% endblock %}

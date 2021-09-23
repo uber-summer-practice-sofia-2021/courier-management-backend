@@ -1,4 +1,11 @@
-function filterTags(courier_tags, available_tags) {
+script = document.getElementById("tags-script");
+courier_tags = JSON.parse(script.getAttribute('courier_tags').replaceAll("\'", '\"'));
+available_tags = JSON.parse(script.getAttribute('available_tags').replaceAll("\'", '\"'));
+
+console.log(courier_tags);
+console.log(available_tags);
+
+function filterTags() {
 
     input = document.getElementById("tags-search").value;
     list = document.getElementById("tags-container");
@@ -39,3 +46,5 @@ function filterTags(courier_tags, available_tags) {
         }
     }
 }
+
+$(document).ready(filterTags());

@@ -23,8 +23,6 @@ def load_user():
 @user.route("/login", methods=["POST", "GET"])
 def login():
 
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
-
     if g.user:
         flash("Already logged in!")
         return redirect(url_for("user.dashboard"))
@@ -34,7 +32,6 @@ def login():
 
         insert_into_db(Courier(email), db)
 
-        # g.user = Courier.query.filter_by(email=email).first()
         g.user = Courier.query.filter_by(email=email).first()
 
         session.permanent = True
@@ -57,7 +54,6 @@ def login():
 # Endpoint for user settings page
 @user.route("/settings", methods=["POST", "GET"])
 def settings():
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not g.user:
         flash("Invalid user or session expired!")
@@ -97,19 +93,19 @@ def settings():
 # Endpoint for user logout
 @user.route("/logout")
 def logout():
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if g.user:
-        flash(f"You have been logged out, {g.user.name}!", "info")
+        name = g.user.name
 
     clear_session(session)
+    flash(f"You have been logged out, {name}!", "info")
+    
     return redirect(url_for("user.login"))
 
 
 # User is redirected here upon going inactive
 @user.route("/inactive", methods=["GET", "POST"])
 def inactive():
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not g.user:
         flash("Invalid user or session expired!")
@@ -136,7 +132,6 @@ def inactive():
 # Endpoint for the user dashboard
 @user.route("/dashboard", methods=["POST", "GET"])
 def dashboard():
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not g.user:
         flash("Invalid user or session expired!")
@@ -158,14 +153,18 @@ def dashboard():
     if request.method == "POST":
         orderID = request.args.get("orderID")
         distance = request.args.get("distance")
-        
+
         if not check_order_availability(orderID):
             flash("Order was already taken, completed or cancelled!")
             return redirect(url_for("user.dashboard"))
 
         init_trip(g.user, orderID, distance)
 
-        return redirect(url_for("user.trip_dashboard", tripID=g.user.current_trip_id, status="ASSIGNED"))
+        return redirect(
+            url_for(
+                "user.trip_dashboard", tripID=g.user.current_trip_id, status="ASSIGNED"
+            )
+        )
 
     page = int(request.args.get("page")) if request.args.get("page") else 1
 
@@ -176,14 +175,22 @@ def dashboard():
         maxWidth=g.user.max_width,
         maxLength=g.user.max_length,
         tags=g.user.tags.split(","),
-        page=page-1,
+        page=page - 1,
     )
 
     data = orders.get("data") if orders.get("data") else []
     pagination = orders.get("pagination")
 
     for order in data:
-        order['distance'] = round(haversine_distance(order['from']['latitude'], order['from']['longitude'], order['to']['latitude'], order['to']['longitude']), 2)
+        order["distance"] = round(
+            haversine_distance(
+                order["from"]["latitude"],
+                order["from"]["longitude"],
+                order["to"]["latitude"],
+                order["to"]["longitude"],
+            ),
+            2,
+        )
 
     if not orders:
         flash("There was a problem!")
@@ -196,7 +203,6 @@ def dashboard():
 # Endpoint for order status change
 @user.route("/dashboard/<tripID>", methods=["GET", "POST"])
 def trip_dashboard(tripID):
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     trip = Trip.query.filter_by(id=tripID).first_or_404()
 
@@ -208,10 +214,6 @@ def trip_dashboard(tripID):
         flash("You need to complete your profile first!")
         return redirect(url_for("user.settings"))
 
-    # if not trip or trip.courier_id != g.user.id:
-    #     flash("You have no such trip!")
-    #     return redirect(url_for("user.dashboard"))
-
     if g.user.current_trip_id and tripID != g.user.current_trip_id:
         flash("You have a trip in progress!")
         return redirect(url_for("user.trip_dashboard", tripID=g.user.current_trip_id))
@@ -222,7 +224,9 @@ def trip_dashboard(tripID):
     if request.method == "POST":
         status = request.args.get("status")
 
-        if (trip.status == "ASSIGNED" and status in ["CANCELLED", "PICKED_UP"]) or (trip.status == "PICKED_UP" and status == "COMPLETED"):
+        if (trip.status == "ASSIGNED" and status in ["CANCELLED", "PICKED_UP"]) or (
+            trip.status == "PICKED_UP" and status == "COMPLETED"
+        ):
             if status:
                 current_app.logger.debug(status)
                 change_order_status(trip.order_id, status)
@@ -233,10 +237,9 @@ def trip_dashboard(tripID):
     return render_template("user/order.html", order=order, trip=trip)
 
 
+# Endpoint for trips history
 @user.route("/history")
 def history():
-
-    # g.user = Courier.query.filter_by(id=session.get("id")).first()
 
     if not g.user:
         flash("Invalid user or session expired!")
@@ -274,3 +277,24 @@ def history():
     )
 
     return render_template("user/history.html", items=history, older=older, newer=newer)
+
+
+# Endpoint for courier stats
+@user.route("/statistics")
+def statistics():
+
+    if not g.user:
+        flash("Invalid user or session expired!")
+        return redirect(url_for("user.login"))
+
+    if not g.user.is_validated:
+        flash("You need to complete your profile first!")
+        return redirect(url_for("user.settings"))
+
+    return render_template(
+        "user/statistics.html",
+        completed_trips=get_count_completed_trips(g.user.id),
+        cancelled_trips=get_count_cancelled_trips(g.user.id),
+        total_distance=get_total_distance(g.user.id),
+        earnings=get_earnings(g.user.id),
+    )

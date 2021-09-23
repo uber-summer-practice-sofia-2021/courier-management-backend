@@ -1,5 +1,6 @@
+from threading import current_thread
 from flask import Flask
-from app.db.models import db
+from app.db.models import *
 from datetime import timedelta
 import os
 
@@ -11,7 +12,7 @@ def create_app(test_config=None):
     db_driver = os.getenv('DATABASE_DRIVER')
     db_path = os.getenv('DATABASE_PATH')
     db_username = os.getenv('DATABASE_USERNAME')
-    db_passwd = os.getenv('DATABASE_PASSWD')
+    db_passwd = os.getenv('DATABASE_PASSWORD')
     db_host = os.getenv('DATABASE_HOST')
     db_port = os.getenv('DATABASE_PORT')
 
@@ -37,7 +38,11 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    app.logger.debug(app.config['SQLALCHEMY_DATABASE_URI'])
+
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
 
     from app.user.routes import user
     from app.api.routes import api
