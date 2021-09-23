@@ -3,12 +3,18 @@
 {% block title %} Dashboard {% endblock %}
 
 {% block content %}
+<style>
+    tr{
+        height: 70px;
+    }
+  
+</style>
 <div>
     <div class="d-flex justify-content-center text-white bg-dark">
         <h1>Courier {{name}} is now active!</h1>
     </div>
     <div class="d-flex justify-content-center text-white bg-dark">
-        <a class="btn btn-primary" href="{{ url_for('user.inactive') }}">Go inactive</a>
+        <a class="btn btn-primary mt-3 mb-4" href="{{ url_for('user.inactive') }}">Go inactive</a>
     </div>
 
     <table class="table table-striped table-hover centered thick-border table-hover">
