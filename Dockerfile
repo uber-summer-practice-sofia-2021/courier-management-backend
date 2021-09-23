@@ -14,17 +14,6 @@ RUN pip install -r requirements.txt
 EXPOSE 5000
 
 ENV FLASK_ENV=development \
-    FLASK_APP=src/app \
-    ORDER_MANAGEMENT_HOST=order-Publi-DVY752SUI77Y-1625392201.eu-west-1.elb.amazonaws.com \
-    ORDER_MANAGEMENT_PORT=80 \
-    KAFKA_BROKERS=kafka:9092 \
-    KAFKA_TOPIC=trips \
-    DATABASE_HOST=couriers-db.cldppnec5w65.eu-west-1.rds.amazonaws.com \
-    DATABASE_PORT=3306 \
-    DATABASE_USERNAME=admin \
-    DATABASE_PASSWORD=d4rkmus2102 \
-    DATABASE_PATH=courier_management \
-    DATABASE_DIALECT=mysql \
-    DATABASE_DRIVER=
+    FLASK_APP=src/app
 
 CMD ["flask", "run", "--host=0.0.0.0"]
