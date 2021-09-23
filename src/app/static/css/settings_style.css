@@ -70,8 +70,8 @@ label {
 } 
 .btn, .form-control,.radio-custom {
   pointer-events: auto;
-
 }
+
 
 .tags-list {
   max-width: 200px;

@@ -30,7 +30,7 @@
                         <input id="van-btn" class="radio-custom" name="Drone" type="radio">
                         <label for="radio-3" class="radio-custom-label">Van</label>
                         </div>
-                    </div>
+                    </div> 
                     <div class="col">
                         <label for="user-full-name">Full Name:</label>
                         <input class="form-control" id="user-full-name" type="text" name="name" placeholder="Enter name"
@@ -67,8 +67,8 @@
                                     data-bs-auto-close="outside" aria-expanded="false"
                                     >
                                     Tags
-                                </button>
-                                <div id="tags-container" class="dropdown-menu dropdown-menu">
+                                </div>
+                                <div id="tags-container" class="dropdown-menu">
                                     <div>
                                         <input id='tags-search' type="text" placeholder="Search tags.."
                                             oninput="filterTags({{tags}}, {{available_tags}});" />
@@ -96,11 +96,8 @@
 </div>
 
 {% block scripts %}
-<<<<<<< HEAD
-<script src="{{ url_for('static', filename='js/tags.js' )}}"></script>
-<script src="{{ url_for('static', filename='js/vehicle-type.js' )}}"></script>
-=======
 <script id="tags-script" src="{{ url_for('static', filename='js/tags.js') }}" available_tags='{{available_tags}}', courier_tags="{{tags}}"></script>
->>>>>>> 3e1bc2d588065590c03e5b1d773a06b4c38eaeca
+<script src="{{ url_for('static', filename='js/vehicle-type.js' )}}"></script>
 {% endblock %}
 {%endblock%}
+
