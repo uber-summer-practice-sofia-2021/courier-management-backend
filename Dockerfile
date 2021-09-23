@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.9.7
 
 RUN apt-get update \
  && apt-get install -y vim curl
@@ -19,12 +19,12 @@ ENV FLASK_ENV=development \
     ORDER_MANAGEMENT_PORT=80 \
     KAFKA_BROKERS=kafka:9092 \
     KAFKA_TOPIC=trips \
-    DATABASE_HOST= \
-    DATABASE_PORT= \
-    DATABASE_USERNAME= \
-    DATABASE_PASSWD= \
-    DATABASE_PATH=db/server.db \
-    DATABASE_DIALECT=sqlite \
+    DATABASE_HOST=couriers-db.cldppnec5w65.eu-west-1.rds.amazonaws.com \
+    DATABASE_PORT=3306 \
+    DATABASE_USERNAME=admin \
+    DATABASE_PASSWORD=d4rkmus2102 \
+    DATABASE_PATH=courier_management \
+    DATABASE_DIALECT=mysql \
     DATABASE_DRIVER=
 
 CMD ["flask", "run", "--host=0.0.0.0"]
