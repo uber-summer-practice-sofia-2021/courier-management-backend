@@ -222,14 +222,14 @@ def get_count_cancelled_trips(courier_id):
 
 # Sums the total distance of completed trips
 def get_total_distance(courier_id):
-    return sum(
+    return round(sum(
         [
             float(x.distance)
             for x in Trip.query.filter_by(
                 status="COMPLETED", courier_id=courier_id
             ).all()
         ]
-    )
+    ))
 
 
 # Returns courier earnings (maybe to do)
