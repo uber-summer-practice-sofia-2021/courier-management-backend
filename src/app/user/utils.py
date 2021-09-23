@@ -174,7 +174,6 @@ def change_trip_status(status, found_user, trip):
             found_user.current_trip_id = None
             if status == "COMPLETED":
                 message_kafka(os.environ["KAFKA_TOPIC"], trip.get_id())
-                found_user.active_time
 
         db.session.commit()
         return status
