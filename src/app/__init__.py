@@ -38,6 +38,8 @@ def create_app(test_config=None):
         pass
 
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
 
     from app.user.routes import user
     from app.api.routes import api

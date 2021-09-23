@@ -18,11 +18,12 @@
 </head>
 
 <body>
+
     {% block navbar %}{% endblock %}
 
-    {% with messages=get_flashed_messages() %}
-    {% if messages %}
-    <div class="d-flex justify-content-center align-items-center">
+    <div class="d-flex justify-content-center align-items-center alert-container" data-mdb-sticky-direction="both">
+        {% with messages=get_flashed_messages() %}
+        {% if messages %}
         <div class="overlay">
             <div class="toast alert alert-primary alert-dismissible fade show" role="alert" aria-live="assertive"
                 aria-atomic="true" style="position: relative; z-index:1;">
@@ -31,9 +32,9 @@
                 </button>
             </div>
         </div>
+        {% endif %}
+        {% endwith %}
     </div>
-    {% endif %}
-    {% endwith %}
     
     {% block content %}{% endblock %}
 
