@@ -1,11 +1,15 @@
 #btn-active {
-    background-color: black;
-    color: white;
-    width: 200px;
-    height: 50px;
-    margin: 20px;
+  background-color: black;
+  color: white;
+  width: 200px;
+  height: 50px;
+  margin: 20px;
 }
 
-.content-container {
-    margin: 100px 0 0 0;
+h1::before {
+  margin: 100px 0 0 0;
+  font-family: FontAwesome;
+  content: "\f1b9";
+  /* content: "\f207"; - for bus */
+  /* content: "\f206"; - for bicycle */
 }

@@ -4,6 +4,7 @@
 
 {% block links %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/settings_style.css')}}">
+
 {% endblock %}
 
 {% block content %}
@@ -13,6 +14,7 @@
             <div class="card bg-dark text-white">
                 <form method="POST">
                     <div class="col">
+                        <i class="fad fa-car"></i>
                         <label for="user-full-name">Full Name:</label>
                         <input class="form-control" id="user-full-name" type="text" name="name" placeholder="Enter name"
                             value="{{name if name}}" required />
