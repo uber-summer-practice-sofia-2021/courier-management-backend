@@ -104,9 +104,28 @@ div {
     }
 }
 
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 .overlay {
     position: absolute;
     z-index: 99;
+    margin-top: 50px;
+}
+
+.toast {
+    margin: 0;
 }
 
 table {
@@ -120,4 +139,10 @@ table {
 .row {
     --bs-gutter-x: 0;
     --bs-gutter-y: 0;
+}
+
+.alert-container {
+    position: sticky;
+    z-index: 99;
+    top: 0;
 }
