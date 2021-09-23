@@ -14,23 +14,23 @@ services:
       - target: 5000
         published: 5000
         protocol: tcp
-    depends_on: 
-      - database
+    # depends_on: 
+    #   - database
   
-  database:
-    image: mysql:latest
-    container_name: mysql
-    volumes:
-     - ~/mysql/db:/var/lib/mysql
-    ports:
-     - "33067:3067"
-    environment:
-      MYSQL_DATABASE: courier_management
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
-      MYSQL_USER: psarlov
-      MYSQL_PASSWORD: secret
-      MYSQL_ROOT_USER: root
-      MYSQL_ROOT_PASSWORD: secret
+  # database:
+  #   image: mysql:latest
+  #   container_name: mysql
+  #   volumes:
+  #    - ~/mysql/db:/var/lib/mysql
+  #   ports:
+  #    - "33067:3067"
+  #   environment:
+  #     MYSQL_DATABASE: courier_management
+  #     MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+  #     MYSQL_USER: psarlov
+  #     MYSQL_PASSWORD: secret
+  #     MYSQL_ROOT_USER: root
+  #     MYSQL_ROOT_PASSWORD: secret
 
   # zookeeper:
   #   image: wurstmeister/zookeeper
