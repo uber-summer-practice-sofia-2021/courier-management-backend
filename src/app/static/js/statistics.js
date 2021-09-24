@@ -29,7 +29,7 @@ $(document).ready(function () {
                 position: 'bottom',
                 textStyle: {
                     fontName: 'Sans-Serif',
-                    color: 'white',
+                    color: 'black',
                 },
             },
             maximize: true,

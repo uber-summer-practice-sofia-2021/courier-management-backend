@@ -40,14 +40,14 @@
     font-weight: 300;
     font-size: 20px;
     opacity: 0.6;
-    color: #fff;
+    color: rgb(0, 0, 0);
     margin-bottom: 6px;
 }
 
 .category span:last-child {
     font-size: 40px;
     font-weight: 300;
-    color: #fff;
+    color: rgb(0, 0, 0);
 }
 
 
