@@ -132,9 +132,9 @@ def paginate(courier_id, older_than, newer_than, limit=10):
                 results = db.session.execute(
                     f"SELECT *\
                     FROM (SELECT *\
-                        FROM Trip\
+                        FROM trip\
                         WHERE courier_id LIKE '{courier_id}'\
-                            AND sorter NOT NULL AND sorter > '{newer_than}'\
+                            AND sorter IS NOT NULL AND sorter > '{newer_than}'\
                         ORDER BY sorter ASC\
                         LIMIT {limit}) x\
                     ORDER BY sorter DESC"
@@ -142,9 +142,9 @@ def paginate(courier_id, older_than, newer_than, limit=10):
             else:
                 results = db.session.execute(
                     f"SELECT *\
-                    FROM Trip\
+                    FROM trip\
                     WHERE courier_id LIKE '{courier_id}'\
-                        AND sorter NOT NULL "
+                        AND sorter IS NOT NULL "
                     + (f"AND sorter < '{older_than}'" if older_than else "")
                     + f"ORDER BY sorter DESC\
                     LIMIT {limit}"
