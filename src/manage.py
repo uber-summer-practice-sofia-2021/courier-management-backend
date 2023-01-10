@@ -23,7 +23,7 @@ if __name__ == "__main__":
     os.environ['FLASK_ENV']='development'
     os.environ['FLASK_APP']='src/app'
     os.environ['ORDER_MANAGEMENT_HOST']='localhost'
-    os.environ['ORDER_MANAGEMENT_PORT']='5000'
+    os.environ['ORDER_MANAGEMENT_PORT']='8080'
     os.environ['KAFKA_BROKERS']="kafka:9092"
     os.environ['KAFKA_TOPIC']="trips"
     os.environ['DATABASE_HOST']=''
